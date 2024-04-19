@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -9,8 +10,10 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import Router, { useRouter } from "next/navigation"
 
 const LoginForm  = () => {
+  const router=useRouter()
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
@@ -30,7 +33,7 @@ const LoginForm  = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">Sign in</Button>
+        <Button className="w-full" onClick={()=>router.push('/dashboard')}>Sign in</Button>
       </CardFooter>
     </Card>
   )
