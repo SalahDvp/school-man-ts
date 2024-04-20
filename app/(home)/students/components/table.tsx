@@ -47,6 +47,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { File } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 const data: Student[] = [
     {
@@ -56,6 +57,7 @@ const data: Student[] = [
         level: "Intermediate",
         joiningDate: "2023-01-15",
         leftAmountToPay: 0,
+        registrationStatus:"accepted"
       },
       {
         id: "2",
@@ -64,6 +66,7 @@ const data: Student[] = [
         level: "Beginner",
         joiningDate: "2022-11-20",
         leftAmountToPay: 150,
+        registrationStatus:"pending"
       },
       {
         id: "3",
@@ -72,9 +75,37 @@ const data: Student[] = [
         level: "Advanced",
         joiningDate: "2023-03-10",
         leftAmountToPay: 200,
+        registrationStatus:"accepted"
+      },
+      {
+        id: "4",
+        student: "John Doe",
+        status: "suspended",
+        level: "Intermediate",
+        joiningDate: "2023-01-15",
+        leftAmountToPay: 0,
+        registrationStatus:"accepted"
+      },
+      {
+        id: "5",
+        student: "Jane Smith",
+        status: "failed",
+        level: "Beginner",
+        joiningDate: "2022-11-20",
+        leftAmountToPay: 150,
+        registrationStatus:"pending"
+      },
+      {
+        id: "6",
+        student: "Michael Johnson",
+        status: "active",
+        level: "Advanced",
+        joiningDate: "2023-03-10",
+        leftAmountToPay: 200,
+        registrationStatus:"accepted"
       },
 ]
-
+type Status = 'accepted' | 'pending' | 'rejected';
 export type Student = {
     id: string;
     student: string;
@@ -82,109 +113,138 @@ export type Student = {
     level: string;
     joiningDate: string;
     leftAmountToPay: number;
+    registrationStatus:"accepted" | "pending" | "rejected"
   };
 
-export const columns: ColumnDef<Student>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "student",
-    header: "Student",
-    cell: ({ row }) => (
-      <div className="capitalize">
-         <div className="font-medium">{row.getValue("student")}</div>
-                            <div className="hidden text-sm text-muted-foreground md:inline">
-                            {row.getValue("email")}
-                            </div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "level",
-    header: "Level",
-    cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <div className="capitalize hidden sm:table-cell">{row.getValue("status")}</div>
-    ),
-  },
-  {
-    accessorKey: "joiningDate",
-    header: "Joining Date",
-    cell: ({ row }) => (
-      <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
-    ),
-  },
-  {
-    accessorKey: "leftAmountToPay",
-    header: () => <div className="text-right">Amount left</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("leftAmountToPay"))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "DZD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
+ interface DataTableDemoProps {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    open: boolean; // Specify the type of setOpen
+  }
+  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
+    
+    const getStatusColor = React.useCallback((status:Status) => {
+      switch (status) {
+        case 'accepted':
+          return '#2ECC71'; // Green for accepted
+        case 'pending':
+          return '#F1C40F'; // Yellow for pending
+        case 'rejected':
+          return '#E74C3C'; // Red for rejected
+        default:
+          return '#FFFFFF'; // Default to white for unknown status
+      }
+    }, []);
+    
+   const columns: ColumnDef<Student>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+    {
+      accessorKey: "student",
+      header: "Student",
+      cell: ({ row }) => (
+        <div className="capitalize">
+           <div className="font-medium">{row.getValue("student")}</div>
+                              <div className="hidden text-sm text-muted-foreground md:inline">
+                              {row.getValue("email")}
+                              </div>
+        </div>
+      ),
     },
-  },
-]
+    {
+      accessorKey: "level",
+      header: "Level",
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <div className="capitalize hidden sm:table-cell">{row.getValue("status")}</div>
+      ),
+    },
+    {
+      accessorKey: "joiningDate",
+      header: "Joining Date",
+      cell: ({ row }) => (
+        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
+      ),
+    },
+    {
+      accessorKey: "registrationStatus",
+      header: "Registration",
+      cell: ({ row }) => (
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("registrationStatus"))}}>{row.getValue("registrationStatus")}</Badge>
+      ),
+    },
+    {
+      accessorKey: "leftAmountToPay",
+      header: () => <div className="text-right">Amount left</div>,
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("leftAmountToPay"))
+  
+        // Format the amount as a dollar amount
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "DZD",
+        }).format(amount)
+  
+        return <div className="text-right font-medium">{formatted}</div>
+      },
+    },
 
-export function DataTableDemo() {
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const payment = row.original
+  
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+              disabled={row.getValue("registrationStatus")==="accepted"}
+                onClick={() => navigator.clipboard.writeText(payment.id)}
+              >
+                accept registration
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={()=>setOpen(true)}>
+                View Student
+              </DropdownMenuItem>
+              <DropdownMenuItem>View payment details</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -209,6 +269,12 @@ export function DataTableDemo() {
       columnFilters,
       columnVisibility,
       rowSelection,
+    },
+    initialState: {
+      pagination: {
+        pageIndex: 0, //custom initial page index
+        pageSize: 3, //custom default page size
+      },
     },
   })
  
@@ -263,9 +329,10 @@ export function DataTableDemo() {
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Students</CardTitle>
+      <CardTitle>Your Students</CardTitle>
       <CardDescription>
-        Recent students of your school.
+      Introducing Our Dynamic student Dashboard for Seamless
+                    Management and Insightful Analysis.
       </CardDescription>
     </CardHeader>
     <CardContent>     

@@ -23,6 +23,7 @@ import { Search } from "@/app/(home)/dashboard/components/search"
 import TeamSwitcher from "@/app/(home)/dashboard/components/team-switcher"
 import { UserNav } from "@/app/(home)/dashboard/components/user-nav"
 import { ModeToggle } from "@/app/(home)/dashboard/components/theme-mode"
+import { ScrollArea } from "@/components/ui/scroll-area"
  function Page() {
   return (
     <>
@@ -192,6 +193,8 @@ import { ModeToggle } from "@/app/(home)/dashboard/components/theme-mode"
               </div>
             </TabsContent>
           </Tabs>
+
+
         </div>
       </div>
     </>
