@@ -74,6 +74,11 @@ const config = {
       },
     },
   },
+  variants: {
+    extend: {
+      width: ["responsive"], // Include responsive variant
+    },
+  },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config
 

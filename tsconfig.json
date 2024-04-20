@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.jsx", "app/(home)/forms/page.jsx", "app/(home)/forms/holidays/page.jsx", "app/(home)/forms/level/sheet-form.jsx", "app/(home)/forms/profile-form.tsx"],
   "exclude": ["node_modules"]
 }
