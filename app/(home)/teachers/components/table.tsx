@@ -49,71 +49,72 @@ import {
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-const data: Student[] = [
+const data: Teacher[] = [
     {
         id: "1",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
+        teacher: "John Doe",
+        status: "Suspended",
+        Subject: "Math",
         joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
+        salary: 22000,
+        
       },
       {
         id: "2",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
+        teacher: "Jane Smith",
+        status: "Active",
+        Subject: "Arabic",
         joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
+        salary: 55000,
+        
       },
       {
         id: "3",
-        student: "Michael Johnson",
-        status: "active",
-        level: "Advanced",
+        teacher: "Michael Johnson",
+        status: "Active",
+        Subject: "Arabic",
         joiningDate: "2023-03-10",
-        leftAmountToPay: 200,
-        registrationStatus:"accepted"
+        salary: 40000,
+        
       },
       {
         id: "4",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
+        teacher: "John Doe",
+        status: "Suspended",
+        Subject: "Art",
         joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
+        salary: 20000,
+        
       },
       {
         id: "5",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
+        teacher: "Jane Smith",
+        status: "Active",
+        Subject: "French",
         joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
+        salary: 15000,
+        
       },
       {
         id: "6",
-        student: "Michael Johnson",
-        status: "active",
-        level: "Advanced",
+        teacher: "Michael Johnson",
+        status: "Active",
+        Subject: "English",
         joiningDate: "2023-03-10",
-        leftAmountToPay: 200,
-        registrationStatus:"accepted"
+        salary: 20000,
+        
       },
 ]
 type Status = 'accepted' | 'pending' | 'rejected';
-export type Student = {
+export type teacher = {
     id: string;
-    student: string;
+    teacher: string;
     status: "active" | "suspended" | "failed";
-    level: string;
+    Subject: string;
     joiningDate: string;
-    leftAmountToPay: number;
-    registrationStatus:"accepted" | "pending" | "rejected"
+    salary: number;
+    
+
   };
 
  interface DataTableDemoProps {
@@ -135,7 +136,7 @@ export type Student = {
       }
     }, []);
     
-   const columns: ColumnDef<Student>[] = [
+   const columns: ColumnDef<Teacher>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -159,11 +160,11 @@ export type Student = {
       enableHiding: false,
     },
     {
-      accessorKey: "student",
-      header: "Student",
+      accessorKey: "teacher",
+      header: "Teacher",
       cell: ({ row }) => (
         <div className="capitalize">
-           <div className="font-medium">{row.getValue("student")}</div>
+           <div className="font-medium">{row.getValue("teacher")}</div>
                               <div className="hidden text-sm text-muted-foreground md:inline">
                               {row.getValue("email")}
                               </div>
@@ -171,9 +172,9 @@ export type Student = {
       ),
     },
     {
-      accessorKey: "level",
-      header: "Level",
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
+      accessorKey: "Subject",
+      header: "Subject",
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("Subject")}</div>,
     },
     {
       accessorKey: "status",
@@ -190,17 +191,10 @@ export type Student = {
       ),
     },
     {
-      accessorKey: "registrationStatus",
-      header: "Registration",
-      cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("registrationStatus"))}}>{row.getValue("registrationStatus")}</Badge>
-      ),
-    },
-    {
-      accessorKey: "leftAmountToPay",
-      header: () => <div className="text-right">Amount left</div>,
+      accessorKey: "salary",
+      header: () => <div className="text-right">Salary</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("leftAmountToPay"))
+        const amount = parseFloat(row.getValue("salary"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -228,15 +222,10 @@ export type Student = {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-              disabled={row.getValue("registrationStatus")==="accepted"}
-                onClick={() => navigator.clipboard.writeText(payment.id)}
-              >
-                accept registration
-              </DropdownMenuItem>
+             
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>setOpen(true)}>
-                View Student
+                View Teacher
               </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
@@ -287,10 +276,10 @@ export type Student = {
        
 
     <Input
-          placeholder="Filter student..."
-          value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter teacher..."
+          value={(table.getColumn("teacher")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("student")?.setFilterValue(event.target.value)
+            table.getColumn("teacher")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -329,9 +318,9 @@ export type Student = {
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Students</CardTitle>
+      <CardTitle>Your Teachers</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic student Dashboard for Seamless
+      Introducing Our Dynamic teacher Dashboard for Seamless
                     Management and Insightful Analysis.
       </CardDescription>
     </CardHeader>

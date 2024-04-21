@@ -12,9 +12,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { DataTableDemo } from "./components/table"
-import StudentForm from "./components/studentForm"
+import TeacherForm from "./components/TeacherForm"
 import { useState } from "react"
-import SheetDemo from "./components/editStudent"
+import SheetDemo from "./components/editTeacher"
 import { Overview } from "./components/area-chart"
 
 
@@ -37,7 +37,7 @@ import { Overview } from "./components/area-chart"
                 x-chunk="dashboard-05-chunk-0"
               >
       <CardHeader className="pb-2">
-      <CardDescription>Students</CardDescription>
+      <CardDescription>Teachers</CardDescription>
                   <Overview/>
            
            
@@ -46,36 +46,36 @@ import { Overview } from "./components/area-chart"
               <Card x-chunk="dashboard-05-chunk-1">
                 <CardHeader className="pb-2">
                   <CardDescription>This Week</CardDescription>
-                  <CardTitle className="text-4xl">$1,329</CardTitle>
+                  <CardTitle className="text-4xl">15 </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    +25% from last week
+                    Teached Classes
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Progress value={25} aria-label="25% increase" />
+                  <Progress value={80} aria-label="25% increase" />
                 </CardFooter>
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
                   <CardDescription>This Month</CardDescription>
-                  <CardTitle className="text-4xl">$5,329</CardTitle>
+                  <CardTitle className="text-4xl">45 </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    +10% from last month
+                    Teached Classses
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Progress value={12} aria-label="12% increase" />
+                  <Progress value={67} aria-label="12% increase" />
                 </CardFooter>
               </Card>
               <Card
              x-chunk="dashboard-05-chunk-0"
               >
                 <CardHeader className="pb-3">
-                  <CardTitle>Create student</CardTitle>
+                  <CardTitle>Create Teacher</CardTitle>
                   <CardDescription className="max-w-lg text-balance leading-relaxed">
             Anyone with the link can create this document.
                   </CardDescription>
@@ -100,7 +100,7 @@ import { Overview } from "./components/area-chart"
 
           </div>
 
-          <StudentForm />
+          <TeacherForm />
 
 
        

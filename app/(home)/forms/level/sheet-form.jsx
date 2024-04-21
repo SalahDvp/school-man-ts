@@ -90,7 +90,7 @@ export function SheetDemo({ addLevel }) {
     <SheetTrigger asChild>
       <Button variant="outline">Add new</Button>
     </SheetTrigger>
-    <SheetContent className="w-1/2 sm:w-[540px]">
+    <SheetContent className=" sm:max-w-[650px]">
       <SheetHeader>
         <SheetTitle>Add New Level</SheetTitle>
         <SheetDescription>

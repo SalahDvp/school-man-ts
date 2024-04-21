@@ -4,7 +4,7 @@ import "./globals.css";
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
-
+import { Toaster } from "@/components/ui/toaster";
 
 
 
@@ -27,6 +27,7 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange>
           {children}
+          <Toaster />
           </ThemeProvider>
        </body>
           
