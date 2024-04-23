@@ -31,7 +31,6 @@ interface Option {
     value:string// Function to handle selection
   }
   const Combobox: React.FC<ComboboxDemoProps> = ({open,setOpen,placeHolder,options,onSelected,value}) => {
-    console.log(value);
   return (
 
     <Popover open={open} onOpenChange={setOpen}>

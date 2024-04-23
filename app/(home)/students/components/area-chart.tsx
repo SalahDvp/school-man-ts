@@ -49,9 +49,8 @@ const data = [
 const GradientColors = () => {
     return (
 <linearGradient id="colorView" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="30%" stopColor="#28A3D8" stopOpacity={0.4} />
-  <stop offset="75%" stopColor="#8884d8" stopOpacity={0.3} />
-  <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.2} />
+  <stop offset="0%" stopColor="#1C64F2" stopOpacity={0.55} />
+  <stop offset="100%" stopColor="#1C64F2" stopOpacity={0} />
 </linearGradient>
     );
   };
@@ -70,12 +69,21 @@ export function Overview() {
             <defs>
             <GradientColors />
           </defs>
-          
-       
+          <Tooltip />
+   
+          <XAxis
+      dataKey="name"
+      stroke="#888888"
+      fontSize={12}
+      tickLine={false}
+      axisLine={false}
+      interval={0} // Display all labels
+      angle={-45} // Rotate labels if needed
+    />
      <Area type="monotone"
       dataKey="uv"   
-          
-               
+          strokeWidth={3}
+      stroke="#1A56DB"  
              fill="url(#colorView)"   />
 
       </AreaChart>

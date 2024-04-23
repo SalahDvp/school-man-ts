@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/table"
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 const data: Student[] = [
     {
@@ -283,9 +284,10 @@ export type Student = {
   
   return (
     <>
+
 <div className="flex items-center justify-between">
        
-
+    
     <Input
           placeholder="Filter student..."
           value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
@@ -325,8 +327,9 @@ export type Student = {
        Export <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
+ 
     </div>
-  
+    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
       <CardTitle>Your Students</CardTitle>
@@ -336,9 +339,9 @@ export type Student = {
       </CardDescription>
     </CardHeader>
     <CardContent>     
-    <div className="w-full">
+
  
-      <div className="rounded-md border">
+ 
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -387,7 +390,7 @@ export type Student = {
             )}
           </TableBody>
         </Table>
-      </div>
+   
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -412,9 +415,11 @@ export type Student = {
           </Button>
         </div>
       </div>
-    </div>
+   
     </CardContent>
   </Card>
+  <ScrollBar orientation="horizontal" />
+      </ScrollArea>
   </>
   )
 }

@@ -92,13 +92,6 @@ export default function ImageUpload() {
       color: OtherColor.bgColor,
     };
   };
-
-  // feel free to mode all these functions to separate utils
-  // here is just for simplicity
-
-
-
-
   const removeFile = (file: File) => {
     setFilesToUpload((prevUploadProgress) => {
       return prevUploadProgress.filter((item) => item.File !== file);

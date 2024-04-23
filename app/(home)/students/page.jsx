@@ -1,4 +1,3 @@
-
 "use client"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,24 +15,25 @@ import StudentForm from "./components/studentForm"
 import { useState } from "react"
 import SheetDemo from "./components/editStudent"
 import { Overview } from "./components/area-chart"
+import { Breadcrumb,BreadcrumbList ,BreadcrumbLink,BreadcrumbItem,BreadcrumbSeparator,BreadcrumbPage} from "@/components/ui/breadcrumb"
+import Link from "next/link"
 
 
- function Dashboard() {
-
+function Dashboard() {
   const [open,setOpen]=useState(false)
-
   return (
   
+    <div className="flex-1 space-y-4 p-8 pt-6">
 
-    <div className="flex flex-row min-h-screen w-full flex-col bg-muted/40">
-      <SheetDemo open={open} setOpen={setOpen}/>
-      <div className="flex flex-col sm:gap-4 sm:py-4 ">
-   
-        <div className="grid flex items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-          <div className="flex grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+<div className="flex items-center justify-between space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">Students</h2>
+
+          </div>
+        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+          <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
-      
-              <Card
+        
+            <Card
                 x-chunk="dashboard-05-chunk-0"
               >
       <CardHeader className="pb-2">
@@ -90,28 +90,16 @@ import { Overview } from "./components/area-chart"
   </CardFooter>
               </Card>
             </div>
-      
-      
-        
-         
-          <DataTableDemo setOpen={setOpen}/>
-
-        
-
+            <DataTableDemo setOpen={setOpen}/>
+            <SheetDemo open={open} setOpen={setOpen}/>
           </div>
-
-          <StudentForm />
-
-
-       
-
-
-
-
-        </div>
+          <div>
+        <StudentForm/>
+          </div>
+        </main>
       </div>
-    </div>
- 
+
+
   )
 }
 export default Dashboard

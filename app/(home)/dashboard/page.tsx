@@ -1,6 +1,5 @@
 
 import Image from "next/image"
-
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,39 +15,15 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { CalendarDateRangePicker } from "@/app/(home)/dashboard/components/date-range-picker"
-import { MainNav } from "@/app/(home)/dashboard/components/main-nav"
 import { Overview } from "@/app/(home)/dashboard/components/overview"
 import { RecentSales } from "@/app/(home)/dashboard/components/recent-sales"
-import { Search } from "@/app/(home)/dashboard/components/search"
-import TeamSwitcher from "@/app/(home)/dashboard/components/team-switcher"
-import { UserNav } from "@/app/(home)/dashboard/components/user-nav"
-import { ModeToggle } from "@/app/(home)/dashboard/components/theme-mode"
-import { ScrollArea } from "@/components/ui/scroll-area"
+
  function Page() {
   return (
-    <>
-      <div className="md:hidden">
-        <Image
-          src="/examples/dashboard-light.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/dashboard-dark.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="hidden dark:block"
-        />
-      </div>
-      <div className="hidden flex-col md:flex">
-   
-        <div className="flex-1 space-y-4 p-8 pt-6">
+  <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="flex items-center space-x-2">
+            <div className="hidden flex items-center space-x-2">
               <CalendarDateRangePicker />
               <Button>Download</Button>
             </div>
@@ -56,7 +31,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
+              <TabsTrigger value="analytics" >
                 Analytics
               </TabsTrigger>
               <TabsTrigger value="reports" disabled>
@@ -196,8 +171,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 
         </div>
-      </div>
-    </>
+    
+    
   )
 }
 export default Page

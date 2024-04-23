@@ -1,6 +1,7 @@
 import { ZodSchema, z } from 'zod';
-const today = new Date();
+
 export const studentRegistrationSchema: ZodSchema<{
+  id:string;
   year: string;
   firstName: string;
   lastName: string;
@@ -19,6 +20,7 @@ export const studentRegistrationSchema: ZodSchema<{
   emergencyContactPhone: string;
   medicalConditions: string | null;
 }> = z.object({
+  id:z.string(),
   year: z.string().min(2, 'Please enter a value between 2 and 10 characters.').max(10, 'Please enter a value between 2 and 10 characters.'),
   firstName: z.string().min(2, 'Please enter a value between 2 and 50 characters.').max(50, 'Please enter a value between 2 and 50 characters.'),
   lastName: z.string().min(2, 'Please enter a value between 2 and 50 characters.').max(50, 'Please enter a value between 2 and 50 characters.'),
