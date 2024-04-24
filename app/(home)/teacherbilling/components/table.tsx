@@ -49,77 +49,73 @@ import {
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-const data: Parent[] = [
-    {
-        id: "1",
-        parent: "John Doe",
-        status: "Suspended",
-        numberOfChildren: "5",
-        joiningDate: "2023-01-15",
-        payment: 22000,
-        paymentStatus:"Active"
-        
-      },
-      {
-        id: "2",
-        parent: "Jane Smith",
-        status: "Active",
-        numberOfChildren: "2",
-        joiningDate: "2022-11-20",
-        payment: 55000,
-        paymentStatus:"Alert"
-        
-      },
-      {
-        id: "3",
-        parent: "Michael Johnson",
-        status: "Active",
-        numberOfChildren: "3",
-        joiningDate: "2023-03-10",
-        payment: 40000,
-        paymentStatus:"Warning"
-        
-      },
-      {
-        id: "4",
-        parent: "John Doe",
-        status: "Suspended",
-        numberOfChildren: "1",
-        joiningDate: "2023-01-15",
-        payment: 20000,
-        paymentStatus:"Warning"
-        
-      },
-      {
-        id: "5",
-        parent: "Jane Smith",
-        status: "Active",
-        numberOfChildren: "4",
-        joiningDate: "2022-11-20",
-        payment: 15000,
-        paymentStatus:"Active"
-        
-      },
-      {
-        id: "6",
-        parent: "Michael Johnson",
-        status: "Active",
-        numberOfChildren: "6",
-        joiningDate: "2023-03-10",
-        payment: 20000,
-        paymentStatus:"Alert"
-        
-      },
-]
-type Status = 'Active' | 'Alert' | 'Warning';
-export type Parent = {
+
+
+const data = [
+  {
+    id: "1",
+    PaymentTitle: "John Doe",
+    Typeofpayment: "salary",
+    Paymentdate: "2023-01-15",
+    PaymentStatus: "Not Paid",
+    PaymentAmount: 2200,
+    month: "January",
+  },
+  {
+    id: "2",
+    PaymentTitle: "Jane Smith",
+    Typeofpayment: "salary",
+    Paymentdate: "2022-11-20",
+    PaymentStatus: "Paid",
+    PaymentAmount: 5500,
+    month: "January",
+  },
+  {
+    id: "3",
+    PaymentTitle: "Michael Johnson",
+    Typeofpayment: "Other",
+    Paymentdate: "2023-03-10",
+    PaymentStatus: "Paid",
+    PaymentAmount: 4000,
+    month: "January",
+  },
+  {
+    id: "4",
+    PaymentTitle: "John Doe",
+    Typeofpayment: "salary",
+    Paymentdate: "2023-01-15",
+    PaymentStatus: "Not Paid",
+    PaymentAmount: 2000,
+    month: "January",
+  },
+  {
+    id: "5",
+    PaymentTitle: "Jane Smith",
+    Typeofpayment: "Other",
+    Paymentdate: "2022-11-20",
+    PaymentStatus: "Paid",
+    PaymentAmount: 1500,
+    month: "January",
+  },
+  {
+    id: "6",
+    PaymentTitle: "Michael Johnson",
+    Typeofpayment: "Other",
+    Paymentdate: "2023-03-10",
+    PaymentStatus: "Not Paid",
+    PaymentAmount: 2000,
+    month: "December",
+  }
+];
+
+type Status = 'Paid' | 'Not Paid' 
+export type Payment = {
     id: string;
-    parent: string;
-    status: "active" | "suspended" | "failed";
-    numberOfChildren: string;
-    joiningDate: string;
-    payment: number;
-    paymentStatus:"accepted" | "pending" | "rejected"
+    PaymentTitle: string;
+    Typeofpayment: string;
+    Paymentdate: string;
+    PaymentAmount: number;
+    PaymentStatus:"Paid" | "Not Paid" 
     
 
   };
@@ -132,18 +128,15 @@ export type Parent = {
     
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
-        case 'Active':
+        case 'Paid':
           return '#2ECC71'; // Green for accepted
-        case 'Alert':
-          return '#F1C40F'; // Yellow for pending
-        case 'Warning':
-          return '#E74C3C'; // Red for rejected
-        default:
-          return '#FFFFFF'; // Default to white for unknown status
+        case 'Not Paid':
+          return '#E74C3C'; // Yellow for pending
+        // Default to white for unknown status
       }
     }, []);
     
-   const columns: ColumnDef<Parent>[] = [
+   const columns: ColumnDef<Payment>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -167,11 +160,11 @@ export type Parent = {
       enableHiding: false,
     },
     {
-      accessorKey: "parent",
-      header: "Parent",
+      accessorKey: "PaymentTitle",
+      header: "TeacherName",
       cell: ({ row }) => (
         <div className="capitalize">
-           <div className="font-medium">{row.getValue("parent")}</div>
+           <div className="font-medium">{row.getValue("PaymentTitle")}</div>
                               <div className="hidden text-sm text-muted-foreground md:inline">
                               {row.getValue("email")}
                               </div>
@@ -179,36 +172,37 @@ export type Parent = {
       ),
     },
     {
-      accessorKey: "numberOfChildren",
-      header: "numberOfChildren",
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("numberOfChildren")}</div>,
+      accessorKey: "Typeofpayment",
+      header: "Typeofpayment",
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("Typeofpayment")}</div>,
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "Paymentdate",
+      header: "Paymentdate",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("status")}</div>
+        <div className="capitalize hidden sm:table-cell">{row.getValue("Paymentdate")}</div>
       ),
     },
     {
-      accessorKey: "joiningDate",
-      header: "Joining Date",
+      accessorKey: "month",
+      header: "PaymentMonth",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
+        <div className="capitalize hidden sm:table-cell">{row.getValue("month")}</div>
       ),
     },
     {
-      accessorKey: "paymentStatus",
-      header: "Payment Status",
+      accessorKey: "PaymentStatus",
+      header: "PaymentStatus",
       cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("paymentStatus"))}}>{row.getValue("paymentStatus")}</Badge>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("PaymentStatus"))}}>{row.getValue("PaymentStatus")}</Badge>
       ),
     },
+
     {
-      accessorKey: "payment",
-      header: () => <div className="text-right">Payment</div>,
+      accessorKey: "PaymentAmount",
+      header: () => <div className="text-right">Payment amount</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("payment"))
+        const amount = parseFloat(row.getValue("PaymentAmount"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -239,7 +233,7 @@ export type Parent = {
              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>setOpen(true)}>
-                View Parent
+                View Payment
               </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
@@ -290,10 +284,10 @@ export type Parent = {
        
 
     <Input
-          placeholder="Filter parent..."
-          value={(table.getColumn("parent")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter Payment..."
+          value={(table.getColumn("Payment")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("parent")?.setFilterValue(event.target.value)
+            table.getColumn("Payment")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -332,9 +326,9 @@ export type Parent = {
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Parents</CardTitle>
+      <CardTitle>Your Expences</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic parent Dashboard for Seamless
+      Introducing Our Dynamic Expences Dashboard for Seamless
                     Management and Insightful Analysis.
       </CardDescription>
     </CardHeader>
