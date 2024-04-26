@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
+import { Separator } from "@/components/ui/separator";
 import {
   ColumnDef,
   flexRender,
@@ -226,12 +227,20 @@ export const DataTableDemo = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center ml-auto">
+        <div className="flex flex-row items-center justify-between space-y-6 w-full">
+        <div>
+      <h3 className="text-lg font-medium">Levels</h3>
+      <p className="text-sm text-muted-foreground">
+      Add, edit, or remove levels
+      </p>
+    </div>
+ 
+   
+    
           <SheetDemo addLevel={handleAddLevel} />
-        </div>
+ 
       </div>
-
+      <Separator/>
       <Card x-chunk="dashboard-05-chunk-3">
         <CardHeader className="px-7">
           <CardTitle>Your Levels</CardTitle>

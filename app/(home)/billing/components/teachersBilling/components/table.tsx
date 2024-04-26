@@ -48,87 +48,111 @@ import {
 } from "@/components/ui/table"
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
-const data: Student[] = [
-    {
-        id: "1",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "2",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
-      {
-        id: "3",
-        student: "Michael Johnson",
-        status: "active",
-        level: "Advanced",
-        joiningDate: "2023-03-10",
-        leftAmountToPay: 200,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "4",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "5",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
-
-]
-type Status = 'accepted' | 'pending' | 'rejected';
-export type Student = {
+ 
+type TeacherSalaryFormValues = {
+  id: string;
+  salaryTitle: string;
+  salaryAmount: number;
+  salaryDate: Date;
+  typeofTransaction: string;
+  monthOfSalary: string;
+  fromWho: string;
+  status: string;
+  teacher: {
+    name: string;
     id: string;
-    student: string;
-    status: "active" | "suspended" | "failed";
-    level: string;
-    joiningDate: string;
-    leftAmountToPay: number;
-    registrationStatus:"accepted" | "pending" | "rejected"
   };
+  
+};
+
+const salaryData=[
+    {
+        id: "dqweqew",
+        salaryTitle: "Monthly Salary",
+        salaryAmount: 5000,
+        salaryDate: new Date().toLocaleDateString('en-GB'),
+        typeofTransaction: "Bank Transfer",
+        monthOfSalary: "April",
+        fromWho: "Company XYZ",
+        status: "paid",
+        teacher: { name: "joi", id: "2222" },
+    },
+    {
+        id: "asdasd",
+        salaryTitle: "Yearly Bonus",
+        salaryAmount: 10000,
+        salaryDate: new Date().toLocaleDateString('en-GB'),
+        typeofTransaction: "Direct Deposit",
+        monthOfSalary: "December",
+        fromWho: "Company ABC",
+        status: "pending",
+        teacher: { name: "mary", id: "3333" },
+    },
+    {
+        id: "zxczxc",
+        salaryTitle: "Quarterly Incentive",
+        salaryAmount: 7500,
+        salaryDate:new Date().toLocaleDateString('en-GB'),
+        typeofTransaction: "Check",
+        monthOfSalary: "July",
+        fromWho: "Company PQR",
+        status: "paid",
+        teacher: { name: "peter", id: "4444" },
+    },
+    {
+        id: "rtyrty",
+        salaryTitle: "Performance Bonus",
+        salaryAmount: 12000,
+        salaryDate: new Date().toLocaleDateString('en-GB'),
+        typeofTransaction: "Bank Transfer",
+        monthOfSalary: "March",
+        fromWho: "Company LMN",
+        status: "pending",
+        teacher: { name: "sara", id: "5555" },
+    },
+    {
+        id: "fghfgh",
+        salaryTitle: "Annual Raise",
+        salaryAmount: 8000,
+        salaryDate:new Date().toLocaleDateString('en-GB'),
+        typeofTransaction: "Bank Transfer",
+        monthOfSalary: "January",
+        fromWho: "Company XYZ",
+        status: "paid",
+        teacher: { name: "alex", id: "6666" },
+    },
+    {
+        id: "vbnvbn",
+        salaryTitle: "Extra Hour Pay",
+        salaryAmount: 2000,
+        salaryDate:new Date().toLocaleDateString('en-GB'),
+        typeofTransaction: "Cash",
+        monthOfSalary: "August",
+        fromWho: "Company ABC",
+        status: "paid",
+        teacher: { name: "joe", id: "7777" },
+    },
+];
+
+type Status = 'paid' | 'not paid' 
 
  interface DataTableDemoProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
   }
   export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
     
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
-        case 'accepted':
+        case 'paid':
           return '#2ECC71'; // Green for accepted
-        case 'pending':
-          return '#F1C40F'; // Yellow for pending
-        case 'rejected':
-          return '#E74C3C'; // Red for rejected
-        default:
-          return '#FFFFFF'; // Default to white for unknown status
+        case 'not paid':
+          return '#E74C3C'; // Yellow for pending
+        // Default to white for unknown status
       }
     }, []);
     
-   const columns: ColumnDef<Student>[] = [
+   const columns: ColumnDef<any>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -152,48 +176,46 @@ export type Student = {
       enableHiding: false,
     },
     {
-      accessorKey: "student",
-      header: "Student",
+      accessorKey: "teacherName",
+      header: "Teacher",
       cell: ({ row }) => (
         <div className="capitalize">
-           <div className="font-medium">{row.getValue("student")}</div>
-                              <div className="hidden text-sm text-muted-foreground md:inline">
-                              {row.getValue("email")}
-                              </div>
+           <div className="font-medium">{row.original.teacher.name}</div>
         </div>
       ),
     },
     {
-      accessorKey: "level",
-      header: "Level",
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
+      accessorKey: "typeofTransaction",
+      header: "Transaction",
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("typeofTransaction")}</div>,
+    },
+    {
+      accessorKey: "salaryDate",
+      header: "Salary Date",
+      cell: ({ row }) => (
+        <div className="capitalize hidden sm:table-cell">{row.getValue("salaryDate")}</div>
+      ),
+    },
+    {
+      accessorKey: "monthOfSalary",
+      header: "Month paid",
+      cell: ({ row }) => (
+        <div className="capitalize hidden sm:table-cell">{row.getValue("monthOfSalary")}</div>
+      ),
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: "status",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("status")}</div>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
       ),
     },
+
     {
-      accessorKey: "joiningDate",
-      header: "Joining Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
-      ),
-    },
-    {
-      accessorKey: "registrationStatus",
-      header: "Registration",
-      cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("registrationStatus"))}}>{row.getValue("registrationStatus")}</Badge>
-      ),
-    },
-    {
-      accessorKey: "leftAmountToPay",
-      header: () => <div className="text-right">Amount left</div>,
+      accessorKey: "salaryAmount",
+      header: () => <div className="text-right">Amount</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("leftAmountToPay"))
+        const amount = parseFloat(row.getValue("salaryAmount"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -221,17 +243,12 @@ export type Student = {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-              disabled={row.getValue("registrationStatus")==="accepted"}
-                onClick={() => navigator.clipboard.writeText(payment.id)}
-              >
-                accept registration
-              </DropdownMenuItem>
+             
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>setOpen(true)}>
-                View Student
+                View Payment
               </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+              {/* <DropdownMenuItem>remove sa</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -247,7 +264,7 @@ export type Student = {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data,
+    data:salaryData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -276,15 +293,14 @@ export type Student = {
   
   return (
     <>
-
 <div className="flex items-center justify-between">
        
-    
+
     <Input
-          placeholder="Filter student..."
-          value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter Salaries..."
+          value={(table.getColumn("teacher")?.getFilterValue() as { name: string; id: string } | undefined)?.name ?? ""}
           onChange={(event) =>
-            table.getColumn("student")?.setFilterValue(event.target.value)
+            table.getColumn("teacher.name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -319,21 +335,20 @@ export type Student = {
        Export <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
- 
     </div>
-    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+  
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Students</CardTitle>
+      <CardTitle>Your salary roll</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic student Dashboard for Seamless
+      Introducing Our Dynamic teacger's salary Dashboard for Seamless
                     Management and Insightful Analysis.
       </CardDescription>
     </CardHeader>
     <CardContent>     
-
+    <div className="w-full">
  
- 
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -382,7 +397,7 @@ export type Student = {
             )}
           </TableBody>
         </Table>
-   
+      </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -407,11 +422,9 @@ export type Student = {
           </Button>
         </div>
       </div>
-   
+    </div>
     </CardContent>
   </Card>
-  <ScrollBar orientation="horizontal" />
-      </ScrollArea>
   </>
   )
 }

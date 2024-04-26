@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { CircleUser, Menu, Package2, Search } from "lucide-react"
+import { CircleUser, Menu, Package2, SchoolIcon, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -25,48 +25,48 @@ console.log(pathname);
           href="#"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Package2 className="h-6 w-6" />
+          <SchoolIcon className="h-6 w-6" />
           <span className="sr-only">Acme Inc</span>
         </Link>
         <Link
           href="/dashboard"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/dashboard' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/dashboard' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Dashboard
         </Link>
         <Link
           href="/students"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/students' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/students' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
          Students
         </Link>
         <Link
           href="/teachers"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/teachers' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/teachers' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Teachers
         </Link>
         <Link
            href="/parents"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/parents' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
-        >
+           className={`${pathname=== '/parents' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
+           >
           Parents
         </Link>
         <Link
-          href="#"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/classes' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          href="/classes"
+          className={`${pathname=== '/classes' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Classes
         </Link>
         <Link
-          href="#"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/billing' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          href="/billing"
+          className={`${pathname=== '/billing' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Billing
         </Link>
         <Link
           href="/settings"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/settings' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/settings' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Settings
         </Link>
@@ -84,53 +84,54 @@ console.log(pathname);
         </SheetTrigger>
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-lg font-semibold"
-            >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
-            </Link>
+
    
+            <Link
+          href="#"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+        >
+          <SchoolIcon className="h-6 w-6" />
+          <span className="sr-only">Acme Inc</span>
+        </Link>
         <Link
           href="/dashboard"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/dashboard' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/dashboard' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Dashboard
         </Link>
         <Link
           href="/students"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/students' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/students' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
          Students
         </Link>
         <Link
           href="/teachers"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/teachers' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/teachers' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Teachers
         </Link>
         <Link
-          href="/parents"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/parents' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
-        >
+           href="/parents"
+           className={`${pathname=== '/parents' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
+           >
           Parents
         </Link>
         <Link
-          href=""
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/classes' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          href="/classes"
+          className={`${pathname=== '/classes' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Classes
         </Link>
         <Link
-          href="#"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/billing' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          href="/billing"
+          className={`${pathname=== '/billing' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Billing
         </Link>
         <Link
           href="/settings"
-          className={`text-muted-foreground transition-colors hover:text-foreground ${pathname=== '/settings' ?'text-black dark:text-white ' : 'text-muted-foreground hover:text-foreground  '}`}
+          className={`${pathname=== '/settings' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           Settings
         </Link>

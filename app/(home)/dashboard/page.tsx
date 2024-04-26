@@ -31,7 +31,7 @@ import { RecentSales } from "@/app/(home)/dashboard/components/recent-sales"
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" >
+              <TabsTrigger value="analytics" disabled>
                 Analytics
               </TabsTrigger>
               <TabsTrigger value="reports" disabled>
@@ -156,9 +156,9 @@ import { RecentSales } from "@/app/(home)/dashboard/components/recent-sales"
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>Upcoming Payments</CardTitle>
                     <CardDescription>
-                      You made 265 sales this month.
+                    Students with payments due within the next 20 days.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

@@ -13,6 +13,12 @@ const levelSchema = z.object({
       value: z.string(),
       label:z.string(),
     })).min(1, { message: 'At least one subject is required' }),
+    prices: z.array(  z.object({
+      name: z.string(),
+      period: z.enum(["1 month", "2 months","4 months","1 year"]),
+
+      price: z.number(),
+    })).min(1, { message: 'At least one method is required' }),
 });
 
 export default levelSchema;

@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetClose,
@@ -11,7 +12,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -29,6 +37,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Level } from './levels-table';
 import CalendarDatePicker from "@/app/(home)/students/components/date-picker";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { PlusCircle } from "lucide-react";
 const objectOptions = [
   { value: 'math', label: 'Math' },
   { value: 'english', label: 'English' },
@@ -65,29 +81,49 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         fee: 1000,
         status: "open",
         registrationDeadline: "2024-08-15",
-        subjects:[{value:'',label:''}]
+        subjects:[{value:'',label:''}],
+        prices:[]
   
     },
   });
 const {toast}=useToast()
-  const { reset, handleSubmit, control, formState,getValues } = form;
+  const { reset, handleSubmit, control, formState,getValues,setValue,register} = form;
   const {isSubmitting}=formState
-  const { fields, append,remove} = useFieldArray({
+
+  const { fields:subjects, append:appendSubject,remove:removeSubject} = useFieldArray({
     control: form.control,
     name: "subjects",
   });
-  const onSubmit = () => {
+  const { fields:prices, append:appendPrice,remove:Price, } = useFieldArray({
+    control: form.control,
+    name: "prices",
+  });
+  
+  const onSubmit = (data:LevelFormValues) => {
     toast({
       title: "changes applied!",
       description: `changes applied Successfully`,
     });
+    console.log(data);
+    
     reset()
     setOpen(false)
  
   }
+  const handleChangePrice = (index:number, newPrice:number) => {
+    const newPrices = [...getValues('prices')]; // Get the current prices array
+    newPrices[index].price = newPrice; // Update the price at the specified index
+    setValue('prices', newPrices); // Set the updated prices array in the form
+  };
+  const periodOptions = [
+    '1 month',
+    '2 months',
+    '4 months',
+    '1 year',
+  ];
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-    <SheetContent >
+  <SheetContent className="sm:max-w-[650px]">
     <ScrollArea className="h-screen  ">
 
       <SheetHeader>
@@ -214,7 +250,85 @@ const {toast}=useToast()
         </FormItem>
       )}
     />
+    {/* select payment methods */}
+    <FormField
+            control={control}
+            name="prices"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Payment methods</FormLabel>
+                <FormDescription>add how parents are going to pay</FormDescription>
+                <Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Name</TableHead>
+      <TableHead>Period</TableHead>
+      <TableHead>Price</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+
+                {prices.map((option,index) => (
+        
+        
+                    <TableRow key={index}>
+                    <TableCell className="font-semibold">
+                    <FormControl>
+              <Input
+                placeholder="Enter method name"
+                defaultValue={option.name}
+                {...register(`prices.${index}.name`)}
+              />
+          </FormControl>
+            </TableCell>
+            <TableCell>
+            <FormControl>
+              <Select
+   
+                defaultValue={option.period}
+              >
+                                 <SelectTrigger
+                              id={`period-${index}`}
+                              aria-label={`Select period`}
+                            >
+                              <SelectValue placeholder="Select period" />
+                            </SelectTrigger>
+            <SelectContent>
+                            {periodOptions.map((time) => (
+                              <SelectItem key={time} value={time}>
+                                {time}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+              </Select>
+              </FormControl>
+            </TableCell>
+            <TableCell>
+            <FormControl>
+              <Input
+               placeholder="Enter price"
+               type="number"
+               value={option.price}
+               onChange={(e) => handleChangePrice(index, parseInt(e.target.value))}
+
+              />
+              </FormControl>
+            </TableCell>
+      </TableRow>
     
+
+                ))}
+         
+         </TableBody>
+</Table>
+<Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '2 Semesters', period:'1 month',price:900 })}>
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      Add Level
+                    </Button>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
     {/* Checkboxes for Objects of Study */}
     <FormField
       control={control}
@@ -229,15 +343,15 @@ const {toast}=useToast()
               <FormControl>
                 <Checkbox
                   
-                  checked={fields.some(obj => obj.value === option.value)}
+                  checked={subjects.some(obj => obj.value === option.value)}
            
                   onCheckedChange={(checked) => {
                     if (checked) {
-                      append({ value: option.value,label:option.label });
+                      appendSubject({ value: option.value,label:option.label });
                     } else {
-                      const indexToRemove = fields.findIndex(obj => obj.value === option.value);
+                      const indexToRemove = subjects.findIndex(obj => obj.value === option.value);
                       if (indexToRemove !== -1) {
-                        remove(indexToRemove);
+                        removeSubject(indexToRemove);
                       }
                     }
                   }}

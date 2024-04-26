@@ -48,87 +48,64 @@ import {
 } from "@/components/ui/table"
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-
-const data: Student[] = [
-    {
-        id: "1",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "2",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
-      {
-        id: "3",
-        student: "Michael Johnson",
-        status: "active",
-        level: "Advanced",
-        joiningDate: "2023-03-10",
-        leftAmountToPay: 200,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "4",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "5",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
-
-]
-type Status = 'accepted' | 'pending' | 'rejected';
-export type Student = {
-    id: string;
-    student: string;
-    status: "active" | "suspended" | "failed";
-    level: string;
-    joiningDate: string;
-    leftAmountToPay: number;
-    registrationStatus:"accepted" | "pending" | "rejected"
-  };
+import { z } from "zod"
+import { PaymentRegistrationSchema } from "@/validators/paymentSchema"
+const data= [
+  {
+      id: "222",
+      paymentTitle: "John",
+      paymentAmount: 20000,
+      typeofPayment: "john.doe@example.com",
+      paymentDate: new Date().toLocaleDateString('en-GB'),
+      fromWho: "salah",
+      toWho: "youcef",
+      status: "paid",
+      notesTobeAdded: "kitchen needed to be fixed"
+  },
+  {
+      id: "223",
+      paymentTitle: "Jane",
+      paymentAmount: 15000,
+      typeofPayment: "jane.smith@example.com",
+      paymentDate: new Date().toLocaleDateString('en-GB'),
+      fromWho: "mohamed",
+      toWho: "ben",
+      status: "pending",
+      notesTobeAdded: "bathroom renovation"
+  },
+  {
+      id: "224",
+      paymentTitle: "Alice",
+      paymentAmount: 18000,
+      typeofPayment: "alice.wonder@example.com",
+      paymentDate: new Date().toLocaleDateString('en-GB'),
+      fromWho: "emma",
+      toWho: "charlie",
+      status: "paid",
+      notesTobeAdded: "living room painting"
+  },
+  // Add more objects as needed
+];
+type Status = 'paid' | 'not paid' 
+type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
 
  interface DataTableDemoProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
+
   }
   export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
     
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
-        case 'accepted':
+        case 'paid':
           return '#2ECC71'; // Green for accepted
-        case 'pending':
-          return '#F1C40F'; // Yellow for pending
-        case 'rejected':
-          return '#E74C3C'; // Red for rejected
-        default:
-          return '#FFFFFF'; // Default to white for unknown status
+        case 'not paid':
+          return '#E74C3C'; // Yellow for pending
+        // Default to white for unknown status
       }
     }, []);
     
-   const columns: ColumnDef<Student>[] = [
+   const columns: ColumnDef<any>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -152,48 +129,39 @@ export type Student = {
       enableHiding: false,
     },
     {
-      accessorKey: "student",
-      header: "Student",
+      accessorKey: "paymentTitle",
+      header: "Payment",
       cell: ({ row }) => (
         <div className="capitalize">
-           <div className="font-medium">{row.getValue("student")}</div>
-                              <div className="hidden text-sm text-muted-foreground md:inline">
-                              {row.getValue("email")}
-                              </div>
+           <div className="font-medium">{row.getValue("paymentTitle")}</div>
+
         </div>
       ),
     },
     {
-      accessorKey: "level",
-      header: "Level",
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
+      accessorKey: "typeofPayment",
+      header: "Method",
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("typeofPayment")}</div>,
+    },
+    {
+      accessorKey: "paymentDate",
+      header: "Date",
+      cell: ({ row }) => (
+        <div className="capitalize hidden sm:table-cell">{row.getValue("paymentDate")}</div>
+      ),
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: "status",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("status")}</div>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
       ),
     },
     {
-      accessorKey: "joiningDate",
-      header: "Joining Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
-      ),
-    },
-    {
-      accessorKey: "registrationStatus",
-      header: "Registration",
-      cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("registrationStatus"))}}>{row.getValue("registrationStatus")}</Badge>
-      ),
-    },
-    {
-      accessorKey: "leftAmountToPay",
-      header: () => <div className="text-right">Amount left</div>,
+      accessorKey: "paymentAmount",
+      header: () => <div className="text-right">Amount</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("leftAmountToPay"))
+        const amount = parseFloat(row.getValue("paymentAmount"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -221,17 +189,11 @@ export type Student = {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-              disabled={row.getValue("registrationStatus")==="accepted"}
-                onClick={() => navigator.clipboard.writeText(payment.id)}
-              >
-                accept registration
-              </DropdownMenuItem>
+             
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>setOpen(true)}>
-                View Student
+                View Payment
               </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -248,7 +210,7 @@ export type Student = {
 
   const table = useReactTable({
     data,
-    columns,
+   columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -276,15 +238,14 @@ export type Student = {
   
   return (
     <>
-
 <div className="flex items-center justify-between">
        
-    
+
     <Input
-          placeholder="Filter student..."
-          value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter Payment..."
+          value={(table.getColumn("paymentTitle")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("student")?.setFilterValue(event.target.value)
+            table.getColumn("paymentTitle")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -319,21 +280,20 @@ export type Student = {
        Export <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
- 
     </div>
-    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+  
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Students</CardTitle>
+      <CardTitle>Your Expences</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic student Dashboard for Seamless
+      Introducing Our Dynamic Expences Dashboard for Seamless
                     Management and Insightful Analysis.
       </CardDescription>
     </CardHeader>
     <CardContent>     
-
+    <div className="w-full">
  
- 
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -382,7 +342,7 @@ export type Student = {
             )}
           </TableBody>
         </Table>
-   
+      </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -407,11 +367,9 @@ export type Student = {
           </Button>
         </div>
       </div>
-   
+    </div>
     </CardContent>
   </Card>
-  <ScrollBar orientation="horizontal" />
-      </ScrollArea>
   </>
   )
 }

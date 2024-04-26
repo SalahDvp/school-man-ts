@@ -1,36 +1,21 @@
+
+import { CardContent,Card,CardHeader,CardTitle,CardDescription} from '@/components/ui/card';
 import {
     Avatar,
     AvatarFallback,
     AvatarImage,
   } from "@/components/ui/avatar"
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-    balance: number;
-}
-
-interface UserCardProps {
-    user: User;
-}
-  const StudentPayment: React.FC<UserCardProps> = ({ user }) => {
+function CardTransactions(){
     return (
-        <div className="flex items-center">
-            <Avatar className="h-9 w-9">
-                <img src="/avatars/01.png" alt="Avatar" />
-                <div>OM</div>
-            </Avatar>
-            <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
-            </div>
-            <div className="ml-auto font-medium">{`+$${user.balance}`}</div>
-        </div>
-    );
-};
-  export function RecentSales() {
-    return (
-      <div className="space-y-8">
+<Card className="col-span-3">
+<CardHeader>
+  <CardTitle>Recent Transactions</CardTitle>
+  <CardDescription>
+    You made 265 transactions this week.
+  </CardDescription>
+</CardHeader>
+<CardContent>
+<div className="space-y-8">
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
             <AvatarImage src="/avatars/01.png" alt="Avatar" />
@@ -42,7 +27,7 @@ interface UserCardProps {
               olivia.martin@email.com
             </p>
           </div>
-          <div className="ml-auto font-medium">+$1,999.00</div>
+          <div className="ml-auto font-medium text-red-500">-$1,999.00</div>
         </div>
         <div className="flex items-center">
           <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
@@ -53,7 +38,7 @@ interface UserCardProps {
             <p className="text-sm font-medium leading-none">Jackson Lee</p>
             <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
           </div>
-          <div className="ml-auto font-medium">+$39.00</div>
+          <div className="ml-auto font-medium text-green-500">+$39.00</div>
         </div>
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
@@ -66,7 +51,7 @@ interface UserCardProps {
               isabella.nguyen@email.com
             </p>
           </div>
-          <div className="ml-auto font-medium">+$299.00</div>
+          <div className="ml-auto font-medium text-red-500">-$299.00</div>
         </div>
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
@@ -77,7 +62,7 @@ interface UserCardProps {
             <p className="text-sm font-medium leading-none">William Kim</p>
             <p className="text-sm text-muted-foreground">will@email.com</p>
           </div>
-          <div className="ml-auto font-medium">+$99.00</div>
+          <div className="ml-auto font-medium text-green-500">+$99.00</div>
         </div>
         <div className="flex items-center">
           <Avatar className="h-9 w-9">
@@ -88,8 +73,11 @@ interface UserCardProps {
             <p className="text-sm font-medium leading-none">Sofia Davis</p>
             <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
           </div>
-          <div className="ml-auto font-medium">+$39.00</div>
+          <div className="ml-auto font-medium text-red-500">-$39.00</div>
         </div>
       </div>
+</CardContent>
+</Card>
     )
-  }
+}
+export default CardTransactions

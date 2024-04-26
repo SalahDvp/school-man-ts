@@ -30,7 +30,25 @@ import { LoadingButton } from '@/components/ui/loadingButton';
 import CalendarDatePicker from "@/app/(home)/students/components/date-picker";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
-// List of subjects for the checkboxes
+import { PlusCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
 const objectOptions = [
   { value: 'math', label: 'Math' },
   { value: 'english', label: 'English' },
@@ -59,33 +77,53 @@ export function SheetDemo({ addLevel }) {
       fee: 1000,
       status: "open",
       registrationDeadline: "2024-08-15",
-      subjects:[{value:'',label:''}]
+      subjects:[{value:'',label:''}],
+      prices:[    { name: '1 Semester', period:'1 month',price:900},
+      { name: '2 Semesters', period:'1 month',price:900},
+      { name: 'Full Year',  period:'1 month',price:900 },
+    ]
     },
   });
 
-  const { reset, handleSubmit, control, isSubmitting,getValues } = form;
-  const { fields, append,remove} = useFieldArray({
+  const { reset, handleSubmit, control, isSubmitting,getValues,register,setValue} = form;
+  const { fields:subjects, append:appendSubject,remove:removeSubject} = useFieldArray({
     control: form.control,
     name: "subjects",
   });
+  const { fields:prices, append:appendPrice,remove:Price, } = useFieldArray({
+    control: form.control,
+    name: "prices",
+  });
+  
+
   const {toast}=useToast()
-  const onSubmit = () => {
+  const onSubmit = (data) => {
     toast({
       title: "changes applied!",
-      description: `changes applied Successfully`,
+      description: `changes applied Successfully ${data}`,
     });
-    console.log("qweqweqwew");
+    console.log(data);
     reset()
 
  
   }
-
+  const handleChangePrice = (index, newPrice) => {
+    const newPrices = [...getValues('prices')]; // Get the current prices array
+    newPrices[index].price = newPrice; // Update the price at the specified index
+    setValue('prices', newPrices); // Set the updated prices array in the form
+  };
+  const periodOptions = [
+    '1 month',
+    '2 months',
+    '4 months',
+    '1 year',
+  ];
   return (
     <Sheet>
     <SheetTrigger asChild>
       <Button variant="outline">Add new</Button>
     </SheetTrigger>
-    <SheetContent >
+    <SheetContent className="sm:max-w-[650px]">
     <ScrollArea className="h-screen  ">
 
       <SheetHeader>
@@ -211,7 +249,89 @@ export function SheetDemo({ addLevel }) {
               </FormItem>
             )}
           />
+          {/*select payments methods*/}
+
+                 
           
+            
+                    <FormField
+            control={control}
+            name="prices"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Payment methods</FormLabel>
+                <FormDescription>add how parents are going to pay</FormDescription>
+                <Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Name</TableHead>
+      <TableHead>Period</TableHead>
+      <TableHead>Price</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+
+                {prices.map((option,index) => (
+        
+        
+                    <TableRow key={index}>
+                    <TableCell className="font-semibold">
+                    <FormControl>
+              <Input
+                placeholder="Enter method name"
+                defaultValue={option.name}
+                {...register(`prices.${index}.name`)}
+              />
+          </FormControl>
+            </TableCell>
+            <TableCell>
+            <FormControl>
+              <Select
+   
+                defaultValue={option.period}
+              >
+                                 <SelectTrigger
+                              id={`period-${index}`}
+                              aria-label={`Select period`}
+                            >
+                              <SelectValue placeholder="Select period" />
+                            </SelectTrigger>
+            <SelectContent>
+                            {periodOptions.map((time) => (
+                              <SelectItem key={time} value={time}>
+                                {time}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+              </Select>
+              </FormControl>
+            </TableCell>
+            <TableCell>
+            <FormControl>
+              <Input
+               placeholder="Enter price"
+               type="number"
+               value={option.price}
+               onChange={(e) => handleChangePrice(index, parseInt(e.target.value))}
+
+              />
+              </FormControl>
+            </TableCell>
+      </TableRow>
+    
+
+                ))}
+         
+         </TableBody>
+</Table>
+<Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '2 Semesters', period:'1 month',price:900 })}>
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      Add Level
+                    </Button>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           {/* Checkboxes for Objects of Study */}
           <FormField
             control={control}
@@ -226,15 +346,15 @@ export function SheetDemo({ addLevel }) {
                     <FormControl>
                       <Checkbox
                         
-                        checked={fields.some(obj => obj.value === option.value)}
+                        checked={subjects.some(obj => obj.value === option.value)}
                  
                         onCheckedChange={(checked) => {
                           if (checked) {
-                            append({ value: option.value ,label:option.label});
+                            appendSubject({ value: option.value ,label:option.label});
                           } else {
-                            const indexToRemove = fields.findIndex(obj => obj.value === option.value);
+                            const indexToRemove = subjects.findIndex(obj => obj.value === option.value);
                             if (indexToRemove !== -1) {
-                              remove(indexToRemove);
+                              removeSubject(indexToRemove);
                             }
                           }
                         }}
