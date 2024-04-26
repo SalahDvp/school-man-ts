@@ -3,7 +3,31 @@ import {
     AvatarFallback,
     AvatarImage,
   } from "@/components/ui/avatar"
-  
+  interface User {
+    id: number;
+    name: string;
+    email: string;
+    balance: number;
+}
+
+interface UserCardProps {
+    user: User;
+}
+  const StudentPayment: React.FC<UserCardProps> = ({ user }) => {
+    return (
+        <div className="flex items-center">
+            <Avatar className="h-9 w-9">
+                <img src="/avatars/01.png" alt="Avatar" />
+                <div>OM</div>
+            </Avatar>
+            <div className="ml-4 space-y-1">
+                <p className="text-sm font-medium leading-none">{user.name}</p>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
+            </div>
+            <div className="ml-auto font-medium">{`+$${user.balance}`}</div>
+        </div>
+    );
+};
   export function RecentSales() {
     return (
       <div className="space-y-8">

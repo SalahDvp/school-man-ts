@@ -24,13 +24,13 @@ export function MainNav({
         Students
       </Link>
       <Link
-        href="/examples/dashboard"
+            href="/teachers"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
         Teachers
       </Link>
       <Link
-        href="/examples/dashboard"
+        href="/teachers"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
         Parents
@@ -48,7 +48,7 @@ export function MainNav({
         Billing
       </Link>
       <Link
-        href="/examples/dashboard"
+        href="/settings"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
         Settings
