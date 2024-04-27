@@ -9,6 +9,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -180,7 +189,10 @@ const studentList= [
   }
 ]
 
-
+interface openModelProps {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: boolean; // Specify the type of setOpen
+}
 
 const levels=[
 {id: "1",
@@ -189,7 +201,7 @@ fee: 1000,
 paymentPlans:[{id: 'PP001', name: 'Monthly Plan', period: '1 month', fee: 500 ,value:'Monthly Plan',label:'Monthly Plan'}]}
 ]
 
-export default function EditStudentPaymentForm() {
+const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open }) => {
   const { toast } = useToast();
   const [status, setstatus] = useState(false);
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
@@ -365,34 +377,17 @@ const onSelected=(selectedStudent:any)=>{
   }
 
   return (
-    <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
-      <CardHeader className="flex flex-row items-start bg-muted/50">
-        <div className="grid gap-0.5">
-          <CardTitle className="group flex items-center gap-2 text-lg">
-            Create Payment
-          </CardTitle>
-          <CardDescription></CardDescription>
-        </div>
-
-        <div className="ml-auto flex items-center gap-1">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1"
-            onClick={() => reset()}
-          >
-            <ResetIcon className="h-3.5 w-3.5" />
-            <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Reset details
-            </span>
-          </Button>
-        </div>
-      </CardHeader>
-      <ScrollArea
-        className="overflow-auto pt-6 text-sm"
-        style={{ maxHeight: "600px" }}
-      >
-        <CardContent>
+ 
+    <Sheet open={open}  onOpenChange={setOpen}  >
+   
+<SheetContent className=" sm:max-w-[650px]">
+   <ScrollArea className="h-screen pb-20 "> 
+     <SheetHeader>
+       <SheetTitle>Edit payment</SheetTitle>
+       <SheetDescription>
+         Make changes to your payment here. Click save when you're done.
+       </SheetDescription>
+     </SheetHeader>
           <Form {...form}>
             <form>
               {fieldNames.map((fieldName, index) => (
@@ -414,19 +409,26 @@ const onSelected=(selectedStudent:any)=>{
           </Form>
 
           <ImageUpload />
-        </CardContent>
-      </ScrollArea>
-      <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-        <div className="flex gap-2">
-          <LoadingButton
-            loading={isSubmitting}
-            type="submit"
-            onClick={form.handleSubmit(onSubmit)}
-          >
-            Submit
-          </LoadingButton>
-        </div>
-      </CardFooter>
-    </Card>
+
+
+     <SheetFooter className="mt-5">
+       <SheetClose asChild>
+         
+       <LoadingButton loading={isSubmitting} type="submit"    onClick={form.handleSubmit(onSubmit)}>
+         Save changes
+   </LoadingButton>
+       </SheetClose>
+     </SheetFooter>
+     </ScrollArea>
+   </SheetContent>
+   
+ </Sheet>
+       
   );
 }
+
+
+export default EditStudentPaymentForm
+
+       
+      
