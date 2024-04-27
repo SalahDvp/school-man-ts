@@ -14,6 +14,7 @@ import CardTransactions from "./components/analytics/CardTransactions";
 import CardIncome from "./components/analytics/CardExpenses";
 import Payouts from "./components/otherPayouts/page";
 import TeacherSalaryDashBoard from "./components/teachersBilling/page";
+import Studentpayment from "./components/studentPayment/page";
 
 export default function DashboardPage() {
   return (
@@ -51,6 +52,9 @@ export default function DashboardPage() {
             </TabsContent>
             <TabsContent value="teachers" className="space-y-4">
               <TeacherSalaryDashBoard/>
+            </TabsContent>
+            <TabsContent value="students" className="space-y-4">
+          <Studentpayment/>
             </TabsContent>
           </Tabs>
         </div>
