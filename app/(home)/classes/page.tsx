@@ -181,7 +181,7 @@ function Classes() {
         {
           accessorKey: "level",
           header: "Level",
-          cell: ({ row }) => <div className="lowercase hidden sm:table-cell"> {row.original.level.name}</div>,
+          cell: ({ row }) => <div className="lowercase hidden sm:table-cell"> {row.original.level?.name}</div>,
         },
         {
           accessorKey: "className",
