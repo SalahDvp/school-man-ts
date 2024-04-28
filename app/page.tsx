@@ -8,21 +8,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from 'react';
 import { auth } from '@/firebase/firebase-config';
+import { signIn } from "@/lib/auth"
+import { useRouter } from "next/navigation"
+
 
 function Dashboard() {
   const [email, setEmail] = useState('admin@admin.com');
   const [password, setPassword] = useState('12345678');
+  const router=useRouter()
   const handleSignIn = async () => {
     try {
-        const res = await signInWithEmailAndPassword(auth,email, password);
-        console.log({res});
-        setEmail('');
-        setPassword('');
-      
-    }catch(e){
-        console.error(e)
+      await signIn(email, password, true);
+      router.replace('/dashboard');
+    } catch (error) {
+      window.alert(error);
     }
-  };
+  }
   return (
     <div className="w-full lg:grid lg:grid-cols-2  min-h-screen">
       <div className="flex items-center justify-center py-12">
