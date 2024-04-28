@@ -164,7 +164,7 @@ students: [
   
 ]
 
-export function Classes() {
+function Classes() {
   const [open, setOpen] = React.useState(false);
   const [cls, setCls] = React.useState< ClassFormValues>(data[0]);
     const columns: ColumnDef<ClassFormValues>[] = [
