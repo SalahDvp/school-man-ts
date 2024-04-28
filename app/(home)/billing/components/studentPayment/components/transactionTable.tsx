@@ -102,7 +102,7 @@ type Status = 'accepted' | 'pending' | 'rejected';
 export type Student = {
     id: string;
     student: string;
-    totalAmount: string;
+    totalAmount: number;
     level: string;
     lastPaymentDate: string;
     leftAmountToPay: number;
@@ -272,51 +272,8 @@ export type Student = {
   return (
     <>
 
-<div className="flex items-center justify-between">
-       
-    
-    <Input
-          placeholder="Filter student..."
-          value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("student")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-          <div className="flex items-center ml-auto">
-    <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Button variant="outline" className="ml-2">
-       Export <File className="ml-2 h-4 w-4" />
-      </Button>
-    </div>
- 
-    </div>
-    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+
+
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
       <CardTitle>Transactions</CardTitle>
@@ -326,9 +283,54 @@ export type Student = {
       </CardDescription>
     </CardHeader>
     <CardContent>     
+    <div className="w-full">
+    <div className="flex items-center justify-between">
+       
+    
+       <Input
+             placeholder="Filter student..."
+             value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
+             onChange={(event) =>
+               table.getColumn("student")?.setFilterValue(event.target.value)
+             }
+             className="max-w-sm"
+           />
+             <div className="flex items-center ml-auto">
+       <DropdownMenu>
+             <DropdownMenuTrigger asChild>
+               <Button variant="outline" className="ml-auto">
+                 Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+               </Button>
+             </DropdownMenuTrigger>
+             <DropdownMenuContent align="end">
+               {table
+                 .getAllColumns()
+                 .filter((column) => column.getCanHide())
+                 .map((column) => {
+                   return (
+                     <DropdownMenuCheckboxItem
+                       key={column.id}
+                       className="capitalize"
+                       checked={column.getIsVisible()}
+                       onCheckedChange={(value) =>
+                         column.toggleVisibility(!!value)
+                       }
+                     >
+                       {column.id}
+                     </DropdownMenuCheckboxItem>
+                   )
+                 })}
+             </DropdownMenuContent>
+           </DropdownMenu>
+           <Button variant="outline" className="ml-2">
+          Export <File className="ml-2 h-4 w-4" />
+         </Button>
+       </div>
+    
+       </div>
+ 
+       <div className="rounded-md border mt-5">
 
- 
- 
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -377,7 +379,7 @@ export type Student = {
             )}
           </TableBody>
         </Table>
-   
+   </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -402,11 +404,11 @@ export type Student = {
           </Button>
         </div>
       </div>
-   
+      </div>
     </CardContent>
   </Card>
-  <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+
+
   </>
   )
 }

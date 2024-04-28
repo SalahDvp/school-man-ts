@@ -31,16 +31,16 @@ import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
 
 const fieldNames: string[] = [
-  'paymentTitle',
-  'paymentAmount',
-  'paymentDate',
-  'typeofTransaction',
-  'fromWho',
   'student',
   'parent',
   'level',
   'class',
   'paymentPlan',
+  'paymentTitle',
+  'paymentAmount',
+  'paymentDate',
+  'fromWho',
+  'typeofTransaction',
   'status',
   'description'
 ];
@@ -53,28 +53,141 @@ type FormKeys =
   | 'typeofTransaction'
   | 'fromWho'
   | 'student'
+  |'description'
   | 'parent'
   | 'level'
   | 'class'
   | 'paymentPlan'
-  | 'status'
-  |'description';
+  | 'status';
 
-type StudentPaymentFormValues = {
-  id:string;
-  paymentTitle: string;
-  paymentAmount: number;
-  paymentDate: Date;
-  typeofTransaction: string;
-  fromWho: string;
-  student:object;
-  parent:object;
-  level:string;             
-  class:object;
-  paymentPlan:object;
-  status: string;
-  description:string
-};
+type StudentPaymentFormValues = z.infer<typeof studentPaymentSchema>;
+
+const typeofTransaction = [
+  {
+    value: "CreditCard",
+    label: "Credit Card",
+  },
+  {
+  value: "Cash",
+  label: "Cash",
+    },
+ 
+];
+
+const studentPaymentStatus =[
+  
+  {
+    value:"paid"  ,
+    label: "Paid",
+  },
+  {
+    value:"notPaid"  ,
+    label: "Not Paid",
+  },
+]
+const studentList= [
+  {
+    "id": "2",
+    "name": "Jane Smith",
+    "status": "active",
+    "level": "Grade 5",
+    "joiningDate": "2022-09-10",
+    "leftAmountToPay": 200,
+    "registrationStatus": "accepted",
+    "startDate": "2022-09-01",
+    "lastPaymentDate": "2023-04-01",
+    "nextPaymentDate": "2023-05-01",
+    "totalAmount": 1500,
+    "amountLeftToPay": 200,
+    "value": "Jane Smith",
+    "label": "Jane Smith",
+    "parent": {
+      "name": "Rebecca",
+      "id": "2"
+    },
+    "class": {
+      "name": "5A"
+    }
+  },
+  {
+    "id": "3",
+    "name": "Alice Johnson",
+    "status": "suspended",
+    "level": "Grade 3",
+    "joiningDate": "2021-02-15",
+    "leftAmountToPay": 500,
+    "registrationStatus": "pending",
+    "startDate": "2021-02-10",
+    "lastPaymentDate": "2023-03-15",
+    "nextPaymentDate": "2023-04-15",
+    "totalAmount": 1000,
+    "amountLeftToPay": 500,
+    "value": "Alice Johnson",
+    "label": "Alice Johnson",
+    "parent": {
+      "name": "George",
+      "id": "3"
+    },
+    "class": {
+      "name": "3B"
+    }
+  },
+  {
+    "id": "4",
+    "name": "Charlie Brown",
+    "status": "graduated",
+    "level": "Kindergarten",
+    "joiningDate": "2020-08-01",
+    "leftAmountToPay": 0,
+    "registrationStatus": "completed",
+    "startDate": "2020-08-01",
+    "lastPaymentDate": "2022-06-01",
+    "nextPaymentDate": null,
+    "totalAmount": 1800,
+    "amountLeftToPay": 0,
+    "value": "Charlie Brown",
+    "label": "Charlie Brown",
+    "parent": {
+      "name": "Eleanor",
+      "id": "4"
+    },
+    "class": {
+      "name": "6C"
+    }
+  },
+  {
+    "id": "5",
+    "name": "Michael Lee",
+    "status": "expelled",
+    "level": "Grade 2",
+    "joiningDate": "2023-01-20",
+    "leftAmountToPay": 700,
+    "registrationStatus": "rejected",
+    "startDate": "2023-01-15",
+    "lastPaymentDate": "2023-02-20",
+    "nextPaymentDate": "2023-02-20",
+    "totalAmount": 800,
+    "amountLeftToPay": 700,
+    "value": "Michael Lee",
+    "label": "Michael Lee",
+    "parent": {
+      "name": "Benjamin",
+      "id": "5"
+    },
+    "class": {
+      "name": "2D"
+    }
+  }
+]
+
+
+
+const levels=[
+{id: "1",
+level: "Kindergarten",
+fee: 1000,
+paymentPlans:[{id: 'PP001', name: 'Monthly Plan', period: '1 month', fee: 500 ,value:'Monthly Plan',label:'Monthly Plan'}]}
+]
 
 export default function StudentPaymentForm() {
   const { toast } = useToast();
@@ -82,175 +195,29 @@ export default function StudentPaymentForm() {
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const [studentModal,setStudentModal]=React.useState(false)
   const [paymentPlanModal,setPaymentPlanModal]=React.useState(false)
-
+const [student,setStudent]=useState()
   const form = useForm<StudentPaymentFormValues>({
-    defaultValues: {                                                           
-      id: '1',
-      paymentTitle:" ",
-      paymentAmount:0,
-      paymentDate: new Date(),
-      typeofTransaction:"",
-      fromWho:' ',
-      student:"",
-      level:"sfbdfv",
-      //startDate:new Date(),lastPaymentDate: new Date(),nextPaymentDate:new Date(),totalAmount:1000,amountLeftToPay:800, update on class registration/on payment
-      parent:"",
-      class:"",                                   
-      paymentPlan:"",
-      status:"",
-      description: 'Monthly tuition fee for the Mathematics class.'
-    },
+    resolver: zodResolver(studentPaymentSchema),
   });
-
- 
-  
   const { reset, formState, setValue, getValues,watch } = form;
   const { isSubmitting } = formState;
 
 
-  const typeofTransaction = [
-    {
-      value: "CreditCard",
-      label: "Credit Card",
-    },
-    {
-    value: "Cash",
-    label: "Cash",
-      },
-   
-  ];
-  
-  const studentPaymentStatus =[
-    
-    {
-      value:"paid"  ,
-      label: "Paid",
-    },
-    {
-      value:"notPaid"  ,
-      label: "Not Paid",
-    },
-  ]
-  const studentList= [
-    {
-      "id": "2",
-      "name": "Jane Smith",
-      "status": "active",
-      "level": "Grade 5",
-      "joiningDate": "2022-09-10",
-      "leftAmountToPay": 200,
-      "registrationStatus": "accepted",
-      "startDate": "2022-09-01",
-      "lastPaymentDate": "2023-04-01",
-      "nextPaymentDate": "2023-05-01",
-      "totalAmount": 1500,
-      "amountLeftToPay": 200,
-      "value": "Jane Smith",
-      "label": "Jane Smith",
-      "parent": {
-        "name": "Rebecca",
-        "id": "2"
-      },
-      "class": {
-        "name": "5A"
-      }
-    },
-    {
-      "id": "3",
-      "name": "Alice Johnson",
-      "status": "suspended",
-      "level": "Grade 3",
-      "joiningDate": "2021-02-15",
-      "leftAmountToPay": 500,
-      "registrationStatus": "pending",
-      "startDate": "2021-02-10",
-      "lastPaymentDate": "2023-03-15",
-      "nextPaymentDate": "2023-04-15",
-      "totalAmount": 1000,
-      "amountLeftToPay": 500,
-      "value": "Alice Johnson",
-      "label": "Alice Johnson",
-      "parent": {
-        "name": "George",
-        "id": "3"
-      },
-      "class": {
-        "name": "3B"
-      }
-    },
-    {
-      "id": "4",
-      "name": "Charlie Brown",
-      "status": "graduated",
-      "level": "Kindergarten",
-      "joiningDate": "2020-08-01",
-      "leftAmountToPay": 0,
-      "registrationStatus": "completed",
-      "startDate": "2020-08-01",
-      "lastPaymentDate": "2022-06-01",
-      "nextPaymentDate": null,
-      "totalAmount": 1800,
-      "amountLeftToPay": 0,
-      "value": "Charlie Brown",
-      "label": "Charlie Brown",
-      "parent": {
-        "name": "Eleanor",
-        "id": "4"
-      },
-      "class": {
-        "name": "6C"
-      }
-    },
-    {
-      "id": "5",
-      "name": "Michael Lee",
-      "status": "expelled",
-      "level": "Grade 2",
-      "joiningDate": "2023-01-20",
-      "leftAmountToPay": 700,
-      "registrationStatus": "rejected",
-      "startDate": "2023-01-15",
-      "lastPaymentDate": "2023-02-20",
-      "nextPaymentDate": null,
-      "totalAmount": 800,
-      "amountLeftToPay": 700,
-      "value": "Michael Lee",
-      "label": "Michael Lee",
-      "parent": {
-        "name": "Benjamin",
-        "id": "5"
-      },
-      "class": {
-        "name": "2D"
-      }
-    }
-  ]
-  
-
-
-const levels=[
-  {id: "1",
-  level: "Kindergarten",
-  fee: 1000,
-  paymentPlans:[{id: 'PP001', name: 'Monthly Plan', period: '1 month', fee: 500 ,value:'Monthly Plan',label:'Monthly Plan'}]}
-]
-
 const paymentPlans = React.useMemo(() => {
-  const studentValue = form.getValues("student");
+  const studentValue = form.getValues("level");
   if (studentValue) {
-    const selectedLevel = levels.find(level => level.level === studentValue.level);
+    const selectedLevel = levels.find(level => level.level === studentValue);
     if (selectedLevel) {
 
       return selectedLevel.paymentPlans;
     }
   }
   return [];
-}, [watch('student')]);
-
-
+}, [watch('level')]);
 const onSelected=(selectedStudent:any)=>{
   form.setValue("class",selectedStudent.class.name)
   form.setValue("parent",selectedStudent.parent)
+  form.setValue("level",selectedStudent.level)
 }
   const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
@@ -270,7 +237,6 @@ const onSelected=(selectedStudent:any)=>{
         );
         case "student":
           return (
-            
             <Combobox
               {...field}
               open={studentModal}
@@ -282,13 +248,16 @@ const onSelected=(selectedStudent:any)=>{
                 const selectedStudent = studentList.find((student) => student.value === selectedValue);
                 if (selectedStudent) {
                   const { value, label, ...rest } = selectedStudent; 
-                  const updatedStudent = { ...rest };
+                  const updatedStudent:any = { ...rest };
                   onSelected(updatedStudent); 
-                  form.setValue(fieldName, updatedStudent); 
+                  console.log(updatedStudent);
+                  setStudent(updatedStudent)
+                  form.setValue(fieldName, {name:selectedStudent.name,value:selectedStudent.value,label:selectedStudent.label,id:selectedStudent.id}); 
                 }
               }}
          
             />
+
           );
  
       case "status":
@@ -328,7 +297,7 @@ const onSelected=(selectedStudent:any)=>{
           return (<Input {...field}  value={getValues("parent")?.name} readOnly/>)
           
         case "level" :
-          return (<Input {...field}  value={getValues("student")?.level} readOnly/>)
+          return (<Input {...field}  value={getValues("level")} readOnly/>)
 
         case "paymentPlan":
           return (
@@ -340,16 +309,16 @@ const onSelected=(selectedStudent:any)=>{
             options={paymentPlans}
             value={getValues("paymentPlan")?.name}
             onSelected={(selectedValue) => {
-              let paymentPlan= paymentPlans?.find(
-                  (plan) => plan?.value === selectedValue
-                );
-                console.log(paymentPlan)
-            //   delete paymentPlan?.value
-            //   delete paymentPlan?.label
-           {paymentPlan && form.setValue(fieldName, paymentPlan)}
-           form.setValue("paymentAmount",paymentPlan?.fee)
-            }} // Set the value based on the form's current value for the field
+              const paymentPlan = paymentPlans?.find(
+                (plan) => plan?.value === selectedValue
+              );
+              if (paymentPlan) {
+                form.setValue(fieldName, paymentPlan)
+                form.setValue("paymentAmount",paymentPlan.fee)
+              }
+            }}
           />
+
           )
 
          
@@ -362,9 +331,8 @@ const onSelected=(selectedStudent:any)=>{
   };
 
   function onSubmit(data:StudentPaymentFormValues) {
-       
-        console.log(data);
 
+        console.log("eqwqewqweq",data);
   }
 
   return (

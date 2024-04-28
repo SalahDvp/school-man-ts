@@ -34,10 +34,7 @@ type FormKeys =
   |"notesTobeAdded"
   
 
-interface openModelProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
-  }
+
   type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema> & { [key: string]: string | Date | number; }
 
   const fieldNames= [
@@ -103,6 +100,10 @@ interface openModelProps {
       label: "Not Paid",
     },
   ]
+  interface openModelProps {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    open: boolean; // Specify the type of setOpen
+  }
 const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
   const { toast } = useToast();
   const [status, setstatus] = useState(false);
