@@ -243,7 +243,7 @@ const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open }) => {
   const { reset, formState, setValue, getValues,watch } = form;
   const { isSubmitting } = formState;
 
-
+const watchField=watch('level')
 const paymentPlans = React.useMemo(() => {
   const studentValue = form.getValues("level");
   if (studentValue) {
@@ -254,7 +254,7 @@ const paymentPlans = React.useMemo(() => {
     }
   }
   return [];
-}, [watch('level')]);
+}, [form]);
 const onSelected=(selectedStudent:any)=>{
   form.setValue("class",selectedStudent.class.name)
   form.setValue("parent",selectedStudent.parent)

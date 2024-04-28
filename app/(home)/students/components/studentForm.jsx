@@ -193,7 +193,7 @@ export default function StudentForm() {
         setValue("parentPhone", selectedParent.parentPhone);
       }
     },
-    [parentNames]
+    [setValue]
   );
 
   function onSubmit(data) {

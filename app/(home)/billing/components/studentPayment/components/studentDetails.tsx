@@ -235,7 +235,7 @@ const StudentDetails: React.FC<openModelProps> = ({ setOpen, open }) => {
         setValue("parentPhone", selectedParent.parentPhone);
       }
     },
-    [parentNames]
+    [setValue]
   );
 
   const getChanges = (currentValues: FormValues): string => {

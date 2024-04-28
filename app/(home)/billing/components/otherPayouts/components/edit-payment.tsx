@@ -200,7 +200,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
         <SheetHeader>
           <SheetTitle>Edit payment</SheetTitle>
           <SheetDescription>
-            Make changes to your payment here. Click save when you're done.
+            {`Make changes to your payment here. Click save when you're done.`}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
