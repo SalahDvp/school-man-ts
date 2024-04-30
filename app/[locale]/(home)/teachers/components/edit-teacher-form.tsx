@@ -12,7 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { Form,FormField,FormItem,FormControl,FormLabel,FormMessage } from "@/components/ui/form"
-import ImageUpload from "@/app/(home)/students/components/uploadFile"
+import ImageUpload from "../../students/components/uploadFile"
 import {useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {teacherRegistrationSchema} from "@/validators/teacherSchema"

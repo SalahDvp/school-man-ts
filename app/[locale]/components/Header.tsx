@@ -14,9 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "../(home)/dashboard/components/theme-mode"
 import { usePathname, useRouter } from "next/navigation"
+import LanguageChange from "@/components/LanguageChanger"
 export default function Header(){
 const pathname=usePathname()
-console.log(pathname);
+
 
     return(
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -30,7 +31,11 @@ console.log(pathname);
         </Link>
         <Link
           href="/dashboard"
-          className={`${pathname=== '/dashboard' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
+          className={`${
+            pathname === '/dashboard' || pathname === '/ar/dashboard'
+              ? 'text-black-500 dark:text-white'
+              : 'text-muted-foreground hover:text-foreground foreground transition-colors'
+          }`}
         >
           Dashboard
         </Link>
@@ -166,6 +171,7 @@ console.log(pathname);
           </DropdownMenuContent>
         </DropdownMenu>
         <ModeToggle/>
+        <LanguageChange/>
       </div>
     </header>
     )

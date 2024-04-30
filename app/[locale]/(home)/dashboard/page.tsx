@@ -14,17 +14,28 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { CalendarDateRangePicker } from "@/app/(home)/dashboard/components/date-range-picker"
-import { Overview } from "@/app/(home)/dashboard/components/overview"
-import { RecentSales } from "@/app/(home)/dashboard/components/recent-sales"
-
- function Page() {
+import { CalendarDateRangePicker } from "./components/date-range-picker"
+import { Overview } from "./components/overview"
+import { RecentSales } from "./components/recent-sales"
+import initTranslations from "@/app/i18n"
+import TranslationsProvider from "@/components/TranslationsProvider"
+import LanguageChanger from "@/components/LanguageChanger"
+const i18nNamespaces = ['dashboard'];
+ async function Page({params:{locale}}) {
+  const { t, resources } = await initTranslations(locale, i18nNamespaces);
+  console.log("dqwdqwd",locale);
+  
   return (
+    <TranslationsProvider
+    namespaces={i18nNamespaces}
+    locale={locale}
+    resources={resources}>
   <div className="flex-1 space-y-4 p-8 pt-6" >
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <div className="hidden flex items-center space-x-2">
+            <h2 className="text-3xl font-bold tracking-tight">{t('Dashboard')}</h2>
+            <div className="flex items-center space-x-2">
               <CalendarDateRangePicker />
+      <LanguageChanger/>
               <Button>Download</Button>
             </div>
           </div>
@@ -172,7 +183,7 @@ import { RecentSales } from "@/app/(home)/dashboard/components/recent-sales"
 
         </div>
     
-    
+    </TranslationsProvider>
   )
 }
 export default Page

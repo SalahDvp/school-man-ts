@@ -23,9 +23,9 @@ import { teacherRegistrationSchema } from "@/validators/teacherSchema"
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useState} from "react";
 import { useToast } from "@/components/ui/use-toast";
-import CalendarDatePicker from "@/app/(home)/students/components/date-picker";
+import CalendarDatePicker from "../../students/components/date-picker";
 import { ScrollArea} from "@/components/ui/scroll-area";
-import ImageUpload from "@/app/(home)/students/components/uploadFile";
+import ImageUpload from "../../students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
