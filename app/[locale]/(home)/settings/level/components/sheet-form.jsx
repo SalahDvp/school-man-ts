@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/form";
 import levelSchema from '@/validators/level';
 import { LoadingButton } from '@/components/ui/loadingButton';
-import CalendarDatePicker from "@/app/(home)/students/components/date-picker";
+import CalendarDatePicker from "../../../students/components/date-picker";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle } from "lucide-react";

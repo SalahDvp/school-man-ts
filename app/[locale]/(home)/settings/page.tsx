@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator"
-import { ProfileForm } from "@/app/(home)/settings/level/components/profile-form"
+import { ProfileForm } from "./level/components/profile-form"
 
 const SettingsProfilePage = () => {
   return (

@@ -18,11 +18,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import ImageUpload from "@/app/(home)/students/components/uploadFile";
+import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentRegistrationSchema } from "@/validators/auth";
-import CalendarDatePicker from "@/app/(home)/students/components/date-picker";
+import CalendarDatePicker from "@/app/[locale]/(home)/students/components/date-picker";
 import Combobox from "@/components/ui/comboBox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";

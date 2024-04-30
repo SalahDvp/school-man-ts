@@ -1,4 +1,4 @@
-"use client"
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -186,7 +186,7 @@ export default function StudentForm() {
         (parent) => parent.value === selectedValue
       );
       if (selectedParent) {
-        // Update form fields with selected parent information
+  console.log("wqeqwemamamam");
         setValue("parentFirstName", selectedParent.parentFirstName);
         setValue("parentLastName", selectedParent.parentLastName);
         setValue("parentEmail", selectedParent.parentEmail);

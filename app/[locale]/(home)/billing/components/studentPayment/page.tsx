@@ -2,7 +2,7 @@
 "use client"
 import React from "react"
 
-import StudentPaymentForm from "./components/studentPaymentFrom"
+import StudentPaymentForm from "./components/studentPaymentForm"
 import { StudentPaymentTable } from "./components/studentPaymentTable"
 import StudentDetails from "./components/studentDetails"
 

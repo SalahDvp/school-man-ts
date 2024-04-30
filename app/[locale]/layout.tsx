@@ -4,8 +4,9 @@ import "./globals.css";
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/toaster";
-
+import { Toaster } from "@/components/ui/toaster"
+import i18nConfig from "@/i18nConfig";
+import { dir } from "i18next";
 const APP_NAME = "PWA App";
 const APP_DEFAULT_TITLE = "My Awesome PWA App";
 const APP_TITLE_TEMPLATE = "%s - PWA App";
@@ -46,14 +47,17 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
   },
 };
-
-export default function RootLayout({
-  children,
-}: Readonly<{
+export function generateStaticParams() {
+  return i18nConfig.locales.map(locale => ({ locale }));
+}
+interface RootLayoutProps {
   children: React.ReactNode;
-}>) {
+  params: { locale: string };
+}
+const RootLayout: React.FC<RootLayoutProps> = ({ children, params: { locale } }) => {
+
   return (
-    <html lang="en">
+    <html lang={locale} dir={dir(locale)}>
       <body className={cn("min-h-screen bg-background font-sans antialiased",fontSans.variable)}>  
            <ThemeProvider
         attribute="class"
@@ -68,3 +72,4 @@ export default function RootLayout({
     </html>
   );
 }
+export default RootLayout

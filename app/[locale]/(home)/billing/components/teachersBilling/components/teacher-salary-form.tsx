@@ -23,9 +23,9 @@ import { teacherPaymentRegistrationSchema } from "@/validators/teacherSalarySche
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useState} from "react";
 import { useToast } from "@/components/ui/use-toast";
-import CalendarDatePicker from "@/app/(home)/students/components/date-picker";
+import CalendarDatePicker from "@/app/[locale]/(home)/students/components/date-picker";
 import { ScrollArea} from "@/components/ui/scroll-area";
-import ImageUpload from "@/app/(home)/students/components/uploadFile";
+import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
