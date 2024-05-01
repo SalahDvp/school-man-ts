@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/select"
 import { PlusCircle } from "lucide-react";
 import { updateLevel } from "@/lib/hooks/levels";
+import React from "react";
+import { useData } from "@/context/admin/fetchDataContext";
 const objectOptions = [
   { value: 'math', label: 'Math' },
   { value: 'english', label: 'English' },
@@ -72,10 +74,10 @@ interface SheetDemoProps {
 
 
 const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => {
+  const {setLevels}=useData()
   const form = useForm<LevelFormValues>({
     resolver: zodResolver(levelSchema),
-    defaultValues: {
-        id: "1",
+    defaultValues:{ id: "1",
         level: "Kindergarten",
         start: new Date("2024-09-01"),
         end: new Date("2025-06-30"),
@@ -83,14 +85,24 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         status: "open",
         registrationDeadline: new Date("2024-08-15"),
         subjects:[{value:'',label:''}],
-        prices:[]
-  
-    },
+        prices:[]}
   });
-const {toast}=useToast()
+  const {toast}=useToast()
   const { reset, handleSubmit, control, formState,getValues,setValue,register} = form;
   const {isSubmitting}=formState
+  const periodOptions = [
+    '1 month',
+    '2 months',
+    '4 months',
+    '1 year',
+  ];
 
+//reset useform default values on each new level
+  React.useEffect(() => {
+    reset(level)
+    console.log("reset",level);
+    
+ }, [level])
   const { fields:subjects, append:appendSubject,remove:removeSubject} = useFieldArray({
     control: form.control,
     name: "subjects",
@@ -102,6 +114,12 @@ const {toast}=useToast()
   
   const onSubmit =async (data:LevelFormValues) => {
     await updateLevel(data,data.id)
+    setLevels((prev:any) => {
+      const updatedLevels = prev.map((level:Level) =>
+        level.id === data.id ? data : level
+      );
+      return updatedLevels;
+    });
     toast({
       title: "changes applied!",
       description: `changes applied Successfully`,
@@ -117,12 +135,7 @@ const {toast}=useToast()
     newPrices[index].price = newPrice; // Update the price at the specified index
     setValue('prices', newPrices); // Set the updated prices array in the form
   };
-  const periodOptions = [
-    '1 month',
-    '2 months',
-    '4 months',
-    '1 year',
-  ];
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
   <SheetContent className="sm:max-w-[650px]">

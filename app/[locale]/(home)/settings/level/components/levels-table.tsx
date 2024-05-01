@@ -41,62 +41,6 @@ import { Badge } from "@/components/ui/badge";
 import { SheetDemo } from "./sheet-form";
 import EditFormSheetDemo from "./edit-level";
 import { useData } from "@/context/admin/fetchDataContext";
-const data: Level[] = [
-  {
-    id: "1",
-    level: "Kindergarten",
-    start: "2024-09-01",
-    end: "2025-06-30",
-    fee: 1000,
-    status: "open",
-    registrationDeadline: "2024-08-15",
-  },
-  {
-    id: "2",
-    level: "Year 1",
-    start: "2024-09-01",
-    end: "2025-06-30",
-    fee: 1200,
-    status: "open",
-    registrationDeadline: "2024-08-15",
-  },
-  {
-    id: "3",
-    level: "Year 2",
-    start: "2024-09-01",
-    end: "2025-06-30",
-    fee: 1400,
-    status: "open",
-    registrationDeadline: "2024-08-15",
-  },
-  {
-    id: "4",
-    level: "Year 3",
-    start: "2024-09-01",
-    end: "2025-06-30",
-    fee: 1600,
-    status: "open",
-    registrationDeadline: "2024-08-15",
-  },
-  {
-    id: "5",
-    level: "Year 4",
-    start: "2024-09-01",
-    end: "2025-06-30",
-    fee: 1800,
-    status: "open",
-    registrationDeadline: "2024-08-15",
-  },
-  {
-    id: "6",
-    level: "Year 5",
-    start: "2024-09-01",
-    end: "2025-06-30",
-    fee: 2000,
-    status: "open",
-    registrationDeadline: "2024-08-15",
-  },
-];
 type Status = "open" | "closed";
 export type Level = {
   id: string;
@@ -106,13 +50,23 @@ export type Level = {
   start: Date;
   end: Date;
   registrationDeadline: Date;
+  subjects:any;
+  prices:any;
 };
 export const DataTableDemo = () => {
   const {levels,setLevels}=useData()
-  console.table(levels);
+
   
   const [open, setOpen] = React.useState(false);
-  const [level, setLevel] = React.useState<Level>(data[0]);
+  const [level, setLevel] = React.useState<Level>({id: "1",
+  level: "Kindergarten",
+  start: new Date("2024-09-01"),
+  end: new Date("2025-06-30"),
+  fee: 1000,
+  status: "open",
+  registrationDeadline: new Date("2024-08-15"),
+  subjects:[{value:'',label:''}],
+  prices:[]});
 
   const getStatusColor = React.useCallback((status: Status) => {
     switch (status) {
@@ -140,7 +94,7 @@ export const DataTableDemo = () => {
       header: "Start",
       cell: ({ row }) => (
         <div className="lowercase hidden sm:table-cell">
-          {row.getValue("start").toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+{((row.getValue("start") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
         </div>
       ),
     },
@@ -149,7 +103,7 @@ export const DataTableDemo = () => {
       header: "End",
       cell: ({ row }) => (
         <div className="capitalize hidden sm:table-cell">
-          {row.getValue("end").toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+{((row.getValue("end") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
         </div>
       ),
     },
@@ -186,7 +140,8 @@ export const DataTableDemo = () => {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const level = row.original;
+        const level1 = row.original;
+
 
         return (
           <DropdownMenu>
@@ -203,7 +158,7 @@ export const DataTableDemo = () => {
                   ? "Close level"
                   : "Open Level"}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => openEditSheet(level)}>
+              <DropdownMenuItem onClick={() => openEditSheet(level1)}>
                 View level details
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -213,8 +168,9 @@ export const DataTableDemo = () => {
     },
   ];
   const openEditSheet = (level: Level) => {
-    setOpen(true);
-    setLevel(level);
+setLevel(level)
+
+    setOpen(true); // Open the sheet after setting the level
   };
 
   const table = useReactTable({
@@ -225,6 +181,7 @@ export const DataTableDemo = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
+
 
 
   return (
