@@ -209,7 +209,7 @@ const paymentPlans = React.useMemo(() => {
   
   if (studentValue) {
     const selectedLevel = levels.find(level => level.level === studentValue);
-    console.log("level", selectedLevel)
+
     if (selectedLevel) {
 
       return selectedLevel.paymentPlans;

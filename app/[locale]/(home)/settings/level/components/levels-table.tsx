@@ -40,6 +40,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { SheetDemo } from "./sheet-form";
 import EditFormSheetDemo from "./edit-level";
+import { useData } from "@/context/admin/fetchDataContext";
 const data: Level[] = [
   {
     id: "1",
@@ -102,14 +103,17 @@ export type Level = {
   level: string;
   status: "open" | "closed";
   fee: number;
-  start: string;
-  end: string;
-  registrationDeadline: string;
+  start: Date;
+  end: Date;
+  registrationDeadline: Date;
 };
 export const DataTableDemo = () => {
+  const {levels,setLevels}=useData()
+  console.table(levels);
+  
   const [open, setOpen] = React.useState(false);
   const [level, setLevel] = React.useState<Level>(data[0]);
-  const [levels, setLevels] = React.useState(data);
+
   const getStatusColor = React.useCallback((status: Status) => {
     switch (status) {
       case "open":
@@ -136,7 +140,7 @@ export const DataTableDemo = () => {
       header: "Start",
       cell: ({ row }) => (
         <div className="lowercase hidden sm:table-cell">
-          {row.getValue("start")}
+          {row.getValue("start").toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
         </div>
       ),
     },
@@ -145,7 +149,7 @@ export const DataTableDemo = () => {
       header: "End",
       cell: ({ row }) => (
         <div className="capitalize hidden sm:table-cell">
-          {row.getValue("end")}
+          {row.getValue("end").toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
         </div>
       ),
     },
@@ -214,16 +218,14 @@ export const DataTableDemo = () => {
   };
 
   const table = useReactTable({
-    data,
+    data:levels,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
-  const handleAddLevel = (newLevel: any) => {
-    setLevels((prevLevels) => [...prevLevels, newLevel]);
-  };
+
 
   return (
     <>
@@ -237,7 +239,7 @@ export const DataTableDemo = () => {
  
    
     
-          <SheetDemo addLevel={handleAddLevel} />
+          <SheetDemo />
  
       </div>
       <Separator/>

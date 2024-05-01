@@ -21,3 +21,26 @@ export function useUser() {
 
   return user;
 }
+
+
+
+// useEffect(() => {
+//   const unsub = onAuthStateChanged(auth, async (user) => {
+//     try {
+//       if (user) {
+//         setUser(user);
+//         setIsAuthenticated(true);
+//         router.replace('/dashboard');
+//       } else {
+//         setIsAuthenticated(false);
+//         setUser(null);
+//         router.replace('/Auth');
+//       }
+//     } catch (error) {
+//       console.error('Error in onAuthStateChanged:', error);
+//       // Handle the error as needed, such as setting an error state or logging the error
+//     }
+//   });
+
+//   return () => unsub(); // Cleanup function to unsubscribe when the component unmounts
+// }, []);

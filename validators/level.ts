@@ -4,11 +4,11 @@ import { z } from 'zod';
 const levelSchema = z.object({
     id: z.string().min(1, { message: 'ID is required' }) ,
     level: z.string().min(1, { message: 'Level is required' }),
-    start: z.string().min(1, { message: 'Start date is required' }),
-    end: z.string().min(1, { message: 'End date is required' }),
+    start:  z.date().refine((value) => value > new Date(), { message: 'Please enter a valid date of birth.' }),
+    end:  z.date().refine((value) => value > new Date(), { message: 'Please enter a valid date of birth.' }),
     fee: z.number().min(0, { message: 'Fee must be a positive number' }),
     status: z.enum(["open", "closed"]),
-    registrationDeadline: z.string().min(1, { message: 'Registration deadline is required' }),
+    registrationDeadline:  z.date().refine((value) => value > new Date(), { message: 'Please enter a valid date of birth.' }),
     subjects: z.array( z.object({
       value: z.string(),
       label:z.string(),

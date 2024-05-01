@@ -2,16 +2,16 @@
 import { Button } from "@/components/ui/button";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarDateRangePicker } from "../dashboard/components/date-range-picker";
-import CardsRevenue from "./components/analytics/CardRevenue";
+import { CalendarDateRangePicker } from "@/app/[locale]/(home)/dashboard/components/date-range-picker";
+import CardsRevenue from "@/app/[locale]/(home)/billing/components/analytics/CardRevenue";
 
 
-import StudentsPerYear from "./components/analytics/CardStudentsPerYear";
+import StudentsPerYear from "@/app/[locale]/(home)/billing/components/analytics/CardStudentsPerYear";
 
-import { CardsMetric } from "./components/analytics/CardMetric";
-import { CircleExpenses } from "./components/analytics/CardExpensesCircle";
-import CardTransactions from "./components/analytics/CardTransactions";
-import CardIncome from "./components/analytics/CardExpenses";
+import { CardsMetric } from "@/app/[locale]/(home)/billing/components/analytics/CardMetric";
+import { CircleExpenses } from "@/app/[locale]/(home)/billing/components/analytics/CardExpensesCircle";
+import CardTransactions from "@/app/[locale]/(home)/billing/components/analytics/CardTransactions";
+import CardIncome from "@/app/[locale]/(home)/billing/components/analytics/CardExpenses";
 import Payouts from "./components/otherPayouts/page";
 import TeacherSalaryDashBoard from "./components/teachersBilling/page";
 import Studentpayment from "./components/studentPayment/page";

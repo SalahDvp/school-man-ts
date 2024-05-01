@@ -47,7 +47,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
+import { addLevel } from "@/lib/hooks/levels";
+import { useData } from "@/context/admin/fetchDataContext";
 
 const objectOptions = [
   { value: 'math', label: 'Math' },
@@ -66,23 +67,18 @@ const objectOptions = [
 
 // Schema for validation with zod
 
-export function SheetDemo({ addLevel }) {
+export function SheetDemo() {
+  const {setLevels}=useData()
   const form = useForm({
     resolver: zodResolver(levelSchema),
     defaultValues: {
       id: "1",
-      level: "Kindergarten",
-      start: "2024-09-01",
-      end: "2025-06-30",
-      fee: 1000,
+
       status: "open",
-      registrationDeadline: "2024-08-15",
-      subjects:[{value:'',label:''}],
-      prices:[    { name: '1 Semester', period:'1 month',price:900},
-      { name: '2 Semesters', period:'1 month',price:900},
-      { name: 'Full Year',  period:'1 month',price:900 },
-    ]
+
+
     },
+   
   });
 
   const { reset, handleSubmit, control, isSubmitting,getValues,register,setValue} = form;
@@ -97,10 +93,12 @@ export function SheetDemo({ addLevel }) {
   
 
   const {toast}=useToast()
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
+    await addLevel(data)
+    setLevels((prev) => [...prev, data]);
     toast({
       title: "changes applied!",
-      description: `changes applied Successfully ${data}`,
+      description: `changes applied Successfully`,
     });
     console.log(data);
     reset()
@@ -163,12 +161,12 @@ export function SheetDemo({ addLevel }) {
           <CalendarDatePicker
             {...field}
    
-              date={new Date(getValues("start"))}
+            date={getValues("start") ? new Date(getValues("start")) : null}
               setDate={(selectedValue) => {
               if (selectedValue === undefined) {
           // Handle undefined case if needed
              } else {
-                  form.setValue("start", selectedValue.toDateString());
+                  form.setValue("start", selectedValue);
                 }
       }}
     />
@@ -190,12 +188,12 @@ export function SheetDemo({ addLevel }) {
           <CalendarDatePicker
             {...field}
 
-              date={new Date(getValues("end"))}
+            date={getValues("end") ? new Date(getValues("end")) : null}
               setDate={(selectedValue) => {
               if (selectedValue === undefined) {
           // Handle undefined case if needed
              } else {
-                  form.setValue("end", selectedValue.toDateString());
+                  form.setValue("end", selectedValue);
                 }
       }}
     />
@@ -218,12 +216,12 @@ export function SheetDemo({ addLevel }) {
           <CalendarDatePicker
             {...field}
         
-              date={new Date(getValues("registrationDeadline"))}
+            date={getValues("registrationDeadline") ? new Date(getValues("registrationDeadline")) : null}
               setDate={(selectedValue) => {
               if (selectedValue === undefined) {
           // Handle undefined case if needed
              } else {
-                  form.setValue("registrationDeadline", selectedValue.toDateString());
+                  form.setValue("registrationDeadline", selectedValue);
                 }
       }}
     />

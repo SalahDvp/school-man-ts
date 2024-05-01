@@ -85,9 +85,9 @@ import {
     DotsHorizontalIcon,
   } from "@radix-ui/react-icons"
 import React from "react"
-import { ClassForm } from "./components/new-class"
-import EditClassForm from "./components/edit-class"
-import { ClassFormValues } from "./components/new-class"
+import { ClassForm } from "@/app/[locale]/(home)/classes/components/new-class"
+import EditClassForm from "@/app/[locale]/(home)/classes/components/edit-class"
+import { ClassFormValues } from "@/app/[locale]/(home)/classes/components/new-class"
 const data:  ClassFormValues[] = [
         {name: "Class A",
         level:{name:"intermediate",id:"2"},

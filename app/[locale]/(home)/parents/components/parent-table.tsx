@@ -133,7 +133,8 @@ export type parent = {
 
   }
   export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
-    console.table(data)
+  
+    
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'Active':

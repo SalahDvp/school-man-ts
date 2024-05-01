@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { PlusCircle } from "lucide-react";
+import { updateLevel } from "@/lib/hooks/levels";
 const objectOptions = [
   { value: 'math', label: 'Math' },
   { value: 'english', label: 'English' },
@@ -76,11 +77,11 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     defaultValues: {
         id: "1",
         level: "Kindergarten",
-        start: "2024-09-01",
-        end: "2025-06-30",
+        start: new Date("2024-09-01"),
+        end: new Date("2025-06-30"),
         fee: 1000,
         status: "open",
-        registrationDeadline: "2024-08-15",
+        registrationDeadline: new Date("2024-08-15"),
         subjects:[{value:'',label:''}],
         prices:[]
   
@@ -99,7 +100,8 @@ const {toast}=useToast()
     name: "prices",
   });
   
-  const onSubmit = (data:LevelFormValues) => {
+  const onSubmit =async (data:LevelFormValues) => {
+    await updateLevel(data,data.id)
     toast({
       title: "changes applied!",
       description: `changes applied Successfully`,
@@ -169,7 +171,7 @@ const {toast}=useToast()
               if (selectedValue === undefined) {
           // Handle undefined case if needed
              } else {
-                  form.setValue("start", selectedValue.toDateString());
+                  form.setValue("start", selectedValue);
                 }
       }}
     />
@@ -196,7 +198,7 @@ const {toast}=useToast()
               if (selectedValue === undefined) {
           // Handle undefined case if needed
              } else {
-                  form.setValue("end", selectedValue.toDateString());
+                  form.setValue("end", selectedValue);
                 }
       }}
     />
@@ -224,7 +226,7 @@ const {toast}=useToast()
               if (selectedValue === undefined) {
           // Handle undefined case if needed
              } else {
-                  form.setValue("registrationDeadline", selectedValue.toDateString());
+                  form.setValue("registrationDeadline", selectedValue);
                 }
       }}
     />

@@ -10,20 +10,27 @@ import { useState } from 'react';
 import { auth } from '@/firebase/firebase-config';
 import { signIn } from "@/lib/auth"
 import { useRouter } from "next/navigation"
+import { useUser } from "@/lib/auth";
 
+import { redirect } from "next/navigation";
 
-function Dashboard() {
+function SignIn() {
   const [email, setEmail] = useState('admin@admin.com');
   const [password, setPassword] = useState('12345678');
   const router=useRouter()
   const handleSignIn = async () => {
     try {
       await signIn(email, password, true);
-      router.replace('/dashboard');
+      //if role admine
+      //if parent parendachos
+router.push('/dashboard')
     } catch (error) {
       window.alert(error);
     }
   }
+  const user = useUser();
+ if (user) return redirect('/dashboard') 
+ if (user === false) return <>Auth loading...</>;
   return (
     <div className="w-full lg:grid lg:grid-cols-2  min-h-screen">
       <div className="flex items-center justify-center py-12">
@@ -83,4 +90,4 @@ function Dashboard() {
     </div>
   )
 }
-export default Dashboard
+export default SignIn
