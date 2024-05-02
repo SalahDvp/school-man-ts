@@ -4,7 +4,7 @@ import { auth } from '@/firebase/firebase-config'
 import {  onAuthStateChanged,} from "firebase/auth";
 import { redirect, useRouter } from "next/navigation";
 import { useUser } from "@/lib/auth";
-import { getDocs,collection,query,where,orderBy,getDoc} from 'firebase/firestore';
+import { getDocs,collection,query,where,orderBy,getDoc,doc} from 'firebase/firestore';
 import { db } from "@/firebase/firebase-config"
 
 export const AppContext = createContext();
@@ -33,8 +33,26 @@ export const  FetchDataProvider = ({ children }) => {
     getLevels();
   }, []);
 
+  const [profile, setProfile] = useState([]);
+
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const profileSnapshot = await getDoc(doc(db, 'Profile','GeneralInformation'));
+      
+        
+           
+        setProfile({...profileSnapshot.data(),id:profileSnapshot.id})
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    getProfile();
+  }, []);
+
   return (
-    <AppContext.Provider value={{levels,setLevels}}>
+    <AppContext.Provider value={{levels,setLevels,profile,setProfile}}>
       {children}
     </AppContext.Provider>
   );

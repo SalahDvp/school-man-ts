@@ -94,8 +94,9 @@ export function SheetDemo() {
 
   const {toast}=useToast()
   const onSubmit = async(data) => {
-    await addLevel(data)
-    setLevels((prev) => [...prev, data]);
+    
+    const a = await addLevel(data)
+    setLevels((prev) => [...prev, {...data,id:a}]);
     toast({
       title: "changes applied!",
       description: `changes applied Successfully`,
@@ -105,6 +106,7 @@ export function SheetDemo() {
 
  
   }
+  
   const handleChangePrice = (index, newPrice) => {
     const newPrices = [...getValues('prices')]; // Get the current prices array
     newPrices[index].price = newPrice; // Update the price at the specified index

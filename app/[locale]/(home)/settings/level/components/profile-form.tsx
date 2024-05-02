@@ -1,7 +1,11 @@
-"use client";
+"use client"
+import React from "react";
+import {addProfile} from "@/lib/hooks/profile"
+import { useData } from "@/context/admin/fetchDataContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -14,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { profileFormSchema } from "@/validators/general-info";
+import  profileFormSchema  from "@/validators/general-info";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loadingButton";
@@ -22,27 +26,35 @@ import OpenDaysTable from "../../components/open-days-table";
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-const defaultValues: Partial<ProfileFormValues> = {
-  bio: "I own a computer.",
-  urls: [
+
+const defaultValues : Partial<ProfileFormValues>  = {
+  bio:  "I own a computer.",
+  urls:  [
     { value: "https://shadcn.com" },
     { value: "http://twitter.com/shadcn" },
   ],
-  schoolName: "Sample School",
-  phoneNumber: "+1 1234567890",
+  schoolName:  "Sample School",
+  email:  "salah@email.com",
+  phoneNumber:  "+1 1234567890",
   capacity: 500,
-  nationalRanking: 10,
-  address: "123 Main St, City, Country",
-  openDays: [
-    { day: "Sunday", start: "07:00", end: "18:00", state: "open" },
-    { day: "Monday", start: "07:00", end: "18:00", state: "open" },
-    { day: "Tuesday", start: "07:00", end: "18:00", state: "open" },
-    { day: "Wednesday", start: "07:00", end: "18:00", state: "open" },
-    { day: "Thursday", start: "07:00", end: "18:00", state: "open" },
-  ],
+  nationalRanking:  10,
+  address:  "123 Main St, City, Country",
+  openDays:  [
+    { day: "Monday", start: "09:00", end: "17:00", state: "open" },
+    { day: "Tuesday", start: "09:00", end: "17:00", state: "open" },
+    { day: "Wednesday", start: "09:00", end: "17:00", state: "open" },
+    { day: "Thursday", start: "09:00", end: "17:00", state: "open" },
+    { day: "Friday", start: "09:00", end: "17:00", state: "open" },
+    { day: "Saturday", start: "10:00", end: "14:00", state: "open" },
+    { day: "Sunday", start: "07:00", end: "18:00", state: "open" }
+  ]
 };
 
+
+
 export function ProfileForm() {
+ 
+
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -60,7 +72,32 @@ export function ProfileForm() {
     name: "openDays",
   });
 
-  function onSubmit(data: ProfileFormValues) {
+
+ 
+  const {reset} = form;
+  const {profile,setProfile}=useData()
+  React.useEffect(() => {
+    reset(profile)
+    console.log("reset",profile);
+    
+  }, [profile])
+  
+
+  const {toast} = useToast()
+  const onSubmit = async(data) => {
+    await addProfile(data)
+    setProfile({...data,id:"GeneralInformation"})
+    toast({
+      title: "changes applied!",
+      description: `changes applied Successfully`,
+    });
+    console.log(data);
+
+
+ 
+  }
+ 
+ /* function onSubmit(data: ProfileFormValues) {
 
     toast({
       title: "You submitted the following values:",
@@ -71,7 +108,7 @@ export function ProfileForm() {
       ),
     });
   }
-
+*/
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
