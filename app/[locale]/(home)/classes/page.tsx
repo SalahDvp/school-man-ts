@@ -1,33 +1,10 @@
 
 "use client"
-import Image from "next/image"
-import Link from "next/link"
+
 import {
   File,
-  Home,
-  LineChart,
-  ListFilter,
   MoreHorizontal,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  School,
-  Search,
-  Settings,
-  ShoppingCart,
-  Users2,
 } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import {
     ColumnDef,
@@ -55,11 +32,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+
+
 import {
   Table,
   TableBody,
@@ -70,24 +46,19 @@ import {
 } from "@/components/ui/table"
 import {
   Tabs,
-  TabsContent,
+
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {
-    CaretSortIcon,
     ChevronDownIcon,
-    DotsHorizontalIcon,
   } from "@radix-ui/react-icons"
 import React from "react"
 import { ClassForm } from "@/app/[locale]/(home)/classes/components/new-class"
 import EditClassForm from "@/app/[locale]/(home)/classes/components/edit-class"
 import { ClassFormValues } from "@/app/[locale]/(home)/classes/components/new-class"
+import { useData } from "@/context/admin/fetchDataContext"
 const data:  ClassFormValues[] = [
         {name: "Class A",
         level:{name:"intermediate",id:"2"},
@@ -165,6 +136,7 @@ students: [
 ]
 
 function Classes() {
+  const {levels}=useData()
   const [open, setOpen] = React.useState(false);
   const [cls, setCls] = React.useState< ClassFormValues>(data[0]);
     const columns: ColumnDef<ClassFormValues>[] = [
@@ -284,11 +256,11 @@ function Classes() {
             <div className="flex items-center">
               <TabsList>
                 <TabsTrigger value="all" onClick={() => handleFilter("All")}>All</TabsTrigger>
-                <TabsTrigger value="Beginner" onClick={() => handleFilter("Beginner")}>Beginner</TabsTrigger>
-                <TabsTrigger value="Intermediate" onClick={() => handleFilter("Intermediate")}>Intermediate</TabsTrigger>
-                <TabsTrigger value="Advanced" className="sm:flex" onClick={() => handleFilter("Advanced")}>
-                Advanced
-                </TabsTrigger>
+                {levels.map((level:any) => (
+    <TabsTrigger key={level.level} value={level.level} onClick={() => handleFilter(level.level)}>
+      {level.level}
+    </TabsTrigger>
+  ))}
               </TabsList>
               <div className="ml-auto flex items-center gap-2">
               <DropdownMenu>
