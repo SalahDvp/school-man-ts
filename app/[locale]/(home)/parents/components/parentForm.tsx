@@ -29,23 +29,24 @@ import ImageUpload from "../../students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addParent } from "@/lib/hooks/parents";
 const fieldNames = [
   "firstName",
   "lastName",
-  "NumberOfChildren",
   "dateOfBirth",
   "gender",
-  "year",
-  "payment",
   "address",
   "city",
   "state",
   "postalCode",
   "country",
+  "numberOfChildren",
   "parentEmail",
   "parentPhone",
   "secondParentName",
   "secondParentPhone",
+  "salary"
 ];
 const genders = [
   {
@@ -63,7 +64,6 @@ type FormKeys =
   | 'lastName'
   | 'dateOfBirth'
   | 'gender'
-  | 'year'
   | 'address'
   | 'city'
   | 'state'
@@ -73,39 +73,24 @@ type FormKeys =
   | 'parentPhone'
   | 'secondParentName'
   | 'secondParentPhone'
-  | 'payment'
   |'salary'
+  |"numberOfChildren"
 
   type ParentFormValues = z.infer<typeof ParentRegistrationSchema>;
 
-export default function ParentForm() {
+ function ParentForm() {
   const { toast } = useToast();
+  const {setParents}=useData()
   const [openGender, setOpenGender] = useState(false);
   const form = useForm<ParentFormValues>({
     resolver: zodResolver(ParentRegistrationSchema),
-    defaultValues:  {
-        id: '',
-        year: '',
-        firstName: '',
-        lastName: '',
-        dateOfBirth: new Date('1990-01-01'),
-        gender: 'male',
-        address: '',
-        city: '',
-        state: '',
-        postalCode: '',
-        country: '',
-        parentEmail: '',
-        parentPhone: '',
-        NumberOfChildren: 0,
-        secondParentName: '',
-        secondParentPhone: '',
-        payment: 0,
-        salary:0,
-        paymentStatus:'Active'
-      }
+    defaultValues:{
+      id:"ididid",
+      paymentStatus:'Active',
+      totalPayment:0
+    }
   });
-  const { reset, formState, setValue, getValues } = form;
+  const { reset, formState, setValue, getValues,watch } = form;
   const { isSubmitting } = formState;
 
   const renderInput = (fieldName:string, field:any) => {
@@ -124,41 +109,47 @@ export default function ParentForm() {
             }}
           />
         );
-      case "gender":
-        return (
-          <Combobox
-            {...field}
-            open={openGender}
-            setOpen={setOpenGender}
-            placeHolder="gender"
-            options={genders}
-            value={getValues("gender")}
-            onSelected={(selectedValue) => {
-              form.setValue(fieldName, selectedValue);
-            }}
-          />
-        );
-        case "salary" ||"payment":
-            return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
+        case "gender":
+          return (
+            <Combobox
+              {...field}
+              open={openGender}
+              setOpen={setOpenGender}
+              placeHolder="gender"
+              options={genders}
+              value={getValues("gender")} // Set the value based on the form's current value for the field
+              onSelected={(selectedValue) => {
+                const gender: "male" | "female" | "other" = selectedValue as "male" | "female" | "other";
 
+                form.setValue(fieldName, gender);
+              }}
+            />
+          );
+        case "salary":
+            return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
+        case  "numberOfChildren":
+            return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
       default:
         return <Input {...field} />;
     }
   };
+  React.useEffect(() => {
+    const subscription = watch((value, { name, type }) =>
+      console.log(value, name, type)
+    )
+    return () => subscription.unsubscribe()
+  }, [watch])
 
 
-  function onSubmit(data:ParentFormValues) {
-    return new Promise<void>((resolve) => {
-        setTimeout(() => {
+  async function onSubmit(data:ParentFormValues) {
+  const parentId= await addParent(data)
+setParents((prev:ParentFormValues[])=>[...prev,{...data,id:parentId,parent: `${data.firstName} ${data.lastName}`}])
           toast({
             title: "Parent added!",
             description: "Parent added Successfully",
           });
-          console.log(data);
-          resolve();
-        }, 2000); // Simulating a delay of 1 second
-      });
- 
+console.log(data)
+          reset()
   }
 
   return (
@@ -207,6 +198,7 @@ export default function ParentForm() {
                   )}
                 />
               ))}
+
             </form>
           </Form>
 
@@ -227,3 +219,4 @@ export default function ParentForm() {
     </Card>
   );
 }
+export default ParentForm

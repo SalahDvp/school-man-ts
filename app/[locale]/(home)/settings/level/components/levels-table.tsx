@@ -41,6 +41,8 @@ import { Badge } from "@/components/ui/badge";
 import { SheetDemo } from "./sheet-form";
 import EditFormSheetDemo from "./edit-level";
 import { useData } from "@/context/admin/fetchDataContext";
+import { deleteLevel } from "@/lib/hooks/levels";
+import { useToast } from "@/components/ui/use-toast";
 type Status = "open" | "closed";
 export type Level = {
   id: string;
@@ -153,10 +155,8 @@ export const DataTableDemo = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>
-                {row.getValue("status") === "open"
-                  ? "Close level"
-                  : "Open Level"}
+              <DropdownMenuItem onClick={()=>deleteLevelDoc(level1.id,level1)}>
+                Delete level
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => openEditSheet(level1)}>
                 View level details
@@ -181,8 +181,15 @@ setLevel(level)
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
   });
-
-
+const {toast}=useToast()
+const deleteLevelDoc=async(levelId:string,data:Level)=>{
+  await deleteLevel(levelId)
+  setLevels((prev:any) => prev.filter((level:Level) => level.id !== data.id));
+  toast({
+    title: "level deleted!",
+    description: `level deleted Successfully`,
+  });
+}
 
   return (
     <>

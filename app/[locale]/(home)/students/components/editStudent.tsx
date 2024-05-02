@@ -214,7 +214,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
             value={getValues("gender")} // Set the value based on the form's current value for the field
             onSelected={(selectedValue) => {
               form.setValue(fieldName, selectedValue); // Update the form value when an option is selected
-              onSelected(selectedValue); // Call the onSelected callback if needed
+              //onSelected(selectedValue); // Call the onSelected callback if needed
             }}
           />
         );

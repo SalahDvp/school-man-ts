@@ -48,6 +48,10 @@ import {
 } from "@/components/ui/table"
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useData } from "@/context/admin/fetchDataContext"
+import { ParentRegistrationSchema } from "@/validators/parentSchema"
+import { z } from "zod"
+import SheetDemo from "./editParent"
 export type ParentSummary = {
     id: string;
     parent: string;
@@ -57,65 +61,6 @@ export type ParentSummary = {
     payment:number;
  
   };
-const data: ParentSummary[] = [
-    {
-        id: "1",
-        parent: "John Doe",
-        numberOfChildren: 5,
-        joiningDate: "2023-01-15",
-        payment: 22000,
-        paymentStatus:"Active"
-        
-      },
-      {
-        id: "2",
-        parent: "Jane Smith",
-
-        numberOfChildren: 2,
-        joiningDate: "2022-11-20",
-        payment: 55000,
-        paymentStatus:"Alert"
-        
-      },
-      {
-        id: "3",
-        parent: "Michael Johnson",
-   
-         numberOfChildren: 3,
-        joiningDate: "2023-03-10",
-        payment: 40000,
-        paymentStatus:"Warning"
-        
-      },
-      {
-        id: "4",
-        parent: "John Doe",
-
-        numberOfChildren: 1,
-        joiningDate: "2023-01-15",
-        payment: 20000,
-        paymentStatus:"Warning"
-        
-      },
-      {
-        id: "5",
-        parent: "Jane Smith",
-        numberOfChildren: 4,
-        joiningDate: "2022-11-20",
-        payment: 15000,
-        paymentStatus:"Active"
-        
-      },
-      {
-        id: "6",
-        parent: "Michael Johnson",
-        numberOfChildren: 6,
-        joiningDate: "2023-03-10",
-        payment: 20000,
-        paymentStatus:"Alert"
-        
-      },
-]
 type Status = 'Active' | 'Alert' | 'Warning';
 export type parent = {
     id: string;
@@ -128,13 +73,33 @@ export type parent = {
 
   };
 
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
-  }
-  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
   
-    
+  type ParentFormValues = z.infer<typeof ParentRegistrationSchema>  & {id:string };
+
+  export const DataTableDemo = () => {
+    const [open,setOpen]=React.useState(false)
+      const {parents,setParents}=useData()
+   
+      
+      const [parent,setParent]=React.useState<ParentFormValues>({  
+      id:"dqwd",
+      firstName: "John",
+      lastName: "Doe",
+      dateOfBirth: new Date("1990-01-01"),
+      gender: "male",
+      address: "123 Main Street",
+      city: "Anytown",
+      state: "California",
+      postalCode: "12345",
+      country: "USA",
+      parentEmail: "parent@example.com",
+      parentPhone: "+1234567890",
+      numberOfChildren: 2,
+      secondParentName: "Jane Doe",
+      secondParentPhone: "+1987654321",
+      salary: 50000,
+      paymentStatus: "Active",
+      totalPayment: 10000})
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'Active':
@@ -148,7 +113,7 @@ export type parent = {
       }
     }, []);
     
-   const columns: ColumnDef<ParentSummary>[] = [
+   const columns: ColumnDef<ParentFormValues>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -189,13 +154,6 @@ export type parent = {
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("numberOfChildren")}</div>,
     },
     {
-      accessorKey: "joiningDate",
-      header: "Joining Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
-      ),
-    },
-    {
       accessorKey: "paymentStatus",
       header: "Payment Status",
       cell: ({ row }) => (
@@ -203,10 +161,15 @@ export type parent = {
       ),
     },
     {
-      accessorKey: "payment",
-      header: () => <div className="text-right">Payment</div>,
+      accessorKey: "parentPhone",
+      header: "Phone Number",
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("parentPhone")}</div>,
+    },
+    {
+      accessorKey: "totalPayment",
+      header: () => <div className="text-right">total Payment</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("payment"))
+        const amount = parseFloat(row.getValue("totalPayment"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -222,7 +185,7 @@ export type parent = {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original
+        const parent = row.original
   
         return (
           <DropdownMenu>
@@ -236,10 +199,10 @@ export type parent = {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(parent)}>
                 View Parent
               </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+              {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -253,9 +216,13 @@ export type parent = {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+  const openEditSheet = (parent:ParentFormValues) => {
+        setParent(parent)
+        setOpen(true); // Open the sheet after setting the level
+      };
+    
   const table = useReactTable({
-    data,
+    data:parents,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -414,6 +381,8 @@ export type parent = {
         </div>
       </div>
     </div>
+    <SheetDemo open={open} setOpen={setOpen}  parent={parent}/>
+
     </CardContent>
   </Card>
   </>

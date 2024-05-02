@@ -15,6 +15,7 @@ export default function RootLayout({
   if (user === false) return <>Auth loading...</>;
   if (!user) return redirect("/");
   return (
+    
     <FetchDataProvider>
       <div>
         <Header />

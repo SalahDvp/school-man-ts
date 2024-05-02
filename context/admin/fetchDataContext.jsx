@@ -12,6 +12,7 @@ export const AppContext = createContext();
 // Create the provider component
 export const  FetchDataProvider = ({ children }) => {
   const [levels, setLevels] = useState([]);
+  const [parents,setParents]=useState([])
 
   useEffect(() => {
     const getLevels = async () => {
@@ -23,18 +24,34 @@ export const  FetchDataProvider = ({ children }) => {
            start:new Date(doc.data().start.toDate()),
            end:new Date(doc.data().end.toDate()),
            registrationDeadline:new Date(doc.data().registrationDeadline.toDate())}));
-           console.log('Levels data:', levelsData);
+   
         setLevels(levelsData);
       } catch (error) {
         console.error('Error fetching levels:', error);
       }
     };
-
+    const getParents = async () => {
+      try {
+        const parentsSnapshot = await getDocs(collection(db, 'Parents'));
+      
+        const parentsData = parentsSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           parent: `${doc.data().firstName} ${doc.data().lastName}`}))
+       
+     
+          //console.table(parentsData);
+        setParents(parentsData)
+      } catch (error) {
+        console.error('Error fetching levels:', error);
+      }
+    };
     getLevels();
+    getParents();
   }, []);
 
   return (
-    <AppContext.Provider value={{levels,setLevels}}>
+    <AppContext.Provider value={{levels,setLevels,setParents,parents}}>
       {children}
     </AppContext.Provider>
   );
