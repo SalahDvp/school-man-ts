@@ -12,6 +12,9 @@ export const AppContext = createContext();
 // Create the provider component
 export const  FetchDataProvider = ({ children }) => {
   const [levels, setLevels] = useState([]);
+  const [parents,setParents]=useState([]);
+  const [teachers,setTeachers]=useState([]);
+  const [students,setStudents]=useState([]);
 
   useEffect(() => {
     const getLevels = async () => {
@@ -30,8 +33,69 @@ export const  FetchDataProvider = ({ children }) => {
       }
     };
 
+    const getParents = async () => {
+      try {
+        const parentsSnapshot = await getDocs(collection(db, 'Parents'));
+      
+        const parentsData = parentsSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           parent: `${doc.data().firstName} ${doc.data().lastName}`}))
+       
+     
+          //console.table(parentsData);
+        setParents(parentsData)
+      } catch (error) {
+        console.error('Error fetching levels:', error);
+      }
+    };
+
+
+    const getTeachers = async () => {
+      try {
+        const teachersSnapshot = await getDocs(collection(db, 'Teachers'));
+      
+        const TeachersData = teachersSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           joiningDate:new Date(doc.data().joiningDate.toDate()),
+           teacher: `${doc.data().firstName} ${doc.data().lastName}`}))
+       
+     
+          //console.table(parentsData);
+        setTeachers(TeachersData)
+      } catch (error) {
+        console.error('Error fetching Teachers:', error);
+      }
+    };
+
+   const getStudents = async () => {
+      try {
+        const studentSnapshot = await getDocs(collection(db, 'Students'));
+      
+        const StudentsData = studentSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           joiningDate:new Date(doc.data().joiningDate.toDate()),
+           lastPaymentDate:new Date(doc.data().joiningDate.toDate()),
+           nextPaymentDate:new Date(doc.data().joiningDate.toDate()),
+           startDate:new Date(doc.data().joiningDate.toDate()),
+           student: `${doc.data().firstName} ${doc.data().lastName}`}))
+       
+     
+          //console.table(parentsData);
+        setStudents(StudentsData)
+      } catch (error) {
+        console.error('Error fetching Students:', error);
+      }
+    };
+    
     getLevels();
+    getParents();
+    getTeachers();
+    getStudents(); 
   }, []);
+
 
   const [profile, setProfile] = useState([]);
 
@@ -51,8 +115,12 @@ export const  FetchDataProvider = ({ children }) => {
     getProfile();
   }, []);
 
+
+  
+
+
   return (
-    <AppContext.Provider value={{levels,setLevels,profile,setProfile}}>
+    <AppContext.Provider value={{levels,setLevels,profile,setProfile,setParents,parents,teachers,setTeachers,students,setStudents}}>
       {children}
     </AppContext.Provider>
   );

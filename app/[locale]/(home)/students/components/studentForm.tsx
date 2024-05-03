@@ -19,7 +19,7 @@ import {
 import {ResetIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { studentRegistrationSchema } from "@/validators/auth";
+import  studentRegistrationSchema  from "@/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useState} from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,6 +28,10 @@ import { ScrollArea} from "@/components/ui/scroll-area";
 import ImageUpload from "./uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
+import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addStudent } from "@/lib/hooks/student";
+
 const fieldNames = [
   "firstName",
   "lastName",
@@ -39,56 +43,17 @@ const fieldNames = [
   "state",
   "postalCode",
   "country",
-  "parentFirstName",
-  "parentLastName",
+  "parentFullName",
   "parentEmail",
   "parentPhone",
   "emergencyContactName",
   "emergencyContactPhone",
   "medicalConditions",
+  "status",
+  "joiningDate",
+  "startDate",
 ];
-const parentNames = [
-  {
-    value: "John Doe",
-    label: "John Doe",
-    parentFirstName: "John",
-    parentLastName: "Doe",
-    parentEmail: "john.doe@example.com",
-    parentPhone: "1234567890",
-  },
-  {
-    value: "Jane Smith",
-    label: "Jane Smith",
-    parentFirstName: "Jane",
-    parentLastName: "Smith",
-    parentEmail: "jane.smith@example.com",
-    parentPhone: "9876543210",
-  },
-  {
-    value: "Michael Johnson",
-    label: "Michael Johnson",
-    parentFirstName: "Michael",
-    parentLastName: "Johnson",
-    parentEmail: "michael.johnson@example.com",
-    parentPhone: "5678901234",
-  },
-  {
-    value: "Emily Brown",
-    label: "Emily Brown",
-    parentFirstName: "Emily",
-    parentLastName: "Brown",
-    parentEmail: "emily.brown@example.com",
-    parentPhone: "3456789012",
-  },
-  {
-    value: "William Wilson",
-    label: "William Wilson",
-    parentFirstName: "William",
-    parentLastName: "Wilson",
-    parentEmail: "william.wilson@example.com",
-    parentPhone: "9012345678",
-  },
-];
+ 
 const genders = [
   {
     value: "male",
@@ -99,43 +64,96 @@ const genders = [
     label: "Female",
   },
 ];
+
+type FormKeys =
+  | "firstName"
+  | "lastName"
+  | "dateOfBirth"
+  | "gender"
+  | "year"
+  | "address"
+  | "city"
+  | "state"
+  | "postalCode"
+  | "country"
+  | "parentFullName"
+  | "parentEmail"
+  | "parentPhone"
+  | "emergencyContactName"
+  | "emergencyContactPhone"
+  | "medicalConditions"
+  | "status"
+  | "joiningDate"
+  | "startDate"
+type StudnetFormValues = z.infer<typeof  studentRegistrationSchema>;
 export default function StudentForm() {
   const { toast } = useToast();
+  const {parents}= useData();
+  const {setStudnets} = useData();
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
-  const form = useForm({
+  const form = useForm<StudnetFormValues>({
     resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
      id: 'abc123',
-  year: '2023',
-  firstName: 'John',
-  lastName: 'Doe',
-  dateOfBirth: new Date('2020-05-15'),
-  gender: 'male',
-  address: '123 Main Street',
-  city: 'Cityville',
-  state: 'Stateland',
-  postalCode: '12345',
-  country: 'Countryland',
-  parentFirstName: 'Jane',
-  parentLastName: 'Doe',
-  parentEmail: 'janedoe@example.com',
-  parentPhone: '123-456-7890',
-  emergencyContactName: 'Emergency Contact',
-  emergencyContactPhone: '987-654-3210',
-  medicalConditions: 'None',
+      year: '2023',
+      firstName: 'John',
+      lastName: 'Doe',
+      name:  'John Doe' ,
+      dateOfBirth: new Date('2020-05-15'),
+      gender: 'male',
+      status:'active',
+      address: '123 Main Street',
+      city: 'Cityville',
+      state: 'Stateland',
+      postalCode: '12345',
+      country: 'Countryland',
+      parentFullName: 'Jane',
+      parentEmail: 'janedoe@example.com',
+      parentPhone: '123-456-7890',
+      emergencyContactName: 'Emergency Contact',
+      emergencyContactPhone: '987-654-3210',
+      medicalConditions: 'None',
+      joiningDate:new Date('2024-01-15'),
+      leftAmountToPay:0,
+      registrationStatus:"active",
+      startDate:new Date('2024-01-15'),
+      lastPaymentDate:new Date('2010-01-15'),
+      nextPaymentDate:new Date('2013-01-15'),
+      totalAmount:2000,
+      amountLeftToPay:200,
+      parent:{name:'salah', id:"20330209394949"},
+      class:{name:'1AS3'},
+      level:"fjdsbkdn"
+
+
     },
   });
   const { reset, formState, setValue, getValues } = form;
   const { isSubmitting } = formState;
+  //const parentNames = parents
+  
+  
 
-  const renderInput = (fieldName, field) => {
+  const parentNames = parents.map((parent_: { firstName: string; lastName: string; }) => {
+    // Combine and trim first and last name to remove leading/trailing spaces
+    const combinedName = `${parent_.firstName.trim()} ${parent_.lastName.trim()}`;
+  
+    return {
+      label: combinedName, // For use in UI components like dropdowns
+      value: combinedName, // For use as a form value or ID
+    };
+  });
+
+  
+  
+  const renderInput = (fieldName: string, field) => {
     switch (fieldName) {
       case "dateOfBirth":
         return (
           <CalendarDatePicker
             {...field}
-            className="w-1/2"
+          
             date={getValues("dateOfBirth")}
             setDate={(selectedValue) => {
               if (selectedValue === undefined) {
@@ -146,7 +164,22 @@ export default function StudentForm() {
             }}
           />
         );
-      case "parentFirstName":
+        case "joiningDate":
+          return (
+            <CalendarDatePicker
+              {...field}
+              
+              date={getValues("joiningDate")}
+              setDate={(selectedValue) => {
+                if (selectedValue === undefined) {
+                  // Handle undefined case if needed
+                } else {
+                  form.setValue(fieldName, selectedValue.toLocaleString());
+                }
+              }}
+            />
+          );
+      case "parentFullName":
         return (
           <Combobox
             {...field}
@@ -154,7 +187,7 @@ export default function StudentForm() {
             setOpen={setOpen}
             placeHolder="parents"
             options={parentNames}
-            value={getValues("parentFirstName")}
+            value={getValues("parentFullName")}
             onSelected={(selectedValue) => {
               onSelected(selectedValue);
               form.setValue(fieldName, selectedValue);
@@ -181,13 +214,13 @@ export default function StudentForm() {
     }
   };
   const onSelected = useCallback(
-    (selectedValue) => {
+    (selectedValue: any) => {
       const selectedParent = parentNames.find(
-        (parent) => parent.value === selectedValue
+        (parent: { value: any; }) => parent.value === selectedValue
       );
       if (selectedParent) {
   console.log("wqeqwemamamam");
-        setValue("parentFirstName", selectedParent.parentFirstName);
+        setValue("parentFullName", selectedParent.parentFullName);
         setValue("parentLastName", selectedParent.parentLastName);
         setValue("parentEmail", selectedParent.parentEmail);
         setValue("parentPhone", selectedParent.parentPhone);
@@ -196,18 +229,18 @@ export default function StudentForm() {
     [setValue]
   );
 
-  function onSubmit(data) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Student added!",
-          description: "student added Successfully",
-        });
-        console.log(data);
-        resolve();
-      }, 2000);
-    });
-  }
+  async function onSubmit(data:StudnetFormValues) {
+    const studentId= await addStudent(data)
+    setStudnets((prev:StudnetFormValues[])=>[...prev,{...data,id:studentId,student: `${data.firstName} ${data.lastName}`}])
+          toast({
+              title: "student added!",
+              description: "Student added Successfully",
+            });
+    console.log(data);
+            reset(); 
+          
+          }
+     
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
@@ -244,7 +277,7 @@ export default function StudentForm() {
               <FormField
                 key={index}
                 control={form.control}
-                name={fieldName}
+                name={fieldName as FormKeys}
                 render={({ field }) => (
                   <FormItem style={{ marginBottom: 15 }}>
                     <FormLabel>{fieldName}</FormLabel>

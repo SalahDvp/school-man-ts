@@ -22,48 +22,34 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod"
+import { updateParent } from "@/lib/hooks/parents"
+import { useData } from "@/context/admin/fetchDataContext"
 
-type FormKeys =
-  | 'firstName'
-  | 'lastName'
-  | 'dateOfBirth'
-  | 'gender'
-  | 'year'
-  | 'address'
-  | 'city'
-  | 'state'
-  | 'postalCode'
-  | 'country'
-  | 'ParentEmail'
-  | 'ParentPhone'
-  | 'secondParentName'
-  | 'secondParentPhone'
-  | 'payment';
   
-
+  type ParentFormValues = z.infer<typeof ParentRegistrationSchema> & { [key: string]: string | Date | number;}
 interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
+    open: boolean;
+    parent:ParentFormValues // Specify the type of setOpen
   }
-  type ParentFormValues = z.infer<typeof ParentRegistrationSchema> & { [key: string]: string | Date | number; }
 
-  const fieldNames= [
+  const fieldNames = [
     "firstName",
     "lastName",
     "dateOfBirth",
     "gender",
-    "year",
     "address",
     "city",
     "state",
     "postalCode",
     "country",
-    "ParentEmail",
-    "ParentPhone",
+    "numberOfChildren",
+    "parentEmail",
+    "parentPhone",
     "secondParentName",
     "secondParentPhone",
-    "payment",
-    
+    "salary",
+    "totalPayment"
   ];
   const genders = [
     {
@@ -74,65 +60,103 @@ interface openModelProps {
       value: "female",
       label: "Female",
     },
+  ];
   
-  ]
-  const parent:ParentFormValues = {
-    id:"qewqewqeqweqweq",
-    year: "2023",
-    firstName: "John",
-    lastName: "Doe",
-    dateOfBirth: new Date("2000-01-01"), // Assuming a valid date string or Date object
-    gender: "female",
-    address: "123 Main St",
-    city: "City",
-    state: "State",
-    postalCode: "12345",
-    country: "Country",
-    parentEmail: "jane.doe@example.com",
-    parentPhone: "123-456-7890",
-    secondParentName: "Emergency Contact",
-    secondParentPhone: "987-654-3210",
-    salary:2000,
-    payment:2000,
-    NumberOfChildren:2,
-    paymentStatus:'Active'
-  
-  };
-const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
+  type FormKeys =
+    | 'firstName'
+    | 'lastName'
+    | 'dateOfBirth'
+    | 'gender'
+    | 'address'
+    | 'city'
+    | 'state'
+    | 'postalCode'
+    | 'country'
+    | 'parentEmail'
+    | 'parentPhone'
+    | 'secondParentName'
+    | 'secondParentPhone'
+    |'salary'
+    |"numberOfChildren"
+    | "totalPayment"
+const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
     const {toast}=useToast()
+    const {setParents}=useData()
     const [openGender,setOpenGender]=useState(false)
+
+    
     const form =useForm<ParentFormValues>({
       resolver: zodResolver(ParentRegistrationSchema),
-           defaultValues:parent
+           defaultValues:{  
+          id:"1",
+          firstName: "John",
+           lastName: "Doe",
+           dateOfBirth: new Date("1990-01-01"),
+           gender: "male",
+           address: "123 Main Street",
+           city: "Anytown",
+           state: "California",
+           postalCode: "12345",
+           country: "USA",
+           parentEmail: "parent@example.com",
+           parentPhone: "+1234567890",
+           numberOfChildren: 2,
+           secondParentName: "Jane Doe",
+           secondParentPhone: "+1987654321",
+           salary: 50000,
+           paymentStatus: "Active",
+           totalPayment: 10000}
     });
-    const {formState,setValue,getValues } = form;
+    const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
 
-
-    const renderInput = ({ fieldName, field }: any) => {
-      switch (fieldName) {
-        case 'dateOfBirth':
-          return <CalendarDatePicker {...field} date={getValues("dateOfBirth")}   setDate={(selectedValue) => {
-            if (selectedValue === undefined) {
-              // Handle undefined case if needed
-            } else {
-              form.setValue(fieldName, selectedValue);
-            }
-          }}/>;
-        case 'gender':
+    React.useEffect(() => {
+      reset(parent)
+      console.log("reset",parent);
+      
+   }, [parent])
+   const renderInput = (fieldName:string, field:any) => {
+    switch (fieldName) {
+      case "dateOfBirth":
+        return (
+          <CalendarDatePicker
+            {...field}
+            date={getValues("dateOfBirth")}
+            setDate={(selectedValue) => {
+              if (selectedValue === undefined) {
+                // Handle undefined case if needed
+              } else {
+                form.setValue(fieldName, selectedValue);
+              }
+            }}
+          />
+        );
+        case "gender":
           return (
-            <Combobox    {...field} open={openGender} setOpen={setOpenGender} placeHolder="gender" options={genders}
-            value={getValues("gender")} // Set the value based on the form's current value for the field
-            onSelected={(selectedValue) => {
-              form.setValue(fieldName, selectedValue); // Update the form value when an option is selected
-            }}/>
+            <Combobox
+              {...field}
+              open={openGender}
+              setOpen={setOpenGender}
+              placeHolder="gender"
+              options={genders}
+              value={getValues("gender")} // Set the value based on the form's current value for the field
+              onSelected={(selectedValue) => {
+                const gender: "male" | "female" | "other" = selectedValue as "male" | "female" | "other";
+
+                form.setValue(fieldName, gender);
+              }}
+            />
           );
-          case "salary" ||"payment":
+        case "salary":
             return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
-        default:
-          return <Input {...field} />;
-      }
-    };
+        case  "numberOfChildren":
+            return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
+            case  "totalPayment":
+              return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
+      default:
+        return <Input {...field} />;
+    }
+  };
     
   
     const getChanges = (currentValues: ParentFormValues): string => {
@@ -146,14 +170,25 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
     
         return changes;
       };
-    function onSubmit(data: ParentFormValues) {
+    async function onSubmit(data: ParentFormValues) {
         const changes = getChanges(data);
-            alert(changes);
+
+   
+          await updateParent(data,data.id)
+          setParents((prev:any) => {
+            const updatedParents = prev.map((parent:ParentFormValues) =>
+              parent.id === data.id? {...data,parent:`${data.firstName} ${data.lastName}`} : parent
+            );
+            return updatedParents;
+          });
             toast({
                 title: "changes applied!",
                 description: `changes applied Successfully ${changes}`,
               })
-      }
+          
+              setOpen(false)
+
+      } 
 
     
   return (
@@ -180,7 +215,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
               <FormItem style={{marginBottom:15}} >
                       <FormLabel>{fieldName}</FormLabel>
                       <FormControl  >
-                      {renderInput({ fieldName, field })}
+                      {renderInput(fieldName,field)}
                       </FormControl>
            
                       <FormMessage />

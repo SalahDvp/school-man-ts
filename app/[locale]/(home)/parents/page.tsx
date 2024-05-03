@@ -1,4 +1,3 @@
-
 "use client"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,15 +12,10 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { DataTableDemo } from "./components/parent-table"
 import ParentForm from "./components/parentForm"
-import { useState } from "react"
-import SheetDemo from "./components/editParent"
 import { Overview } from "./components/area-chart"
 
 
  function Dashboard() {
-
-  const [open,setOpen]=useState(false)
-
   return (
   
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -94,8 +88,7 @@ import { Overview } from "./components/area-chart"
       
         
          
-          <DataTableDemo setOpen={setOpen}/>
-          <SheetDemo open={open} setOpen={setOpen} />
+          <DataTableDemo/>
         
 
           </div>

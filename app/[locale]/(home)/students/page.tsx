@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { DataTableDemo } from "./components/table"
-import StudentForm from "./components/studentForm"
+import  StudentForm  from "./components/studentForm"
 import { useState } from "react"
 import SheetDemo from "./components/editStudent"
 import { Overview } from "./components/area-chart"

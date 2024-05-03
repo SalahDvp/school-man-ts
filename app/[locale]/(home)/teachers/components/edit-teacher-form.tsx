@@ -22,6 +22,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod"
+import { updateTeacher } from "@/lib/hooks/teacher"
+import { useData } from "@/context/admin/fetchDataContext"
 type FormKeys =
   | 'firstName'
   | 'lastName'
@@ -41,13 +43,17 @@ type FormKeys =
   | 'emergencyContactName'
   | 'emergencyContactPhone'
   | 'salary'
-  | 'medicalConditions';
+  | 'medicalConditions'
+  | 'joiningDate'
+  | 'status';
 
+
+type TeacherFormValues = z.infer<typeof teacherRegistrationSchema> & { [key: string]: string | Date | number;}
 interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
+    teacher:TeacherFormValues;
   }
-  type TeacherFormValues = z.infer<typeof teacherRegistrationSchema> & { [key: string]: string | Date | number; }
   const fieldNames= [
     "firstName",
     "lastName",
@@ -66,8 +72,24 @@ interface openModelProps {
     "emergencyContactPhone",
     "salary",
     "medicalConditions",
+    "joiningDate",
+    "status",
   ];
 
+
+  const status =[
+    {
+      value:"active",
+      label:"Active",
+    },
+    {
+      value:"suspended",
+      label:"Suspended",
+    },{
+      value:"expelled",
+      label:"Expelled",
+    }
+  ]
   const genders = [
     {
       value: "male",
@@ -81,28 +103,16 @@ interface openModelProps {
   ]
   const subjects = [
     {
-      value: "math",
-      label: "Math",
-    },
-    {
-      value: "phisics",
-      label: "Phisics",
-    },
-    {
-      value: "sience",
-      label: "Sience",
-    },
-    {
-      value: "art",
-      label: "Art",
+      value: "arabic",
+      label: "Arabic",
     },
     {
       value: "french",
       label: "French",
     },
     {
-      value: "arabic",
-      label: "Arabic",
+      value: "english",
+      label: "English",
     },
   ];
   const teacher:TeacherFormValues= {
@@ -124,22 +134,31 @@ interface openModelProps {
     emergencyContactPhone: "987-654-3210",
     medicalConditions: "None",
     teacherSubject:"Math",
+    joiningDate: new Date("2000-01-01"),
+    status:"active"
+
 
   };
-const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
+const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
     const {toast}=useToast()
-    const [openParent,setOpenParent]=useState(false)
+    const {setTeachers}=useData()
+    const [openTeacher,setOpenTeacher]=useState(false)
     const [openGender,setOpenGender]=useState(false)
-    const [openSubject, setOpenSubject] = useState();
+    const [openStatus,setOpenSatus]=useState(false)
+    const [openSubject, setOpenSubject] = useState(false);
     const form =useForm<TeacherFormValues>({
       resolver: zodResolver(teacherRegistrationSchema),
            defaultValues: teacher
       
     });
-    const {formState,setValue,getValues } = form;
+    const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
+  
 
-
+    React.useEffect(() => {
+      reset(teacher)
+      console.log("reset",teacher);
+    }, [teacher])
     const renderInput = (fieldName:string, field:any) => {
         switch (fieldName) {
           case "dateOfBirth":
@@ -147,6 +166,20 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
               <CalendarDatePicker
                 {...field}
                 date={getValues("dateOfBirth")}
+                setDate={(selectedValue) => {
+                  if (selectedValue === undefined) {
+                    // Handle undefined case if needed
+                  } else {
+                    form.setValue(fieldName, selectedValue);
+                  }
+                }}
+              />
+            );
+            case "joiningDate":
+            return (
+              <CalendarDatePicker
+                {...field}
+                date={getValues("joiningDate")}
                 setDate={(selectedValue) => {
                   if (selectedValue === undefined) {
                     // Handle undefined case if needed
@@ -165,6 +198,20 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
                 placeHolder="gender"
                 options={genders}
                 value={getValues("gender")}
+                onSelected={(selectedValue) => {
+                  form.setValue(fieldName, selectedValue);
+                }}
+              />
+            );
+            case "status":
+            return (
+              <Combobox
+                {...field}
+                open={openStatus}
+                setOpen={setOpenSatus}
+                placeHolder="status"
+                options={status}
+                value={getValues("status")}
                 onSelected={(selectedValue) => {
                   form.setValue(fieldName, selectedValue);
                 }}
@@ -204,14 +251,23 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
     
         return changes;
       };
-    function onSubmit(data: TeacherFormValues) {
+      async function onSubmit(data: TeacherFormValues) {
         const changes = getChanges(data);
-            alert(changes);
-            toast({
-                title: "changes applied!",
-                description: `changes applied Successfully ${changes}`,
-              })
-      }
+        await updateTeacher(data,data.id)
+        setTeachers((prev:any) => {
+          const updatedTeachers = prev.map((teacher:TeacherFormValues) =>
+            teacher.id === data.id? {...data,teacher:`${data.firstName} ${data.lastName}`} : teacher
+          );
+          return updatedTeachers;
+        });
+          toast({
+              title: "Changes Applied!",
+              description: "Changes Applied Successfully",
+            })
+        
+            setOpen(false)
+
+    } 
 
     
   return (

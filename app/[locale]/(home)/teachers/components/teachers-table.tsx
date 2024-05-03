@@ -1,5 +1,5 @@
 "use client"
-
+import { format } from "date-fns"; 
 import * as React from "react"
 import {
   CaretSortIcon,
@@ -50,6 +50,8 @@ import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { teacherRegistrationSchema } from "@/validators/teacherSchema"
 import { z } from "zod"
+import { useData } from "@/context/admin/fetchDataContext"
+import SheetDemo from "./edit-teacher-form"
 
 
 type Status = 'active' | 'suspended' | 'expelled';
@@ -62,62 +64,7 @@ export type TeacherSummary = {
     salary: number;
  
   };
-const data: TeacherSummary[] = [
-    {
-        id: "1",
-        teacher: "John Doe",
-        status: "suspended",
-        Subject: "Math",
-        joiningDate: "2023-01-15",
-        salary: 22000,
-        
-      },
-      {
-        id: "2",
-        teacher: "Jane Smith",
-        status: "active",
-        Subject: "Arabic",
-        joiningDate: "2022-11-20",
-        salary: 55000,
-        
-      },
-      {
-        id: "3",
-        teacher: "Michael Johnson",
-        status: "active",
-        Subject: "Arabic",
-        joiningDate: "2023-03-10",
-        salary: 40000,
-        
-      },
-      {
-        id: "4",
-        teacher: "John Doe",
-        status: "suspended",
-        Subject: "Art",
-        joiningDate: "2023-01-15",
-        salary: 20000,
-        
-      },
-      {
-        id: "5",
-        teacher: "Jane Smith",
-        status: "active",
-        Subject: "French",
-        joiningDate: "2022-11-20",
-        salary: 15000,
-        
-      },
-      {
-        id: "6",
-        teacher: "Michael Johnson",
-        status: "active",
-        Subject: "English",
-        joiningDate: "2023-03-10",
-        salary: 20000,
-        
-      },
-]
+ 
 
 export type teacher = {
     id: string;
@@ -130,12 +77,35 @@ export type teacher = {
 
   };
 
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
-  }
-  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
+  type TeacherFormValues = z.infer<typeof teacherRegistrationSchema>  & {id:string };
+  export const DataTableDemo = () => {
+    const [open,setOpen]=React.useState(false)
+    const {teachers,setTeachers}=useData()
     
+
+    const [teacher,setTeacher]=React.useState<TeacherFormValues>({  
+      
+      id: '1',
+      year: '2024',
+      firstName: 'John',
+      lastName: 'Doe',
+      dateOfBirth: new Date('1990-01-01'),
+      gender: 'male',
+      address: '123 Main Street',
+      city: 'Example City',
+      state: 'Example State',
+      postalCode: '12345',
+      country: 'Example Country',
+      teacherEmail: 'john.doe@example.com',
+      teacherPhone: '123-456-7890',
+      teacherSubject: 'Math',
+      joiningDate:new Date('2024-01-01'),
+      emergencyContactName: 'Jane Doe',
+      emergencyContactPhone: '987-654-3210',
+      medicalConditions: 'None',
+      salary: 50000,
+      status:"active",})
+      const formattedJoiningDate = format(teacher.joiningDate, "yyyy-MM-dd");
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'active':
@@ -149,7 +119,7 @@ export type teacher = {
       }
     }, []);
     
-   const columns: ColumnDef<TeacherSummary>[] = [
+   const columns: ColumnDef<TeacherFormValues>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -185,9 +155,9 @@ export type teacher = {
       ),
     },
     {
-      accessorKey: "Subject",
+      accessorKey: "teacherSubject",
       header: "Subject",
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("Subject")}</div>,
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("teacherSubject")}</div>,
     },
     {
       accessorKey: "status",
@@ -199,9 +169,10 @@ export type teacher = {
     {
       accessorKey: "joiningDate",
       header: "Joining Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
-      ),
+      cell: ({ row }) => {
+        const rawDate = row.getValue("joiningDate"); // Assuming this is a Date object
+        return <div>{format(new Date(rawDate), "yyyy-MM-dd")}</div>;
+      },
     },
     {
       accessorKey: "salary",
@@ -237,7 +208,7 @@ export type teacher = {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(teacher)}>
                 View Teacher
               </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
@@ -254,9 +225,13 @@ export type teacher = {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+  const openEditSheet = (teacher:TeacherFormValues) => {
+        setTeacher(teacher)
+        setOpen(true); // Open the sheet after setting the level
+      };
+    
   const table = useReactTable({
-    data,
+    data:teachers,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -415,6 +390,7 @@ export type teacher = {
         </div>
       </div>
     </div>
+    <SheetDemo open={open} setOpen={setOpen}  teacher={teacher}/>
     </CardContent>
   </Card>
   </>
