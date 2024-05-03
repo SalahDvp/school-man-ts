@@ -1,5 +1,5 @@
 "use client"
-
+import { format } from "date-fns"; 
 import * as React from "react"
 import {
   CaretSortIcon,
@@ -50,55 +50,21 @@ import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
-const data: Student[] = [
-    {
-        id: "1",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "2",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
-      {
-        id: "3",
-        student: "Michael Johnson",
-        status: "active",
-        level: "Advanced",
-        joiningDate: "2023-03-10",
-        leftAmountToPay: 200,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "4",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "5",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
+import SheetDemo from "./editStudent"
+import  studentRegistrationSchema  from "@/validators/auth";
+import { useData } from "@/context/admin/fetchDataContext";
+import { z } from "zod"
 
-]
 type Status = 'accepted' | 'pending' | 'rejected';
+export type StudentSummary = {
+  id: string;
+  teacher: string;
+  status: Status;
+  Subject: string;
+  joiningDate: string;
+  salary: number;
+
+};
 export type Student = {
     id: string;
     student: string;
@@ -108,13 +74,34 @@ export type Student = {
     leftAmountToPay: number;
     registrationStatus:"accepted" | "pending" | "rejected"
   };
-
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
-  }
-  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
-    
+  type StudentFormValues = z.infer<typeof studentRegistrationSchema>  & {id:string };
+  export const DataTableDemo = () => {
+    const [open,setOpen]=React.useState(false)
+    const {students,setStudents}=useData()
+    const [student,setStudent]=React.useState<StudentFormValues>({  
+      
+      id: '1',
+      year: '2024',
+      firstName: 'John',
+      lastName: 'Doe',
+      dateOfBirth: new Date('1990-01-01'),
+      gender: 'male',
+      address: '123 Main Street',
+      city: 'Example City',
+      state: 'Example State',
+      postalCode: '12345',
+      country: 'Example Country',
+      studentEmail: 'john.doe@example.com',
+      studentPhone: '123-456-7890',
+      studentSubject: 'Math',
+      joiningDate:new Date('2024-01-01'),
+      emergencyContactName: 'Jane Doe',
+      emergencyContactPhone: '987-654-3210',
+      medicalConditions: 'None',
+      salary: 50000,
+      status:"accepted",
+    })
+    const formattedJoiningDate = format(student.joiningDate, "yyyy-MM-dd");
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'accepted':
@@ -178,9 +165,10 @@ export type Student = {
     {
       accessorKey: "joiningDate",
       header: "Joining Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
-      ),
+      cell: ({ row }) => {
+        const rawDate = row.getValue("joiningDate"); // Assuming this is a Date object
+        return <div>{format(new Date(rawDate), "yyyy-MM-dd")}</div>;
+      },
     },
     {
       accessorKey: "registrationStatus",
@@ -228,7 +216,7 @@ export type Student = {
                 accept registration
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(student)}>
                 View Student
               </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
@@ -245,9 +233,13 @@ export type Student = {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+  const openEditSheet = (student:StudentFormValues) => {
+        setStudent(student)
+        setOpen(true); // Open the sheet after setting the level
+      };
+    
   const table = useReactTable({
-    data,
+    data:students,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -407,7 +399,7 @@ export type Student = {
           </Button>
         </div>
       </div>
-   
+      <SheetDemo open={open} setOpen={setOpen}  student={student}/>
     </CardContent>
   </Card>
   <ScrollBar orientation="horizontal" />

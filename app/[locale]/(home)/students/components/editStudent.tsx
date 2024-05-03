@@ -21,12 +21,15 @@ import {
 import ImageUpload from "./uploadFile";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { studentRegistrationSchema } from "@/validators/auth";
+import  studentRegistrationSchema  from "@/validators/auth";
 import CalendarDatePicker from "./date-picker";
 import Combobox from "@/components/ui/comboBox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { LoadingButton } from "@/components/ui/loadingButton";
+import { z } from "zod";
+import { updateStudent } from "@/lib/hooks/student"
+import { useData } from "@/context/admin/fetchDataContext"
 type FormKeys =
   | "firstName"
   | "lastName"
@@ -38,38 +41,24 @@ type FormKeys =
   | "state"
   | "postalCode"
   | "country"
-  | "parentFirstName"
-  | "parentLastName"
+  | "parentFullName"
   | "parentEmail"
   | "parentPhone"
   | "emergencyContactName"
   | "emergencyContactPhone"
-  | "medicalConditions";
+  | "medicalConditions"
+  | "status"
+  | "joiningDate"
+  | "startDate"
+
+  type StudentFormValues = z.infer<typeof studentRegistrationSchema> & { [key: string]: string | Date | number;}
+
 interface openModelProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   open: boolean; // Specify the type of setOpen
+  student:StudentFormValues
 }
-interface FormValues {
-  year: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: any;
-  gender: "male" | "female" | "other";
-  address: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-  parentFirstName: string;
-  parentLastName: string;
-  parentEmail: string;
-  parentPhone: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  medicalConditions: string;
-  // Add other fields as needed
-  [key: string]: string | Date;
-}
+
 const fieldNames = [
   "firstName",
   "lastName",
@@ -89,48 +78,7 @@ const fieldNames = [
   "emergencyContactPhone",
   "medicalConditions",
 ];
-const parentNames = [
-  {
-    value: "John Doe",
-    label: "John Doe",
-    parentFirstName: "John",
-    parentLastName: "Doe",
-    parentEmail: "john.doe@example.com",
-    parentPhone: "1234567890",
-  },
-  {
-    value: "Jane Smith",
-    label: "Jane Smith",
-    parentFirstName: "Jane",
-    parentLastName: "Smith",
-    parentEmail: "jane.smith@example.com",
-    parentPhone: "9876543210",
-  },
-  {
-    value: "Michael Johnson",
-    label: "Michael Johnson",
-    parentFirstName: "Michael",
-    parentLastName: "Johnson",
-    parentEmail: "michael.johnson@example.com",
-    parentPhone: "5678901234",
-  },
-  {
-    value: "Emily Brown",
-    label: "Emily Brown",
-    parentFirstName: "Emily",
-    parentLastName: "Brown",
-    parentEmail: "emily.brown@example.com",
-    parentPhone: "3456789012",
-  },
-  {
-    value: "William Wilson",
-    label: "William Wilson",
-    parentFirstName: "William",
-    parentLastName: "Wilson",
-    parentEmail: "william.wilson@example.com",
-    parentPhone: "9012345678",
-  },
-];
+
 const genders = [
   {
     value: "male",
@@ -141,7 +89,7 @@ const genders = [
     label: "Female",
   },
 ];
-const student: FormValues = {
+const student: StudentFormValues = {
   id:"qwdqdqwdqdqwdqdqwdqd",
   year: "2023",
   firstName: "John",
@@ -161,17 +109,29 @@ const student: FormValues = {
   emergencyContactPhone: "987-654-3210",
   medicalConditions: "None",
 };
-const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
+const SheetDemo: React.FC<openModelProps> = ({ setOpen, open,student }) => {
   const { toast } = useToast();
+  const {setStudents}=useData()
+  const {parents}= useData();
   const [openParent, setOpenParent] = useState(false);
   const [openGender, setOpenGender] = useState(false);
-  const form = useForm<FormValues>({
+  const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentRegistrationSchema),
     defaultValues: student
   });
   const { formState, setValue, getValues } = form;
   const { isSubmitting } = formState;
 
+
+  const parentNames = parents.map((parent_: { firstName: string; lastName: string; }) => {
+    // Combine and trim first and last name to remove leading/trailing spaces
+    const combinedName = `${parent_.firstName.trim()} ${parent_.lastName.trim()}`;
+  
+    return {
+      label: combinedName, // For use in UI components like dropdowns
+      value: combinedName, // For use as a form value or ID
+    };
+  });
   const renderInput = ({ fieldName, field }: any) => {
     switch (fieldName) {
       case "dateOfBirth":
@@ -238,7 +198,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
     [setValue]
   );
 
-  const getChanges = (currentValues: FormValues): string => {
+  const getChanges = (currentValues: StudentFormValues): string => {
     let changes = "Changes:\n";
 
     for (const key in currentValues) {
@@ -249,18 +209,27 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
 
     return changes;
   };
-  function onSubmit(data: FormValues) {
+  async function onSubmit(data: StudentFormValues) {
     const changes = getChanges(data);
-    alert(changes);
-    toast({
-      title: "changes applied!",
-      description: `changes applied Successfully ${changes}`,
+    await updateStudent(data,data.id)
+    setStudents((prev:any) => {
+      const updatedStudents = prev.map((student:StudentFormValues) =>
+        student.id === data.id? {...data,student:`${data.firstName} ${data.lastName}`} : student
+      );
+      return updatedStudents;
     });
-  }
+      toast({
+          title: "Changes Applied!",
+          description: "Changes Applied Successfully",
+        })
+    
+        setOpen(false)
+
+} 
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent>
+      <SheetContent className=" sm:max-w-[650px]">
         <ScrollArea className="h-screen pb-20 ">
           <SheetHeader>
             <SheetTitle>Edit Student</SheetTitle>

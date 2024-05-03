@@ -236,7 +236,7 @@ export default function TeacherForm() {
 
  async function onSubmit(data:TeacherFormValues) {
   const teacherId= await addTeacher(data)
-  setTeachers((prev:TeacherFormValues[])=>[...prev,{...data,id:teacherId,teacher: `${data.firstName} ${data.lastName}`}])
+  setTeachers((prev:TeacherFormValues[])=>[{...data,id:teacherId,teacher: `${data.firstName} ${data.lastName}`},...prev])
         toast({
             title: "Teacher added!",
             description: "Teacher added Successfully",

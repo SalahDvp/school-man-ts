@@ -83,7 +83,7 @@ export const  FetchDataProvider = ({ children }) => {
            student: `${doc.data().firstName} ${doc.data().lastName}`}))
        
      
-          //console.table(parentsData);
+          console.table(StudentsData);
         setStudents(StudentsData)
       } catch (error) {
         console.error('Error fetching Students:', error);

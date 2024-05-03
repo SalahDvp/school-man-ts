@@ -91,7 +91,7 @@ function Dashboard() {
               </Card>
             </div>
             <DataTableDemo setOpen={setOpen}/>
-            <SheetDemo open={open} setOpen={setOpen}/>
+            <SheetDemo open={open} setOpen={setOpen} student={undefined}/>
           </div>
           <div>
         <StudentForm/>

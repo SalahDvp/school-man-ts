@@ -290,16 +290,18 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
              control={form.control}
              name={fieldName as FormKeys} 
              
-             render={({ field }) => (
-              <FormItem style={{marginBottom:15}} >
-                      <FormLabel>{fieldName}</FormLabel>
-                      <FormControl  >
-                      {renderInput( fieldName, field )}
-                      </FormControl>
-           
-                      <FormMessage />
-                    </FormItem>
-                  )}
+             render={function ({ field }) {
+               return (
+                 <FormItem style={{ marginBottom: 15 }}>
+                   <FormLabel>{fieldName}</FormLabel>
+                   <FormControl>
+                     {renderInput(fieldName, field)}
+                   </FormControl>
+
+                   <FormMessage />
+                 </FormItem>
+               )
+             }}
                 />
              
               ))}

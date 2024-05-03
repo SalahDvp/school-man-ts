@@ -89,7 +89,7 @@ type StudnetFormValues = z.infer<typeof  studentRegistrationSchema>;
 export default function StudentForm() {
   const { toast } = useToast();
   const {parents}= useData();
-  const {setStudnets} = useData();
+  const {setStudents} = useData();
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
   const form = useForm<StudnetFormValues>({
@@ -231,7 +231,7 @@ export default function StudentForm() {
 
   async function onSubmit(data:StudnetFormValues) {
     const studentId= await addStudent(data)
-    setStudnets((prev:StudnetFormValues[])=>[...prev,{...data,id:studentId,student: `${data.firstName} ${data.lastName}`}])
+    setStudents((prev:StudnetFormValues[])=>[...prev,{...data,id:studentId,student: `${data.firstName} ${data.lastName}`}])
           toast({
               title: "student added!",
               description: "Student added Successfully",
