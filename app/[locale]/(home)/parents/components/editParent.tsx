@@ -1,6 +1,6 @@
 
 "use client"
-import React,{useState,useCallback} from "react"
+import React,{useState} from "react"
 import { Input } from "@/components/ui/input"
 import {
   Sheet,
@@ -24,9 +24,11 @@ import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod"
 import { updateParent } from "@/lib/hooks/parents"
 import { useData } from "@/context/admin/fetchDataContext"
+import {fetchFiles, updateDocuments} from "@/context/admin/hooks/useUploadFiles"
+
 
   
-  type ParentFormValues = z.infer<typeof ParentRegistrationSchema> & { [key: string]: string | Date | number;}
+  type ParentFormValues = z.infer<typeof ParentRegistrationSchema> & { [key: string]: string | Date | number | any;}
 interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean;
@@ -61,7 +63,12 @@ interface openModelProps {
       label: "Female",
     },
   ];
-  
+  interface FileUploadProgress {
+    file: File;
+    name: string;
+    source:any;
+  }
+
   type FormKeys =
     | 'firstName'
     | 'lastName'
@@ -83,8 +90,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
     const {toast}=useToast()
     const {setParents}=useData()
     const [openGender,setOpenGender]=useState(false)
-
-    
+    const [filesToUpload,setFilesToUpload]=useState<FileUploadProgress[]>([]);
     const form =useForm<ParentFormValues>({
       resolver: zodResolver(ParentRegistrationSchema),
            defaultValues:{  
@@ -105,16 +111,26 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
            secondParentPhone: "+1987654321",
            salary: 50000,
            paymentStatus: "Active",
-           totalPayment: 10000}
+           totalPayment: 10000,}
     });
     const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
-
     React.useEffect(() => {
-      reset(parent)
-      console.log("reset",parent);
-      
-   }, [parent])
+      const downloadFiles = async () => {
+        if (parent && parent.documents) {
+          const files=await fetchFiles(parent.documents)
+          console.log("files",files);
+          
+          setFilesToUpload(files);
+        }
+      };
+    
+      if (parent) {
+        reset(parent)
+        downloadFiles();
+      }
+    }, [parent])
+    
    const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
       case "dateOfBirth":
@@ -170,16 +186,21 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
     
         return changes;
       };
-    async function onSubmit(data: ParentFormValues) {
-        const changes = getChanges(data);
 
-   
-          await updateParent(data,data.id)
-          setParents((prev:any) => {
-            const updatedParents = prev.map((parent:ParentFormValues) =>
-              parent.id === data.id? {...data,parent:`${data.firstName} ${data.lastName}`} : parent
+
+      
+    async function onSubmit(data: ParentFormValues) {
+            const changes = getChanges(data);
+            const {value, label,parent, ...updatedData} = data;
+          await updateParent(updatedData,data.id)
+          const documents= await updateDocuments(data.documents && data.documents> 0?data.documents:[],filesToUpload,'Parents',data.id)
+          console.log("new odcuments",documents);
+          
+          setParents((prev:ParentFormValues[]) => {
+            const updatedLevels = prev.map((parent:ParentFormValues) =>
+              parent.id === data.id ? { ...data, id: data.id, parent: `${data.firstName} ${data.lastName}`, documents: documents }: parent
             );
-            return updatedParents;
+            return updatedLevels;
           });
             toast({
                 title: "changes applied!",
@@ -228,7 +249,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
             </form>
           </Form>
           
-              <ImageUpload/>
+              <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
 
         <SheetFooter className="mt-5">
           <SheetClose asChild>

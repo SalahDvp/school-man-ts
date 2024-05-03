@@ -19,7 +19,7 @@ import {
 import {ResetIcon } from "@radix-ui/react-icons";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { studentRegistrationSchema } from "@/validators/auth";
+import studentRegistrationSchema from "@/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useState} from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,6 +28,11 @@ import { ScrollArea} from "@/components/ui/scroll-area";
 import ImageUpload from "./uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
+import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addStudent } from "@/lib/hooks/students";
+import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+
 const fieldNames = [
   "firstName",
   "lastName",
@@ -39,56 +44,15 @@ const fieldNames = [
   "state",
   "postalCode",
   "country",
-  "parentFirstName",
-  "parentLastName",
+  "parentFullName",
   "parentEmail",
   "parentPhone",
   "emergencyContactName",
   "emergencyContactPhone",
   "medicalConditions",
+  "joiningDate",
 ];
-const parentNames = [
-  {
-    value: "John Doe",
-    label: "John Doe",
-    parentFirstName: "John",
-    parentLastName: "Doe",
-    parentEmail: "john.doe@example.com",
-    parentPhone: "1234567890",
-  },
-  {
-    value: "Jane Smith",
-    label: "Jane Smith",
-    parentFirstName: "Jane",
-    parentLastName: "Smith",
-    parentEmail: "jane.smith@example.com",
-    parentPhone: "9876543210",
-  },
-  {
-    value: "Michael Johnson",
-    label: "Michael Johnson",
-    parentFirstName: "Michael",
-    parentLastName: "Johnson",
-    parentEmail: "michael.johnson@example.com",
-    parentPhone: "5678901234",
-  },
-  {
-    value: "Emily Brown",
-    label: "Emily Brown",
-    parentFirstName: "Emily",
-    parentLastName: "Brown",
-    parentEmail: "emily.brown@example.com",
-    parentPhone: "3456789012",
-  },
-  {
-    value: "William Wilson",
-    label: "William Wilson",
-    parentFirstName: "William",
-    parentLastName: "Wilson",
-    parentEmail: "william.wilson@example.com",
-    parentPhone: "9012345678",
-  },
-];
+ 
 const genders = [
   {
     value: "male",
@@ -99,65 +63,122 @@ const genders = [
     label: "Female",
   },
 ];
+
+type FormKeys =
+  | "firstName"
+  | "lastName"
+  | "dateOfBirth"
+  | "gender"
+  | "year"
+  | "address"
+  | "city"
+  | "state"
+  | "postalCode"
+  | "country"
+  | "parentFullName"
+  | "parentEmail"
+  | "parentPhone"
+  | "emergencyContactName"
+  | "emergencyContactPhone"
+  | "medicalConditions"
+  | "joiningDate"
+type StudentFormValues = z.infer<typeof  studentRegistrationSchema> ;
+interface FileUploadProgress {
+  file: File;
+  name: string;
+  source:any;
+}
 export default function StudentForm() {
   const { toast } = useToast();
+  const {parents,setStudents}= useData();
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
-  const form = useForm({
+  const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
-     id: 'abc123',
-  year: '2023',
-  firstName: 'John',
-  lastName: 'Doe',
-  dateOfBirth: new Date('2020-05-15'),
-  gender: 'male',
-  address: '123 Main Street',
-  city: 'Cityville',
-  state: 'Stateland',
-  postalCode: '12345',
-  country: 'Countryland',
-  parentFirstName: 'Jane',
-  parentLastName: 'Doe',
-  parentEmail: 'janedoe@example.com',
-  parentPhone: '123-456-7890',
-  emergencyContactName: 'Emergency Contact',
-  emergencyContactPhone: '987-654-3210',
-  medicalConditions: 'None',
+      id: '123456',
+      level: 'Intermediate',
+      status: 'Active',
+      registrationStatus: 'Registered',
+      startDate: new Date(),
+      lastPaymentDate: new Date(),
+      nextPaymentDate: new Date(),
+      totalAmount: 0,
+      amountLeftToPay: 0,
+      class: { name: 'Class Name', id: 'class123' },
     },
+ 
   });
-  const { reset, formState, setValue, getValues } = form;
+  const { reset, formState, setValue, getValues,watch} = form;
   const { isSubmitting } = formState;
 
-  const renderInput = (fieldName, field) => {
+  
+  React.useEffect(() => {
+    const subscription = watch((value, { name, type }) => console.log(value, name, type));
+    return () => subscription.unsubscribe();
+  }, [watch]);
+  
+  
+  const renderInput = (fieldName: string, field:any) => {
     switch (fieldName) {
       case "dateOfBirth":
         return (
           <CalendarDatePicker
             {...field}
-            className="w-1/2"
+          
             date={getValues("dateOfBirth")}
             setDate={(selectedValue) => {
               if (selectedValue === undefined) {
                 // Handle undefined case if needed
               } else {
-                form.setValue(fieldName, selectedValue.toLocaleString());
+                form.setValue(fieldName, selectedValue);
               }
             }}
           />
         );
-      case "parentFirstName":
+        case "joiningDate":
+          return (
+            <CalendarDatePicker
+              {...field}
+              
+              date={getValues("joiningDate")}
+              setDate={(selectedValue) => {
+                if (selectedValue === undefined) {
+                  // Handle undefined case if needed
+                } else {
+                  form.setValue(fieldName, selectedValue);
+                }
+              }}
+            />
+          );
+      case "parentFullName":
         return (
           <Combobox
             {...field}
             open={open}
             setOpen={setOpen}
             placeHolder="parents"
-            options={parentNames}
-            value={getValues("parentFirstName")}
+            options={parents}
+            value={getValues("parentFullName")}
             onSelected={(selectedValue) => {
-              onSelected(selectedValue);
-              form.setValue(fieldName, selectedValue);
+              const selectedParent = parents.find(
+                (parent:any) => parent.parent === selectedValue
+              );
+              if (selectedParent) {
+
+                  
+                form.setValue(fieldName, selectedValue);
+                setValue("parentLastName", selectedParent.lastName);
+                setValue("parentFirstName", selectedParent.firstName);
+                setValue("parentEmail", selectedParent.parentEmail);
+                setValue("parentPhone", selectedParent.parentPhone);
+                setValue("parentId", selectedParent.id);
+              }
+              console.log("value found");
+              
+            
             }} // Set the value based on the form's current value for the field
           />
         );
@@ -171,8 +192,9 @@ export default function StudentForm() {
             options={genders}
             value={getValues("gender")}
             onSelected={(selectedValue) => {
-              onSelected(selectedValue);
-              form.setValue(fieldName, selectedValue);
+              const gender: "male" | "female" | "other" = selectedValue as "male" | "female" | "other";
+
+              form.setValue(fieldName, gender);
             }}
           />
         );
@@ -180,34 +202,25 @@ export default function StudentForm() {
         return <Input {...field} />;
     }
   };
-  const onSelected = useCallback(
-    (selectedValue) => {
-      const selectedParent = parentNames.find(
-        (parent) => parent.value === selectedValue
-      );
-      if (selectedParent) {
-  console.log("wqeqwemamamam");
-        setValue("parentFirstName", selectedParent.parentFirstName);
-        setValue("parentLastName", selectedParent.parentLastName);
-        setValue("parentEmail", selectedParent.parentEmail);
-        setValue("parentPhone", selectedParent.parentPhone);
-      }
-    },
-    [setValue]
-  );
 
-  function onSubmit(data) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Student added!",
-          description: "student added Successfully",
-        });
-        console.log(data);
-        resolve();
-      }, 2000);
-    });
-  }
+  async function onSubmit(data:StudentFormValues) {
+    const studentId= await addStudent({...data,documents:[]})
+    
+    const uploaded = await uploadFilesAndLinkToCollection("Students", studentId, filesToUpload);
+
+    setStudents((prev:StudentFormValues[])=>[{...data,id:studentId,student:`${data.firstName} ${data.lastName}`,
+    value: `${data.firstName} ${data.lastName}`,
+    label: `${data.firstName} ${data.lastName}`,
+    documents:uploaded},...prev])
+          toast({
+              title: "student added!",
+              description: "Student added Successfully",
+            });
+    console.log(data);
+            reset(); 
+          
+          }
+     
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
@@ -244,7 +257,7 @@ export default function StudentForm() {
               <FormField
                 key={index}
                 control={form.control}
-                name={fieldName}
+                name={fieldName as FormKeys}
                 render={({ field }) => (
                   <FormItem style={{ marginBottom: 15 }}>
                     <FormLabel>{fieldName}</FormLabel>
@@ -258,7 +271,7 @@ export default function StudentForm() {
           </form>
         </Form>
 
-        <ImageUpload />
+       <ImageUpload  filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/> 
       </CardContent>
     </ScrollArea>
     <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

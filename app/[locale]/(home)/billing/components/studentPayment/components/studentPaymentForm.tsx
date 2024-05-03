@@ -254,7 +254,6 @@ const onSelected=(selectedStudent:any)=>{
                   const updatedStudent:any = { ...rest };
                   onSelected(updatedStudent); 
                   console.log(updatedStudent);
-                  setStudent(updatedStudent)
                   form.setValue(fieldName, {name:selectedStudent.name,value:selectedStudent.value,label:selectedStudent.label,id:selectedStudent.id}); 
                 }
               }}

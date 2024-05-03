@@ -1,11 +1,9 @@
 "use client"
 import React, { createContext, useState,useContext,useEffect} from 'react';
-import { auth } from '@/firebase/firebase-config'
-import {  onAuthStateChanged,} from "firebase/auth";
-import { redirect, useRouter } from "next/navigation";
-import { useUser } from "@/lib/auth";
 import { getDocs,collection,query,where,orderBy,getDoc, doc} from 'firebase/firestore';
 import { db } from "@/firebase/firebase-config"
+
+
 
 export const AppContext = createContext();
 
@@ -13,6 +11,34 @@ export const AppContext = createContext();
 export const  FetchDataProvider = ({ children }) => {
   const [levels, setLevels] = useState([]);
   const [parents,setParents]=useState([])
+  const [students,setStudents]=useState([]);
+  useEffect(()=>{
+    const getStudents = async () => {
+      try {
+        const studentSnapshot = await getDocs(collection(db, 'Students'));
+      
+        const StudentsData = studentSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           joiningDate:new Date(doc.data().joiningDate.toDate()),
+           lastPaymentDate:new Date(doc.data().joiningDate.toDate()),
+           nextPaymentDate:new Date(doc.data().joiningDate.toDate()),
+           startDate:new Date(doc.data().joiningDate.toDate()),
+           student: `${doc.data().firstName} ${doc.data().lastName}`,
+           value: `${doc.data().firstName} ${doc.data().lastName}`,
+           label: `${doc.data().firstName} ${doc.data().lastName}`,
+          
+        }))
+setStudents(StudentsData)
+       
+      } catch (error) {
+        console.error('Error fetching Students:', error);
+      }
+    };
+    
+    getStudents(); 
+  },[])
+
 
   useEffect(() => {
     const getLevels = async () => {
@@ -20,6 +46,8 @@ export const  FetchDataProvider = ({ children }) => {
         const levelsSnapshot = await getDocs(collection(db, 'Levels'));
       
         const levelsData = levelsSnapshot.docs.map((doc) => ({ ...doc.data(),
+           value:doc.data().level,
+           label:doc.data().level,
            id: doc.id,
            start:new Date(doc.data().start.toDate()),
            end:new Date(doc.data().end.toDate()),
@@ -37,7 +65,11 @@ export const  FetchDataProvider = ({ children }) => {
         const parentsData = parentsSnapshot.docs.map((doc) => ({ ...doc.data(),
            id: doc.id,
            dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
-           parent: `${doc.data().firstName} ${doc.data().lastName}`}))
+           parent: `${doc.data().firstName} ${doc.data().lastName}`,
+           value: `${doc.data().firstName} ${doc.data().lastName}`,
+           label: `${doc.data().firstName} ${doc.data().lastName}`,
+
+          }))
        
      
           //console.table(parentsData);
@@ -66,8 +98,9 @@ export const  FetchDataProvider = ({ children }) => {
 
     getProfile();
   }, []);
+  console.log(students);
   return (
-    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile}}>
+    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents}}>
       {children}
     </AppContext.Provider>
   );

@@ -7,11 +7,13 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import i18nConfig from "@/i18nConfig";
 import { dir } from "i18next";
+import initTranslations from "../i18n";
+import TranslationsProvider from "@/components/TranslationsProvider";
 const APP_NAME = "PWA App";
 const APP_DEFAULT_TITLE = "My Awesome PWA App";
 const APP_TITLE_TEMPLATE = "%s - PWA App";
 const APP_DESCRIPTION = "Best PWA app in the world!";
-
+const i18nNamespaces = ['dashboard'];
 export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: {
@@ -54,11 +56,15 @@ interface RootLayoutProps {
   children: React.ReactNode;
   params: { locale: string };
 }
-const RootLayout: React.FC<RootLayoutProps> = ({ children, params: { locale } }) => {
-
+const RootLayout: React.FC<RootLayoutProps> = async ({ children, params: { locale } }) => {
+  const {t,resources}=await initTranslations(locale,i18nNamespaces)
   return (
     <html lang={locale} dir={dir(locale)}>
       <body className={cn("min-h-screen bg-background font-sans antialiased",fontSans.variable)}>  
+      <TranslationsProvider
+    namespaces={i18nNamespaces}
+    locale={locale}
+    resources={resources}>
            <ThemeProvider
         attribute="class"
         defaultTheme="dark"
@@ -67,6 +73,7 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children, params: { locale } })
           {children}
           <Toaster />
           </ThemeProvider>
+          </TranslationsProvider>
        </body>
           
     </html>

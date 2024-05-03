@@ -63,6 +63,7 @@ import {
 import { MultiSelect } from "./multiselect"
 import { json } from "stream/consumers"
 import { LoadingButton } from "@/components/ui/loadingButton"
+import { useData } from "@/context/admin/fetchDataContext"
  
 type Checked = DropdownMenuCheckboxItemProps["checked"]
  
@@ -92,71 +93,12 @@ const allTeachers = [
     "Class I",
     "Class J"
   ];
-  // Array of levels with names and IDs
-  const levels = [
-    {
-      id: "123",
-      name: "Intermediate",
-      start: "2024-05-01",
-      end: "2024-07-31",
-      fee: 100,
-      status: "open",
-      registrationDeadline: "2024-04-30",
-      subjects: [
-        { value: "math", label: "Mathematics" },
-        { value: "sci", label: "Science" }
-      ],
-      prices: [
-        { name: "Monthly", period: "1 month", price: 30 },
-        { name: "Quarterly", period: "2 months", price: 80 },
-        { name: "Semester", period: "4 months", price: 150 },
-        { name: "Annual", period: "1 year", price: 250 }
-      ]
-    },
-    {
-      id: "456",
-      name: "Beginner",
-      start: "2024-06-15",
-      end: "2024-08-30",
-      fee: 80,
-      status: "open",
-      registrationDeadline: "2024-06-01",
-      subjects: [
-        { value: "art", label: "Art" },
-        { value: "music", label: "Music" }
-      ],
-      prices: [
-        { name: "Monthly", period: "1 month", price: 25 },
-        { name: "Quarterly", period: "2 months", price: 70 },
-        { name: "Semester", period: "4 months", price: 120 },
-        { name: "Annual", period: "1 year", price: 200 }
-      ]
-    },
-    {
-      id: "789",
-      name: "Advanced",
-      start: "2024-04-01",
-      end: "2024-09-30",
-      fee: 150,
-      status: "closed",
-      registrationDeadline: "2024-03-15",
-      subjects: [
-        { value: "eng", label: "English" },
-        { value: "hist", label: "History" }
-      ],
-      prices: [
-        { name: "Monthly", period: "1 month", price: 40 },
-        { name: "Quarterly", period: "2 months", price: 110 },
-        { name: "Semester", period: "4 months", price: 200 },
-        { name: "Annual", period: "1 year", price: 350 }
-      ]
-    },
-    // Add more levels as needed
-  ];
+
+
   
 export type ClassFormValues = z.infer<typeof classSchema>;
 export function ClassForm() {
-
+  const{levels}=useData()
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(classSchema),
     defaultValues: {
@@ -247,7 +189,7 @@ function onSubmit(values:ClassFormValues) {
                    console.log(JSON.parse(value));
                    
                     const parsedValue = JSON.parse(value);
-                    const level={name:parsedValue.name,id:parsedValue.id}
+                    const level=parsedValue
                     field.onChange(level);
                   }}
           
@@ -262,9 +204,9 @@ function onSubmit(values:ClassFormValues) {
                           </FormControl>
 
                           <SelectContent>
-                            {levels.map((level,index) => (
+                            {levels.map((level:any,index:number) => (
                               <SelectItem key={index} value={JSON.stringify(level)}>
-                                {level.name}
+                                {level.level}
                               </SelectItem>
                             ))}
                           </SelectContent>

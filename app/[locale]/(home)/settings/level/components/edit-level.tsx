@@ -63,7 +63,7 @@ const objectOptions = [
 
 ];
 
-type LevelFormValues = z.infer<typeof levelSchema>;
+type LevelFormValues = z.infer<typeof levelSchema> & {value:string;label:string};
 interface SheetDemoProps {
     level: Level;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -112,8 +112,9 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     name: "prices",
   });
   
-  const onSubmit =async (data:LevelFormValues) => {
-    await updateLevel(data,data.id)
+  const onSubmit =async (data:LevelFormValues ) => {
+    const {value, label, ...updatedData} = data;
+    await updateLevel(updatedData,data.id)
     setLevels((prev:any) => {
       const updatedLevels = prev.map((level:Level) =>
         level.id === data.id ? data : level

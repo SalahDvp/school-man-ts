@@ -94,8 +94,9 @@ export function SheetDemo() {
 
   const {toast}=useToast()
   const onSubmit = async(data) => {
-    await addLevel(data)
-    setLevels((prev) => [...prev, data]);
+    const levelId=await addLevel(data)
+    setLevels((prev) => [...prev, {...data,id:levelId, value: data.level,
+    label:data.level}]);
     toast({
       title: "changes applied!",
       description: `changes applied Successfully`,

@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import {
-  CaretSortIcon,
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons"
@@ -50,71 +49,61 @@ import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
-const data: Student[] = [
-    {
-        id: "1",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "2",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
-      {
-        id: "3",
-        student: "Michael Johnson",
-        status: "active",
-        level: "Advanced",
-        joiningDate: "2023-03-10",
-        leftAmountToPay: 200,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "4",
-        student: "John Doe",
-        status: "suspended",
-        level: "Intermediate",
-        joiningDate: "2023-01-15",
-        leftAmountToPay: 0,
-        registrationStatus:"accepted"
-      },
-      {
-        id: "5",
-        student: "Jane Smith",
-        status: "failed",
-        level: "Beginner",
-        joiningDate: "2022-11-20",
-        leftAmountToPay: 150,
-        registrationStatus:"pending"
-      },
+import SheetDemo from "./editStudent"
+import  studentRegistrationSchema  from "@/validators/auth";
+import { useData } from "@/context/admin/fetchDataContext";
+import { z } from "zod"
 
-]
 type Status = 'accepted' | 'pending' | 'rejected';
-export type Student = {
-    id: string;
-    student: string;
-    status: "active" | "suspended" | "failed";
-    level: string;
-    joiningDate: string;
-    leftAmountToPay: number;
-    registrationStatus:"accepted" | "pending" | "rejected"
-  };
+export type StudentSummary = {
+  id: string;
+  teacher: string;
+  status: Status;
+  Subject: string;
+  joiningDate: string;
+  salary: number;
 
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
-  }
-  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
-    
+};
+  type StudentFormValues = z.infer<typeof studentRegistrationSchema>  & {id:string };
+  export const DataTableDemo = () => {
+    const [open,setOpen]=React.useState(false)
+    const {students,setStudents}=useData()
+    const [student,setStudent]=React.useState<StudentFormValues>({  
+      id: '123456',
+      level: 'Intermediate',
+      year: '2024',
+      firstName: 'John',
+      lastName: 'Doe',
+      dateOfBirth: new Date('1990-01-01'),
+      gender: 'male',
+      address: '123 Main St',
+      city: 'Anytown',
+      state: 'State',
+      postalCode: '12345',
+      country: 'Country',
+      parentFullName: 'Jane Doe',
+      parentFirstName: 'Jane',
+      parentLastName: 'Doe',
+      parentEmail: 'jane.doe@example.com',
+      parentPhone: '123-456-7890',
+      parentId: '654321',
+      emergencyContactName: 'Emergency Contact',
+      emergencyContactPhone: '987-654-3210',
+      medicalConditions: null,
+      status: 'Active',
+      joiningDate: new Date(),
+      registrationStatus: 'Registered',
+      startDate: new Date(),
+      lastPaymentDate: new Date(),
+      nextPaymentDate: new Date(),
+      totalAmount: 1000,
+      amountLeftToPay: 500,
+      class: { name: 'Class Name', id: 'class123' },
+    })
+    const openEditSheet = (student:StudentFormValues) => {
+      setStudent(student)
+      setOpen(true); // Open the sheet after setting the level
+    };
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'accepted':
@@ -128,7 +117,7 @@ export type Student = {
       }
     }, []);
     
-   const columns: ColumnDef<Student>[] = [
+   const columns: ColumnDef<StudentFormValues>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -179,7 +168,9 @@ export type Student = {
       accessorKey: "joiningDate",
       header: "Joining Date",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("joiningDate")}</div>
+        <div className="lowercase hidden sm:table-cell">
+{((row.getValue("joiningDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+        </div>
       ),
     },
     {
@@ -190,10 +181,10 @@ export type Student = {
       ),
     },
     {
-      accessorKey: "leftAmountToPay",
+      accessorKey: "amountLeftToPay",
       header: () => <div className="text-right">Amount left</div>,
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("leftAmountToPay"))
+        const amount = parseFloat(row.getValue("amountLeftToPay"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -209,7 +200,7 @@ export type Student = {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original
+        const student = row.original
   
         return (
           <DropdownMenu>
@@ -223,12 +214,12 @@ export type Student = {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
               disabled={row.getValue("registrationStatus")==="accepted"}
-                onClick={() => navigator.clipboard.writeText(payment.id)}
+                onClick={() => navigator.clipboard.writeText(student.id)}
               >
                 accept registration
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(student)}>
                 View Student
               </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
@@ -245,9 +236,9 @@ export type Student = {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+    
   const table = useReactTable({
-    data,
+    data:students,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -407,7 +398,7 @@ export type Student = {
           </Button>
         </div>
       </div>
-   
+      <SheetDemo open={open} setOpen={setOpen}  student={student}/>
     </CardContent>
   </Card>
   <ScrollBar orientation="horizontal" />

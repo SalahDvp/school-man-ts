@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Sheet,
@@ -21,12 +21,16 @@ import {
 import ImageUpload from "./uploadFile";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { studentRegistrationSchema } from "@/validators/auth";
+import studentRegistrationSchema from "@/validators/auth";
 import CalendarDatePicker from "./date-picker";
 import Combobox from "@/components/ui/comboBox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { LoadingButton } from "@/components/ui/loadingButton";
+import { useData } from "@/context/admin/fetchDataContext";
+import { z } from "zod";
+import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles";
+import { updateStudent } from "@/lib/hooks/students";
 type FormKeys =
   | "firstName"
   | "lastName"
@@ -42,35 +46,22 @@ type FormKeys =
   | "parentLastName"
   | "parentEmail"
   | "parentPhone"
+    |"class"
+    |"level"
+    |"amountLeftToPay"
   | "emergencyContactName"
   | "emergencyContactPhone"
   | "medicalConditions";
+  type StudentFormValues = z.infer<typeof studentRegistrationSchema> & { [key: string]: string | Date | number | any;}
+
 interface openModelProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   open: boolean; // Specify the type of setOpen
+  student:StudentFormValues
 }
-interface FormValues {
-  year: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: any;
-  gender: "male" | "female" | "other";
-  address: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  country: string;
-  parentFirstName: string;
-  parentLastName: string;
-  parentEmail: string;
-  parentPhone: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  medicalConditions: string;
-  // Add other fields as needed
-  [key: string]: string | Date;
-}
+
 const fieldNames = [
+  
   "firstName",
   "lastName",
   "dateOfBirth",
@@ -85,51 +76,13 @@ const fieldNames = [
   "parentLastName",
   "parentEmail",
   "parentPhone",
+  "level",
+  "class",
+  "amountLeftToPay",
   "emergencyContactName",
   "emergencyContactPhone",
   "medicalConditions",
-];
-const parentNames = [
-  {
-    value: "John Doe",
-    label: "John Doe",
-    parentFirstName: "John",
-    parentLastName: "Doe",
-    parentEmail: "john.doe@example.com",
-    parentPhone: "1234567890",
-  },
-  {
-    value: "Jane Smith",
-    label: "Jane Smith",
-    parentFirstName: "Jane",
-    parentLastName: "Smith",
-    parentEmail: "jane.smith@example.com",
-    parentPhone: "9876543210",
-  },
-  {
-    value: "Michael Johnson",
-    label: "Michael Johnson",
-    parentFirstName: "Michael",
-    parentLastName: "Johnson",
-    parentEmail: "michael.johnson@example.com",
-    parentPhone: "5678901234",
-  },
-  {
-    value: "Emily Brown",
-    label: "Emily Brown",
-    parentFirstName: "Emily",
-    parentLastName: "Brown",
-    parentEmail: "emily.brown@example.com",
-    parentPhone: "3456789012",
-  },
-  {
-    value: "William Wilson",
-    label: "William Wilson",
-    parentFirstName: "William",
-    parentLastName: "Wilson",
-    parentEmail: "william.wilson@example.com",
-    parentPhone: "9012345678",
-  },
+
 ];
 const genders = [
   {
@@ -141,43 +94,82 @@ const genders = [
     label: "Female",
   },
 ];
-const student: FormValues = {
-  id:"qwdqdqwdqdqwdqdqwdqd",
-  year: "2023",
-  firstName: "John",
-  lastName: "Doe",
-  dateOfBirth: new Date("2000-01-01"), // Assuming a valid date string or Date object
-  gender: "female",
-  address: "123 Main St",
-  city: "City",
-  state: "State",
-  postalCode: "12345",
-  country: "Country",
-  parentFirstName: "John Doe",
-  parentLastName: "Doe",
-  parentEmail: "jane.doe@example.com",
-  parentPhone: "123-456-7890",
-  emergencyContactName: "Emergency Contact",
-  emergencyContactPhone: "987-654-3210",
-  medicalConditions: "None",
-};
-const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
+
+interface FileUploadProgress {
+  file: File;
+  name: string;
+  source:any;
+}
+const SheetDemo: React.FC<openModelProps> = ({ setOpen, open,student }) => {
   const { toast } = useToast();
   const [openParent, setOpenParent] = useState(false);
   const [openGender, setOpenGender] = useState(false);
-  const form = useForm<FormValues>({
+  const {parents,setStudents}=useData()
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
+  const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentRegistrationSchema),
-    defaultValues: student
+    defaultValues: {
+      id: '123456',
+      level: 'Intermediate',
+      year: '2024',
+      firstName: 'John',
+      lastName: 'Doe',
+      dateOfBirth: new Date('1990-01-01'),
+      gender: 'male',
+      address: '123 Main St',
+      city: 'Anytown',
+      state: 'State',
+      postalCode: '12345',
+      country: 'Country',
+      parentFullName: 'Jane Doe',
+      parentFirstName: 'Jane',
+      parentLastName: 'Doe',
+      parentEmail: 'jane.doe@example.com',
+      parentPhone: '123-456-7890',
+      parentId: '654321',
+      emergencyContactName: 'Emergency Contact',
+      emergencyContactPhone: '987-654-3210',
+      medicalConditions: null,
+      status: 'Active',
+      joiningDate: new Date(),
+      registrationStatus: 'Registered',
+      startDate: new Date(),
+      lastPaymentDate: new Date(),
+      nextPaymentDate: new Date(),
+      totalAmount: 1000,
+      amountLeftToPay: 500,
+      class: { name: 'Class Name', id: 'class123' },
+    }
   });
-  const { formState, setValue, getValues } = form;
+  const { formState, setValue, getValues,reset} = form;
   const { isSubmitting } = formState;
 
-  const renderInput = ({ fieldName, field }: any) => {
+  
+useEffect(() => {
+    const downloadFiles = async () => {
+      if (student && student.documents) {
+        const files=await fetchFiles(student.documents)
+        console.log("files",files);
+        
+        setFilesToUpload(files);
+      }
+    };
+  
+    if (student) {
+      console.log("studwnt loaded");
+      
+      reset(student)
+      downloadFiles();
+    }
+  }, [student])
+  const renderInput = (fieldName: string, field:any) => {
     switch (fieldName) {
       case "dateOfBirth":
         return (
           <CalendarDatePicker
             {...field}
+          
             date={getValues("dateOfBirth")}
             setDate={(selectedValue) => {
               if (selectedValue === undefined) {
@@ -188,19 +180,48 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
             }}
           />
         );
-      case "parentFirstName":
+        case "joiningDate":
+          return (
+            <CalendarDatePicker
+              {...field}
+              
+              date={getValues("joiningDate")}
+              setDate={(selectedValue) => {
+                if (selectedValue === undefined) {
+                  // Handle undefined case if needed
+                } else {
+                  form.setValue(fieldName, selectedValue);
+                }
+              }}
+            />
+          );
+      case "parentFullName":
         return (
           <Combobox
             {...field}
             open={openParent}
             setOpen={setOpenParent}
             placeHolder="parents"
-            options={parentNames}
-            value={getValues("parentFirstName")}
+            options={parents}
+            value={getValues("parentFullName")}
             onSelected={(selectedValue) => {
-              onSelected(selectedValue);
-              form.setValue(fieldName, selectedValue);
-            }} // Set the value based on the form's current value for the field
+              const selectedParent = parents.find(
+                (parent:any) => parent.parent === selectedValue
+              );
+              if (selectedParent) {
+
+                  
+                form.setValue(fieldName, selectedValue);
+                setValue("parentLastName", selectedParent.lastName);
+                setValue("parentFirstName", selectedParent.firstName);
+                setValue("parentEmail", selectedParent.parentEmail);
+                setValue("parentPhone", selectedParent.parentPhone);
+                setValue("parentId", selectedParent.id);
+              }
+     
+              
+            
+            }} 
           />
         );
       case "gender":
@@ -211,34 +232,22 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
             setOpen={setOpenGender}
             placeHolder="gender"
             options={genders}
-            value={getValues("gender")} // Set the value based on the form's current value for the field
+            value={getValues("gender")}
             onSelected={(selectedValue) => {
-              form.setValue(fieldName, selectedValue); // Update the form value when an option is selected
-              //onSelected(selectedValue); // Call the onSelected callback if needed
+              const gender: "male" | "female" | "other" = selectedValue as "male" | "female" | "other";
+
+              form.setValue(fieldName, gender);
             }}
           />
         );
+        case "class":
+          return <Input {...field}  value={getValues("class").name}/>;
       default:
         return <Input {...field} />;
     }
   };
-  const onSelected = useCallback(
-    (selectedValue: string) => {
-      const selectedParent = parentNames.find(
-        (parent) => parent.value === selectedValue
-      );
-      if (selectedParent) {
-        // Update form fields with selected parent information
-        setValue("parentFirstName", selectedParent.parentFirstName);
-        setValue("parentLastName", selectedParent.parentLastName);
-        setValue("parentEmail", selectedParent.parentEmail);
-        setValue("parentPhone", selectedParent.parentPhone);
-      }
-    },
-    [setValue]
-  );
 
-  const getChanges = (currentValues: FormValues): string => {
+ const getChanges = (currentValues: StudentFormValues): string => {
     let changes = "Changes:\n";
 
     for (const key in currentValues) {
@@ -249,14 +258,25 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
 
     return changes;
   };
-  function onSubmit(data: FormValues) {
+  async function onSubmit(data: StudentFormValues) {
     const changes = getChanges(data);
-    alert(changes);
+    const { value, label, student, ...updatedData } = data;
+    await updateStudent(updatedData,data.id)
+    const documents= await updateDocuments(data.documents && data.documents> 0?data.documents:[],filesToUpload,'Students',data.id)
+setStudents((prev:StudentFormValues[]) => {
+  const updatedLevels = prev.map((student:StudentFormValues) =>
+    student.id === data.id ? { ...data, id: data.id, student: `${data.firstName} ${data.lastName}`, documents: documents }: student
+  );
+  return updatedLevels;
+});
     toast({
       title: "changes applied!",
       description: `changes applied Successfully ${changes}`,
     });
+
+
   }
+  
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -279,7 +299,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
                     <FormItem style={{ marginBottom: 15 }}>
                       <FormLabel>{fieldName}</FormLabel>
                       <FormControl>
-                        {renderInput({ fieldName, field })}
+                        {renderInput(fieldName,field)}
                       </FormControl>
 
                       <FormMessage />
@@ -290,7 +310,8 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open }) => {
             </form>
           </Form>
 
-          <ImageUpload />
+          <ImageUpload  filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/> 
+
 
           <SheetFooter className="mt-5">
             <SheetClose asChild>

@@ -1,4 +1,4 @@
-
+"use client"
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,6 +31,7 @@ import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addParent } from "@/lib/hooks/parents";
+import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 const fieldNames = [
   "firstName",
   "lastName",
@@ -77,9 +78,15 @@ type FormKeys =
   |"numberOfChildren"
 
   type ParentFormValues = z.infer<typeof ParentRegistrationSchema>;
+  interface FileUploadProgress {
+    file: File;
+    name: string;
+    source:any;
+  }
 
  function ParentForm() {
   const { toast } = useToast();
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
   const {setParents}=useData()
   const [openGender, setOpenGender] = useState(false);
   const form = useForm<ParentFormValues>({
@@ -87,7 +94,7 @@ type FormKeys =
     defaultValues:{
       id:"ididid",
       paymentStatus:'Active',
-      totalPayment:0
+      totalPayment:0,
     }
   });
   const { reset, formState, setValue, getValues,watch } = form;
@@ -140,17 +147,30 @@ type FormKeys =
     return () => subscription.unsubscribe()
   }, [watch])
 
-
-  async function onSubmit(data:ParentFormValues) {
-  const parentId= await addParent(data)
-setParents((prev:ParentFormValues[])=>[...prev,{...data,id:parentId,parent: `${data.firstName} ${data.lastName}`}])
-          toast({
-            title: "Parent added!",
-            description: "Parent added Successfully",
-          });
-console.log(data)
-          reset()
+  async function onSubmit(data: ParentFormValues) {
+    try {
+      const parentId = await addParent({...data,documets:[]});
+      const uploaded = await uploadFilesAndLinkToCollection("Parents", parentId, filesToUpload);
+      
+      setParents((prev: ParentFormValues[]) => [
+        ...prev,
+        { ...data, id: parentId, parent: `${data.firstName} ${data.lastName}`,     
+        value: `${data.firstName} ${data.lastName}`,
+        label: `${data.firstName} ${data.lastName}`, documents: uploaded },
+      ]);
+  
+      toast({
+        title: "Parent added!",
+        description: "Parent added Successfully",
+      });
+      console.log(data);
+      reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // Handle the error, e.g., show an error message to the user
+    }
   }
+  
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
@@ -202,7 +222,7 @@ console.log(data)
             </form>
           </Form>
 
-          <ImageUpload />
+          <ImageUpload  filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
