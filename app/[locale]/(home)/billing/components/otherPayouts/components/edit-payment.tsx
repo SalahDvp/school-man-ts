@@ -22,7 +22,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod"
-
+import { useData } from "@/context/admin/fetchDataContext";
+import { updatePayment } from "@/lib/hooks/payment";
 type FormKeys =
   |"paymentTitle"
   |"paymentAmount"
@@ -104,8 +105,10 @@ type FormKeys =
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
   }
-const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
+const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
   const { toast } = useToast();
+  const {setPayouts}= useData()
+  const [openPayout,setOpenPayout]=useState(false)
   const [status, setstatus] = useState(false);
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
     const [openSubject, setOpenSubject] = useState();
@@ -114,10 +117,14 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
            defaultValues: payment,
       
     });
-    const {formState,setValue,getValues } = form;
+    const {formState,setValue,getValues ,reset} = form;
     const { isSubmitting } = formState;
 
 
+    React.useEffect(() => {
+      reset()
+      console.log("reset",payment);
+    }, [payment])
     const renderInput = ({ fieldName, field }: any) => {
       switch (fieldName) {
         case "paymentDate":
@@ -182,15 +189,23 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
     
         return changes;
       };
-    function onSubmit(data:  PaymentFormValues) {
+      async function onSubmit(data: PaymentFormValues) {
         const changes = getChanges(data);
-            alert(changes);
-            toast({
-                title: "changes applied!",
-                description: `changes applied Successfully ${changes}`,
-              })
-      }
+        await updatePayment(data,data.id)
+        setPayouts((prev:any) => {
+          const updatedPayouts = prev.map((payout:PaymentFormValues) =>
+            payout.id === data.id? {...data,payout:`${data.firstName} ${data.lastName}`} : payout
+          );
+          return updatedPayouts;
+        });
+          toast({
+              title: "Changes Applied!",
+              description: "Changes Applied Successfully",
+            })
+        
+            setOpen(false)
 
+    } 
     
   return (
     <Sheet open={open}  onOpenChange={setOpen}  >

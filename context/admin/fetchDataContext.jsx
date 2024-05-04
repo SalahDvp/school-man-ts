@@ -15,7 +15,8 @@ export const  FetchDataProvider = ({ children }) => {
   const [parents,setParents]=useState([]);
   const [teachers,setTeachers]=useState([]);
   const [students,setStudents]=useState([]);
-
+  const [teachersSalary,setTeachersSalary]=useState([]);
+  const [payouts,setPayouts]=useState([]);
   useEffect(() => {
     const getLevels = async () => {
       try {
@@ -89,11 +90,55 @@ export const  FetchDataProvider = ({ children }) => {
         console.error('Error fetching Students:', error);
       }
     };
+
+
+
+    const getTeachersSalary = async () => {
+      try {
+        const teachersSalarySnapshot = await getDocs(collection(db, "Billing","payouts","TeachersTransactions"));
+      
+        const TeachersSalaryData = teachersSalarySnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           
+           //dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           //joiningDate:new Date(doc.data().joiningDate.toDate()),
+           //teacher: `${doc.data().firstName} ${doc.data().lastName}`
+          }))
+       
+     
+          //console.table(parentsData);
+          setTeachersSalary(TeachersSalaryData)
+      } catch (error) {
+        console.error('Error fetching Teachers:', error);
+      }
+    };
+
+
+    const getPayouts = async () => {
+      try {
+        const PayoutsSnapshot = await getDocs(collection(db, "Billing","payouts","Payout"));
+      
+      
+        const PayoutsData = PayoutsSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           
+           payment: `${doc.data().firstName} ${doc.data().lastName}`}))
+       
+     
+          //console.table(parentsData);
+        setPayouts(PayoutsData)
+      } catch (error) {
+        console.error('Error fetching Payouts:', error);
+      }
+    };
     
     getLevels();
     getParents();
     getTeachers();
     getStudents(); 
+    getTeachersSalary();
+    getPayouts();
+
   }, []);
 
 
@@ -120,7 +165,7 @@ export const  FetchDataProvider = ({ children }) => {
 
 
   return (
-    <AppContext.Provider value={{levels,setLevels,profile,setProfile,setParents,parents,teachers,setTeachers,students,setStudents}}>
+    <AppContext.Provider value={{levels,setLevels,profile,setProfile,setParents,parents,teachers,setTeachers,students,setStudents,teachersSalary,setTeachersSalary,payouts,setPayouts}}>
       {children}
     </AppContext.Provider>
   );

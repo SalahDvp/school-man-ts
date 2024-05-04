@@ -22,71 +22,30 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod";
+import { updateTeacherSalary } from "@/lib/hooks/teacherPayment"
+import { useData } from "@/context/admin/fetchDataContext"
 const fieldNames = [
+    "teacher",
     "salaryTitle",
     "salaryAmount",
     "salaryDate",
     "typeofTransaction",
     "monthOfSalary",
     "fromWho",
-    "teacher"
+    
 ];
 type FormKeys = "salaryTitle" | "salaryAmount" | "salaryDate" | "typeofTransaction" | "monthOfSalary" | "fromWho";
  
-type TeacherSalaryFormValues = {
-  id: string;
-  salaryTitle: string;
-  salaryAmount: number;
-  salaryDate: Date;
-  typeofTransaction: string;
-  monthOfSalary: string;
-  fromWho: string;
-  status: string;
-  teacher: {
-    name: string;
-    id: string;
-  };
-  [key: string]: string | number | Date | { name: string; id: string } | undefined;
-};
-  
 
+  
+type TeacherSalaryFormValues = z.infer<typeof teacherPaymentRegistrationSchema> & { [key: string]: string | Date | number;}
 interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
+    teacherSalary:TeacherSalaryFormValues
   }
 
-  const teachers = [
-    {
-      id: "1",
-      label: "Mr. Smith",
-      value: "Mr. Smith",
-      subject: "Mathematics",
-    },
-    {
-      id:"2",
-      label: "Ms. Johnson",
-      value: "Ms. Johnson",
-      subject: "English",
-    },
-    {
-      id: "3",
-      label: "Mrs. Brown",
-      value:"Mrs. Brown",
-      subject: "Science",
-    },
-    {
-      id: "4",
-      label: "Mr. Davis",
-      value: "Mr. Davis",
-      subject: "History",
-    },
-    {
-      id: "5",
-      label: "Ms. Wilson",
-      value:"Ms. Wilson",
-      subject: "Physical Education",
-    },
-  ];
+  
   
   const Typeofpayments = [
     {
@@ -163,36 +122,46 @@ interface openModelProps {
     },
   ]
   
-  const teacher:TeacherSalaryFormValues = {
-   
-     // Assuming a valid date string or Date objec
-     id:"dqweqew",
-     salaryTitle: "Monthly Salary",
-     salaryAmount: 5000,
-     salaryDate: new Date(),
-     typeofTransaction: "Bank Transfer",
-     monthOfSalary: "April",
-     fromWho: "Company XYZ",
-     status:"paid",
-     teacher:{name:"joi",id:"2222"}
-    
-  };
-const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
-  const { toast } = useToast();
-  const [status, setstatus] = useState(false);
-const [monthModal,setMonthModal]=useState(false)
-const [teacherModal,setTeacherModal]=useState(false)
+ 
 
+
+const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => {
+  const { toast } = useToast();
+  const{teachersSalary,setTeachersSalary}=useData()
+  const {teachers}= useData()
+  const [status, setstatus] = useState(false);
+  const [monthModal,setMonthModal]=useState(false)
+  const [teacherModal,setTeacherModal]=useState(false)
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
 
     const form =useForm<TeacherSalaryFormValues>({
       resolver: zodResolver(teacherPaymentRegistrationSchema),
-           defaultValues:teacher
+           defaultValues:teacherSalary
       
     });
-    const {formState,setValue,getValues } = form;
+    const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
 
+
+    const teacherNames = teachers.map((teacher_: { firstName: string; lastName: string; id:string}) => {
+      // Combine and trim first and last name to remove leading/trailing spaces
+      const combinedName = `${teacher_.firstName.trim()} ${teacher_.lastName.trim()}`;
+      
+      
+  
+     
+    
+      return {
+        label: combinedName, // For use in UI components like dropdowns
+        value: combinedName, // For use as a form value or ID
+        id: teacher_.id,
+      };
+    });
+
+    React.useEffect(() => {
+      reset(teacherSalary)
+      console.log("reset",teacherSalary);
+    }, [teacherSalary])
 
     const renderInput = (fieldName:string, field:any) => {
         switch (fieldName) {
@@ -243,20 +212,20 @@ const [teacherModal,setTeacherModal]=useState(false)
             case "teacher":
               return (
                 <Combobox
-                  {...field}
-                    open={teacherModal}
-                    setOpen={setTeacherModal}
-                  placeHolder="Teacher"
-                  options={teachers}
-                  value={getValues("teacher").name}
-                  onSelected={(selectedValue) => {
-                    const selectedTeacher = teachers.find(
-                        (teacher) => teacher.value === selectedValue
-                      );
-                   {selectedTeacher && form.setValue(fieldName, {name:selectedTeacher?.value,id:selectedTeacher?.id})}
-                  }} // Set the value based on the form's current value for the field
-                />
-              );
+              {...field}
+                open={teacherModal}
+                setOpen={setTeacherModal}
+              placeHolder="Teacher"
+              options={teacherNames}
+              value={getValues(teachersSalary.name)}
+              onSelected={(selectedValue) => {
+                const selectedTeacher = teacherNames.find(
+                    (teacher: { value: string; }) => teacher.value === selectedValue
+                  );
+               {selectedTeacher && form.setValue(fieldName, {name:selectedTeacher?.value,id:selectedTeacher?.id})}
+              }} // Set the value based on the form's current value for the field
+            />
+          );
             
           case "typeofTransaction":
             return (
@@ -285,21 +254,31 @@ const [teacherModal,setTeacherModal]=useState(false)
         let changes = 'Changes:\n';
     
         for (const key in currentValues) {
-          if (currentValues[key] !==teacher[key]) {
-            changes += `${key}: ${teacher[key]} => ${currentValues[key]}\n`;
+          if (currentValues[key] !==teacherSalary[key]) {
+            changes += `${key}: ${teacherSalary[key]} => ${currentValues[key]}\n`;
           }
         }
     
         return changes;
       };
-    function onSubmit(data: TeacherSalaryFormValues) {
+      async function onSubmit(data: TeacherSalaryFormValues) {
         const changes = getChanges(data);
-            alert(changes);
-            toast({
-                title: "changes applied!",
-                description: `changes applied Successfully ${changes}`,
-              })
-      }
+        await updateTeacherSalary(data,data.id)
+        setTeachersSalary((prev:any) => {
+          const updatedTeachers = prev.map((teacherSalary:TeacherSalaryFormValues) =>
+          teacherSalary.id === data.id? {...data,teacherSalary:`${data.firstName} ${data.lastName}`} : teacherSalary
+          );
+          return updatedTeachers;
+        });
+          toast({
+              title: "Changes Applied!",
+              description: "Changes Applied Successfully",
+            })
+        
+            setOpen(false)
+
+    } 
+
 
     
   return (

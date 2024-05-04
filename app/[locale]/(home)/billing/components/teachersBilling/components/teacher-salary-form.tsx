@@ -29,6 +29,8 @@ import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addTeacherSalary } from "@/lib/hooks/teacherPayment";
 const fieldNames = [
     "salaryTitle",
     "salaryAmount",
@@ -43,38 +45,7 @@ type FormKeys = "salaryTitle" | "salaryAmount" | "salaryDate" | "typeofTransacti
 type TeacherSalaryFormValues=z.infer<typeof teacherPaymentRegistrationSchema>;
 
 
-const teachers = [
-    {
-      id: "1",
-      label: "Mr. Smith",
-      value: "Mr. Smith",
-      subject: "Mathematics",
-    },
-    {
-      id:"2",
-      label: "Ms. Johnson",
-      value: "Ms. Johnson",
-      subject: "English",
-    },
-    {
-      id: "3",
-      label: "Mrs. Brown",
-      value:"Mrs. Brown",
-      subject: "Science",
-    },
-    {
-      id: "4",
-      label: "Mr. Davis",
-      value: "Mr. Davis",
-      subject: "History",
-    },
-    {
-      id: "5",
-      label: "Ms. Wilson",
-      value:"Ms. Wilson",
-      subject: "Physical Education",
-    },
-  ];
+
   
   const Typeofpayments = [
     {
@@ -152,6 +123,10 @@ const teachers = [
   ]
 export default function PaymentForm() {
   const { toast } = useToast();
+  const {setTeachersSalary} = useData()
+  const {teachers}= useData()
+
+  
   const [status, setstatus] = useState(false);
 const [monthModal,setMonthModal]=useState(false)
 const [teacherModal,setTeacherModal]=useState(false)
@@ -160,7 +135,6 @@ const [teacherModal,setTeacherModal]=useState(false)
   const form = useForm<TeacherSalaryFormValues>({
     resolver: zodResolver(teacherPaymentRegistrationSchema),
     defaultValues: {
-        id:"dqweqew",
         salaryTitle: "Monthly Salary",
         salaryAmount: 5000,
         salaryDate: new Date(),
@@ -175,7 +149,20 @@ const [teacherModal,setTeacherModal]=useState(false)
   const { isSubmitting } = formState;
 
 
+  const teacherNames = teachers.map((teacher_: { firstName: string; lastName: string; id:string}) => {
+    // Combine and trim first and last name to remove leading/trailing spaces
+    const combinedName = `${teacher_.firstName.trim()} ${teacher_.lastName.trim()}`;
+    
+    
+
+   
   
+    return {
+      label: combinedName, // For use in UI components like dropdowns
+      value: combinedName, // For use as a form value or ID
+      id: teacher_.id,
+    };
+  });
 
   const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
@@ -230,11 +217,11 @@ const [teacherModal,setTeacherModal]=useState(false)
                 open={teacherModal}
                 setOpen={setTeacherModal}
               placeHolder="Teacher"
-              options={teachers}
+              options={teacherNames}
               value={getValues("teacher").name}
               onSelected={(selectedValue) => {
-                const selectedTeacher = teachers.find(
-                    (teacher) => teacher.value === selectedValue
+                const selectedTeacher = teacherNames.find(
+                    (teacher: { value: string; }) => teacher.value === selectedValue
                   );
                {selectedTeacher && form.setValue(fieldName, {name:selectedTeacher?.value,id:selectedTeacher?.id})}
               }} // Set the value based on the form's current value for the field
@@ -263,18 +250,17 @@ const [teacherModal,setTeacherModal]=useState(false)
     }
   };
 
-  function onSubmit(data:TeacherSalaryFormValues) {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Payment added!",
-          description: "Payment added Successfully",
-        });
-        console.log(data);
-        resolve();
-      }, 2000);
-    });
-  }
+  async function onSubmit(data:TeacherSalaryFormValues) {
+    const teacherId= await addTeacherSalary(data)
+    setTeachersSalary((prev:TeacherSalaryFormValues[])=>[{...data,id:teacherId,teacher: `${data.firstName} ${data.lastName}`},...prev])
+          toast({
+              title: "Teacher Salary added!",
+              description: "Teacher Salary added Successfully",
+            });
+    console.log(data);
+            reset(); 
+          
+          }
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">

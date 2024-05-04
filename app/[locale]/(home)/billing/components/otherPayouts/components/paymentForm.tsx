@@ -29,6 +29,8 @@ import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addPayment } from "@/lib/hooks/payment";
 
 const fieldNames = [
   "paymentTitle",
@@ -57,6 +59,7 @@ type FormKeys =
 export default function PaymentForm() {
   const { toast } = useToast();
   const [status, setstatus] = useState(false);
+  const {payouts,setPayouts}=useData()
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(PaymentRegistrationSchema),
@@ -168,18 +171,17 @@ export default function PaymentForm() {
     }
   };
 
-  function onSubmit(data:PaymentFormValues) {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Payment added!",
-          description: "Payment added Successfully",
-        });
-        console.log(data);
-        resolve();
-      }, 2000);
-    });
-  }
+  async function onSubmit(data:PaymentFormValues) {
+    const payoutId= await addPayment(data)
+    setPayouts((prev:PaymentFormValues[])=>[{...data,id:payoutId,payout: `${data.firstName} ${data.lastName}`},...prev])
+          toast({
+              title: "payout added!",
+              description: "payout added Successfully",
+            });
+    console.log(data);
+            reset(); 
+          
+          }
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
