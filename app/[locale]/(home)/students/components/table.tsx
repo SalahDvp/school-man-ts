@@ -67,7 +67,7 @@ export type StudentSummary = {
   type StudentFormValues = z.infer<typeof studentRegistrationSchema>  & {id:string };
   export const DataTableDemo = () => {
     const [open,setOpen]=React.useState(false)
-    const {students,setStudents}=useData()
+    const {students}=useData()
     const [student,setStudent]=React.useState<StudentFormValues>({  
       id: '123456',
       level: 'Intermediate',
@@ -174,12 +174,22 @@ export type StudentSummary = {
       ),
     },
     {
-      accessorKey: "registrationStatus",
-      header: "Registration",
-      cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("registrationStatus"))}}>{row.getValue("registrationStatus")}</Badge>
-      ),
+      accessorKey: "totalAmount",
+      header: () => <div className="text-right">total Amount</div>,
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue("totalAmount"))
+  
+        // Format the amount as a dollar amount
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "DZD",
+        }).format(amount)
+  
+        return <div className="text-right font-medium">{formatted}</div>
+      },
     },
+
+
     {
       accessorKey: "amountLeftToPay",
       header: () => <div className="text-right">Amount left</div>,

@@ -22,6 +22,9 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod"
+import { updateTeacher } from "@/lib/hooks/teachers"
+import { useData } from "@/context/admin/fetchDataContext"
+import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles"
 type FormKeys =
   | 'firstName'
   | 'lastName'
@@ -41,13 +44,17 @@ type FormKeys =
   | 'emergencyContactName'
   | 'emergencyContactPhone'
   | 'salary'
-  | 'medicalConditions';
+  | 'medicalConditions'
+  | 'joiningDate'
+  | 'status';
 
+
+type TeacherFormValues = z.infer<typeof teacherRegistrationSchema> & { [key: string]: string | Date | number | any;}
 interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
+    teacher:TeacherFormValues;
   }
-  type TeacherFormValues = z.infer<typeof teacherRegistrationSchema> & { [key: string]: string | Date | number; }
   const fieldNames= [
     "firstName",
     "lastName",
@@ -66,8 +73,24 @@ interface openModelProps {
     "emergencyContactPhone",
     "salary",
     "medicalConditions",
+    "joiningDate",
+    "status",
   ];
 
+
+  const status =[
+    {
+      value:"active",
+      label:"Active",
+    },
+    {
+      value:"suspended",
+      label:"Suspended",
+    },{
+      value:"expelled",
+      label:"Expelled",
+    }
+  ]
   const genders = [
     {
       value: "male",
@@ -81,65 +104,81 @@ interface openModelProps {
   ]
   const subjects = [
     {
-      value: "math",
-      label: "Math",
-    },
-    {
-      value: "phisics",
-      label: "Phisics",
-    },
-    {
-      value: "sience",
-      label: "Sience",
-    },
-    {
-      value: "art",
-      label: "Art",
+      value: "arabic",
+      label: "Arabic",
     },
     {
       value: "french",
       label: "French",
     },
     {
-      value: "arabic",
-      label: "Arabic",
+      value: "english",
+      label: "English",
     },
   ];
-  const teacher:TeacherFormValues= {
-    id:"qdqdqwdqdqwd",
-    salary:2000,
-    year: "2023",
-    firstName: "John",
-    lastName: "Doe",
-    dateOfBirth: new Date("2000-01-01"), // Assuming a valid date string or Date object
-    gender: "female",
-    address: "123 Main St",
-    city: "City",
-    state: "State",
-    postalCode: "12345",
-    country: "Country",
-    teacherEmail: "jane.doe@example.com",
-    teacherPhone: "123-456-7890",
-    emergencyContactName: "Emergency Contact",
-    emergencyContactPhone: "987-654-3210",
-    medicalConditions: "None",
-    teacherSubject:"Math",
-
-  };
-const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
+  interface FileUploadProgress {
+    file: File;
+    name: string;
+    source:any;
+  }
+const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
     const {toast}=useToast()
-    const [openParent,setOpenParent]=useState(false)
+    const {setTeachers}=useData()
+    const [openTeacher,setOpenTeacher]=useState(false)
     const [openGender,setOpenGender]=useState(false)
-    const [openSubject, setOpenSubject] = useState();
+    const [openStatus,setOpenSatus]=useState(false)
+    const [openSubject, setOpenSubject] = useState(false);
+    const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
     const form =useForm<TeacherFormValues>({
       resolver: zodResolver(teacherRegistrationSchema),
-           defaultValues: teacher
+           defaultValues: {
+            id:"qdqdqwdqdqwd",
+            salary:2000,
+            year: "2023",
+            firstName: "John",
+            lastName: "Doe",
+            dateOfBirth: new Date("2000-01-01"), // Assuming a valid date string or Date object
+            gender: "female",
+            address: "123 Main St",
+            city: "City",
+            state: "State",
+            postalCode: "12345",
+            country: "Country",
+            teacherEmail: "jane.doe@example.com",
+            teacherPhone: "123-456-7890",
+            emergencyContactName: "Emergency Contact",
+            emergencyContactPhone: "987-654-3210",
+            medicalConditions: "None",
+            teacherSubject:"Math",
+            joiningDate: new Date("2000-01-01"),
+            status:"active"
+        
+        
+          }
       
     });
-    const {formState,setValue,getValues } = form;
+    const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
+  
 
-
+    React.useEffect(() => {
+      const downloadFiles = async () => {
+        if (teacher && teacher.documents) {
+        
+          const files=await fetchFiles(teacher.documents)
+          console.log("files",files);
+          
+          setFilesToUpload(files);
+        }
+      };
+    if(teacher){
+      reset(teacher)
+      console.log("reset",teacher);
+      downloadFiles()
+    }
+   
+    }, [teacher])
     const renderInput = (fieldName:string, field:any) => {
         switch (fieldName) {
           case "dateOfBirth":
@@ -147,6 +186,20 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
               <CalendarDatePicker
                 {...field}
                 date={getValues("dateOfBirth")}
+                setDate={(selectedValue) => {
+                  if (selectedValue === undefined) {
+                    // Handle undefined case if needed
+                  } else {
+                    form.setValue(fieldName, selectedValue);
+                  }
+                }}
+              />
+            );
+            case "joiningDate":
+            return (
+              <CalendarDatePicker
+                {...field}
+                date={getValues("joiningDate")}
                 setDate={(selectedValue) => {
                   if (selectedValue === undefined) {
                     // Handle undefined case if needed
@@ -165,6 +218,20 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
                 placeHolder="gender"
                 options={genders}
                 value={getValues("gender")}
+                onSelected={(selectedValue) => {
+                  form.setValue(fieldName, selectedValue);
+                }}
+              />
+            );
+            case "status":
+            return (
+              <Combobox
+                {...field}
+                open={openStatus}
+                setOpen={setOpenSatus}
+                placeHolder="status"
+                options={status}
+                value={getValues("status")}
                 onSelected={(selectedValue) => {
                   form.setValue(fieldName, selectedValue);
                 }}
@@ -204,14 +271,25 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
     
         return changes;
       };
-    function onSubmit(data: TeacherFormValues) {
-        const changes = getChanges(data);
-            alert(changes);
-            toast({
-                title: "changes applied!",
-                description: `changes applied Successfully ${changes}`,
-              })
-      }
+      async function onSubmit(data: TeacherFormValues) {
+        const { value, label, teacher, ...updatedData } = data;
+        await updateTeacher(updatedData,data.id)
+        const documents= await updateDocuments(data.documents && data.documents> 0?data.documents:[],filesToUpload,'Teachers',data.id)
+
+        setTeachers((prev:any) => {
+          const updatedTeachers = prev.map((teacher:TeacherFormValues) =>
+            teacher.id === data.id? { ...data, id: data.id, teacher: `${data.firstName} ${data.lastName}`, documents: documents } : teacher
+          );
+          return updatedTeachers;
+        });
+          toast({
+              title: "Changes Applied!",
+              description: "Changes Applied Successfully",
+            })
+        
+            setOpen(false)
+
+    } 
 
     
   return (
@@ -234,16 +312,18 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
              control={form.control}
              name={fieldName as FormKeys} 
              
-             render={({ field }) => (
-              <FormItem style={{marginBottom:15}} >
-                      <FormLabel>{fieldName}</FormLabel>
-                      <FormControl  >
-                      {renderInput( fieldName, field )}
-                      </FormControl>
-           
-                      <FormMessage />
-                    </FormItem>
-                  )}
+             render={function ({ field }) {
+               return (
+                 <FormItem style={{ marginBottom: 15 }}>
+                   <FormLabel>{fieldName}</FormLabel>
+                   <FormControl>
+                     {renderInput(fieldName, field)}
+                   </FormControl>
+
+                   <FormMessage />
+                 </FormItem>
+               )
+             }}
                 />
              
               ))}
@@ -251,7 +331,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
             </form>
           </Form>
           
-              <ImageUpload/>
+          <ImageUpload  filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/> 
 
         <SheetFooter className="mt-5">
           <SheetClose asChild>

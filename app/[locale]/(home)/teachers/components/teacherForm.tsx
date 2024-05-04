@@ -29,6 +29,9 @@ import ImageUpload from "../../students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addTeacher } from "@/lib/hooks/teachers";
+import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 const fieldNames = [
   "firstName",
   "lastName",
@@ -46,7 +49,23 @@ const fieldNames = [
   "emergencyContactName",
   "emergencyContactPhone",
   "medicalConditions",
+  "joiningDate",
+  "status",
 ];
+
+const status =[
+  {
+    value:"active",
+    label:"Active",
+  },
+  {
+    value:"suspended",
+    label:"Suspended",
+  },{
+    value:"expelled",
+    label:"Expelled",
+  }
+]
 const genders = [
   {
     value: "male",
@@ -60,29 +79,19 @@ const genders = [
 
 
 const subjects = [
+  
+  
   {
-    value: "math",
-    label: "Math",
-  },
-  {
-    value: "phisics",
-    label: "Phisics",
-  },
-  {
-    value: "sience",
-    label: "Sience",
-  },
-  {
-    value: "art",
-    label: "Art",
+    value: "arabic",
+    label: "Arabic",
   },
   {
     value: "french",
     label: "French",
   },
   {
-    value: "arabic",
-    label: "Arabic",
+    value: "english",
+    label: "English",
   },
 ];
 
@@ -104,9 +113,19 @@ type FormKeys =
   |"emergencyContactName"
   |"emergencyContactPhone"
   |"medicalConditions"
+  |"joiningDate"
+  |"status"
 type TeacherFormValues = z.infer<typeof teacherRegistrationSchema>;
+interface FileUploadProgress {
+  file: File;
+  name: string;
+  source:any;
+}
 export default function TeacherForm() {
   const { toast } = useToast();
+  const {setTeachers} = useData()
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
   const [openSubject, setOpenSubject] = useState(false);
@@ -115,22 +134,6 @@ export default function TeacherForm() {
     defaultValues: {
       id: '1',
       year: '2024',
-      firstName: 'John',
-      lastName: 'Doe',
-      dateOfBirth: new Date('1990-01-01'),
-      gender: 'male',
-      address: '123 Main Street',
-      city: 'Example City',
-      state: 'Example State',
-      postalCode: '12345',
-      country: 'Example Country',
-      teacherEmail: 'john.doe@example.com',
-      teacherPhone: '123-456-7890',
-      teacherSubject: 'Math',
-      emergencyContactName: 'Jane Doe',
-      emergencyContactPhone: '987-654-3210',
-      medicalConditions: 'None',
-      salary: 50000,
     },
   });
   const { reset, formState, setValue, getValues } = form;
@@ -152,13 +155,27 @@ export default function TeacherForm() {
             }}
           />
         );
+        case "joiningDate":
+          return (
+            <CalendarDatePicker
+              {...field}
+              date={getValues("joiningDate")}
+              setDate={(selectedValue) => {
+                if (selectedValue === undefined) {
+                  // Handle undefined case if needed
+                } else {
+                  form.setValue(fieldName, selectedValue);
+                }
+              }}
+            />
+          );        
       case "gender":
         return (
           <Combobox
             {...field}
             open={openGender}
             setOpen={setOpenGender}
-            placeHolder="gender"
+            placeHolder="Gender"
             options={genders}
             value={getValues("gender")}
             onSelected={(selectedValue) => {
@@ -166,13 +183,30 @@ export default function TeacherForm() {
             }}
           />
         );
+        case "status":
+        return (
+          <Combobox
+            {...field}
+            open={open}
+            setOpen={setOpen}
+            placeHolder="Status"
+            options={status}
+            value={getValues("status")}
+            onSelected={(selectedValue) => {
+              form.setValue(fieldName, selectedValue);
+            }}
+          />
+        );
+
+
+        
         case "teacherSubject":
           return (
             <Combobox
               {...field}
               open={openSubject}
               setOpen={setOpenSubject}
-              placeHolder="teacherSubject"
+              placeHolder="a subject"
               options={subjects}
               value={getValues("teacherSubject")}
               onSelected={(selectedValue) => {
@@ -187,18 +221,24 @@ export default function TeacherForm() {
         return <Input {...field}  />;
     }
   };
-  function onSubmit(data:TeacherFormValues) {
-    return new Promise<void>((resolve) => {
-        setTimeout(() => {
-          toast({
+
+
+ async function onSubmit(data:TeacherFormValues) {
+  const teacherId= await addTeacher({...data,documents:[]})
+  const uploaded=await uploadFilesAndLinkToCollection("Teachers",teacherId,filesToUpload)
+  setTeachers((prev:TeacherFormValues[])=>[{...data,id:teacherId,teacher: `${data.firstName} ${data.lastName}`,
+  value:`${data.firstName} ${data.lastName}`,
+  label:`${data.firstName} ${data.lastName}`,
+documents:uploaded},...prev])
+        toast({
             title: "Teacher added!",
             description: "Teacher added Successfully",
           });
-          console.log(data);
-          resolve();
-        }, 2000); // Simulating a delay of 1 second
-      });
-  }
+  console.log(data);
+          reset(); 
+        
+        }
+   
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
@@ -249,7 +289,7 @@ export default function TeacherForm() {
             </form>
           </Form>
 
-          {/* <ImageUpload /> */}
+ <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/> 
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

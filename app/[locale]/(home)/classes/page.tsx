@@ -59,87 +59,13 @@ import { ClassForm } from "@/app/[locale]/(home)/classes/components/new-class"
 import EditClassForm from "@/app/[locale]/(home)/classes/components/edit-class"
 import { ClassFormValues } from "@/app/[locale]/(home)/classes/components/new-class"
 import { useData } from "@/context/admin/fetchDataContext"
-const data:  ClassFormValues[] = [
-        {name: "Class A",
-        level:{name:"intermediate",id:"2"},
-        className: "",
-        capacity: 30,
-        teachers: [],
-        mainTeacher: { name: "Main Teacher", id: "3" },
-        mainStudent: { name: "Main Student", id: "4" },
-        students: [
-          { name: "Student 1", id: "5" },
-          { name: "Student 2", id: "6" },
-        ],
-      },
-      {name: "Class A",
-      level:{name:"intermediate",id:"3"},
-      className: "",
-      capacity: 30,
-      teachers: [],
-      mainTeacher: { name: "Main Teacher", id: "3" },
-      mainStudent: { name: "Main Student", id: "4" },
-      students: [
-        { name: "Student 1", id: "5" },
-        { name: "Student 2", id: "6" },
-      ],
-    },
-    {name: "Class A",
-    level:{name:"intermediate",id:"4"},
-    className: "",
-    capacity: 30,
-    teachers: [],
-    mainTeacher: { name: "Main Teacher", id: "3" },
-    mainStudent: { name: "Main Student", id: "4" },
-    students: [
-      { name: "Student 1", id: "5" },
-      { name: "Student 2", id: "6" },
-    ],
-  },
-  {name: "Class A",
-  level:{name:"intermediate",id:"5"},
-  className: "",
-  capacity: 30,
-  teachers: [],
-  mainTeacher: { name: "Main Teacher", id: "3" },
-  mainStudent: { name: "Main Student", id: "4" },
-  students: [
-    { name: "Student 1", id: "5" },
-    { name: "Student 2", id: "6" },
-  ],
-},
-{name: "Class A",
-level:{name:"intermediate",id:"6"},
-className: "",
-capacity: 30,
-teachers: [],
-mainTeacher: { name: "Main Teacher", id: "3" },
-mainStudent: { name: "Main Student", id: "4" },
-students: [
-  { name: "Student 1", id: "5" },
-  { name: "Student 2", id: "6" },
-],
-},
-{name: "Class A",
-level:{name:"intermediate",id:"1"},
-className: "",
-capacity: 30,
-teachers: [],
-mainTeacher: { name: "Main Teacher", id: "3" },
-mainStudent: { name: "Main Student", id: "4" },
-students: [
-  { name: "Student 1", id: "5" },
-  { name: "Student 2", id: "6" },
-],
-},
-  
-]
+
 
 function Classes() {
-  const {levels}=useData()
+  const {levels,classes}=useData()
   const [open, setOpen] = React.useState(false);
-  const [cls, setCls] = React.useState< ClassFormValues>(data[0]);
-    const columns: ColumnDef<ClassFormValues>[] = [
+  const [cls, setCls] = React.useState< ClassFormValues>(classes[0]);
+    const columns: ColumnDef<any>[] = [
         {
           accessorKey: "name",
           header: "Name",
@@ -151,15 +77,15 @@ function Classes() {
           ),
         },
         {
-          accessorKey: "level",
+          accessorKey: "levelName",
           header: "Level",
-          cell: ({ row }) => <div className="lowercase hidden sm:table-cell"> {row.original.level?.name}</div>,
+          cell: ({ row }) => <div className="lowercase hidden sm:table-cell"> {row.getValue("levelName")}</div>,
         },
         {
           accessorKey: "className",
           header: "Class",
           cell: ({ row }) => (
-            <div className="capitalize hidden sm:table-cell">{row.getValue("class")}</div>
+            <div className="capitalize hidden sm:table-cell">{row.getValue("className")}</div>
           ),
         },
         {
@@ -216,7 +142,7 @@ function Classes() {
         React.useState<VisibilityState>({})
       const [rowSelection, setRowSelection] = React.useState({})
       const table = useReactTable({
-        data,
+        data:classes,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -240,11 +166,12 @@ function Classes() {
         },
       })
       const handleFilter = (classType:string) => {
+        
+        
         if (classType === "All") {
           table.resetColumnFilters()
-        
         } else {
-          table.getColumn("level")?.setFilterValue(classType);
+          table.getColumn("levelName")?.setFilterValue(classType);
         } 
       };
   return (

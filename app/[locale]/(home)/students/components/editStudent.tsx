@@ -280,7 +280,7 @@ setStudents((prev:StudentFormValues[]) => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent>
+   <SheetContent className=" sm:max-w-[650px]">
         <ScrollArea className="h-screen pb-20 ">
           <SheetHeader>
             <SheetTitle>Edit Student</SheetTitle>

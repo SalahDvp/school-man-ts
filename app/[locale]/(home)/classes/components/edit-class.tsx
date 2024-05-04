@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -13,21 +12,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-
-import { Check, ChevronsUpDown, PlusCircle } from "lucide-react"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-
 import {
   Select,
   SelectContent,
@@ -35,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { cn } from "@/lib/utils"
+
 import {
     Sheet,
     SheetClose,
@@ -46,114 +30,18 @@ import {
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet";
-  import { useFieldArray,} from "react-hook-form";
+
   import { ScrollArea } from "@/components/ui/scroll-area";
 import classSchema from "@/validators/classSchema"
 import { useToast } from "@/components/ui/use-toast"
 import * as React from "react"
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { MultiSelect } from "./multiselect"
-import { json } from "stream/consumers"
 import { LoadingButton } from "@/components/ui/loadingButton"
+import { useData } from "@/context/admin/fetchDataContext"
+import { updateClass, updateStudents, updateTeachers } from "@/lib/hooks/classes"
 
- 
-
-// Array of teachers with names and IDs
-const allTeachers = [
-    { name: "Teacher 1", id: "1" },
-    { name: "Teacher 2", id: "2" },
-    { name: "Teacher 3", id: "3" },
-  ];
   
-  // Array of students with names and IDs
-  const students = [
-    { name: "Student A", id: "101" },
-    { name: "Student B", id: "102" },
-    { name: "Student C", id: "103" },
-  ];
-  const classNames = [
-    "Class A",
-    "Class B",
-    "Class C",
-    "Class D",
-    "Class E",
-    "Class F",
-    "Class G",
-    "Class H",
-    "Class I",
-    "Class J"
-  ];
-  // Array of levels with names and IDs
-  const levels = [
-    {
-      id: "123",
-      name: "Intermediate",
-      start: "2024-05-01",
-      end: "2024-07-31",
-      fee: 100,
-      status: "open",
-      registrationDeadline: "2024-04-30",
-      subjects: [
-        { value: "math", label: "Mathematics" },
-        { value: "sci", label: "Science" }
-      ],
-      prices: [
-        { name: "Monthly", period: "1 month", price: 30 },
-        { name: "Quarterly", period: "2 months", price: 80 },
-        { name: "Semester", period: "4 months", price: 150 },
-        { name: "Annual", period: "1 year", price: 250 }
-      ]
-    },
-    {
-      id: "456",
-      name: "Beginner",
-      start: "2024-06-15",
-      end: "2024-08-30",
-      fee: 80,
-      status: "open",
-      registrationDeadline: "2024-06-01",
-      subjects: [
-        { value: "art", label: "Art" },
-        { value: "music", label: "Music" }
-      ],
-      prices: [
-        { name: "Monthly", period: "1 month", price: 25 },
-        { name: "Quarterly", period: "2 months", price: 70 },
-        { name: "Semester", period: "4 months", price: 120 },
-        { name: "Annual", period: "1 year", price: 200 }
-      ]
-    },
-    {
-      id: "789",
-      name: "Advanced",
-      start: "2024-04-01",
-      end: "2024-09-30",
-      fee: 150,
-      status: "closed",
-      registrationDeadline: "2024-03-15",
-      subjects: [
-        { value: "eng", label: "English" },
-        { value: "hist", label: "History" }
-      ],
-      prices: [
-        { name: "Monthly", period: "1 month", price: 40 },
-        { name: "Quarterly", period: "2 months", price: 110 },
-        { name: "Semester", period: "4 months", price: 200 },
-        { name: "Annual", period: "1 year", price: 350 }
-      ]
-    },
-    // Add more levels as needed
-  ];
-  
-type ClassFormValues = z.infer<typeof classSchema>;
+type ClassFormValues = z.infer<typeof classSchema> & { [key: string]: string | Date | number | any;};
 interface SheetDemoProps {
     cls: ClassFormValues;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -161,26 +49,126 @@ interface SheetDemoProps {
 }
 const EditClassForm: React.FC<SheetDemoProps> = ({ cls,setOpen,open }) => {
 
-  const form = useForm<ClassFormValues>({
-    resolver: zodResolver(classSchema),
-    defaultValues: cls
+  const form = useForm<any>({
+    //resolver: zodResolver(classSchema),
+    defaultValues: {
+      "name": "Math Class",
+      "level": {"name":"Elementary","id":"1"},
+      "className": "Mathematics",
+      "capacity": 30,
+      "teachers": [
+        {
+          "name": "John Doe",
+          "id": "123"
+        },
+        {
+          "name": "Jane Smith",
+          "id": "456"
+        }
+      ],
+      "mainTeacher": {
+        "name": "SALAH EDDINE  SAID",
+        "id": "CY0m1u7BhHmgzxJLhC1W"
+    },
+      "students": [
+        {
+          "name": "Alice",
+          "id": "001"
+        },
+        {
+          "name": "Bob",
+          "id": "002"
+        }
+      ]
+    }
   })
-
+const{levels,teachers,students,setClasses,setStudents,setTeachers,profile}=useData()
+const allTeachers=teachers.map((teacher:any)=>({name:teacher.teacher,id:teacher.id}))
+  const allStudents=students.map((student:any)=>({name:student.student,id:student.id}))
 const {toast}=useToast()
-const { reset, handleSubmit, control, formState,getValues,setValue,register,watch} = form;
+const { reset,formState,watch} = form;
 const {isSubmitting}=formState
 const [selectedTeachers, setSelectedTeachers] = React.useState<({ name: string; id: string; }|undefined)[]>(form.getValues('teachers'));
-
+React.useEffect(() => {
+  reset(cls)
+}, [cls])
 React.useEffect(() => {
 
-  const subscription =  watch((value:any) => {console.log(value);setSelectedTeachers(value.teachers)});
+  const subscription =  watch((value:any) => {setSelectedTeachers(value.teachers)});
   return () => subscription.unsubscribe();
 }, [watch]);
 
 
-function onSubmit(values:ClassFormValues) {
-    console.log(values)
-    toast({
+async function onSubmit(values:ClassFormValues) {
+  const { value, label, ...updatedData } = values;
+ const levelData=levels.find((level:any)=>level.id===values.level.id)
+
+  await updateClass(updatedData,values.id)
+  const updatedStudents= await updateStudents(cls.students,values.students,{...cls,level:levelData})
+  const updatedTeachers= await updateTeachers(cls.teachers,values.teachers,cls)
+updatedStudents.added.map((student)=>{
+  setStudents((prev:any[]) => {
+    const updatedLevels = prev.map((std:any) =>
+      std.id === student.id ? { ...std,
+        amountLeftToPay: levelData.fee,
+        totalAmount: levelData.fee,
+        startDate: levelData.start,
+        nextPaymentDate: levelData.start,
+        lastPaymentDate: levelData.start,
+        level:levelData.level,
+        class:{name:values.name,id:values.id}}: std
+    );
+    return updatedLevels;
+  });
+})
+updatedStudents.deleted.map((student)=>{
+  setStudents((prev:any[]) => {
+    const updatedLevels = prev.map((std:any) =>
+      std.id === student.id ? { ...std,
+        amountLeftToPay: 0,
+        totalAmount: 0,
+        startDate:new Date(),
+        nextPaymentDate: new Date(),
+        lastPaymentDate: new Date(),
+        level:null,
+        class:null}: std
+    );
+    return updatedLevels;
+  });
+})
+updatedTeachers.added.forEach((teacher) => {
+
+  setTeachers((prev:any[]) => {
+      const updatedLevels = prev.map((std:any) =>
+        std.id === teacher.id ? { ...std,
+          class: {
+              name: values.name,
+              id: values.id
+          }
+      }: std
+      );
+      return updatedLevels;
+    });
+  });
+  updatedTeachers.deleted.forEach((teacher) => {
+
+    setTeachers((prev:any[]) => {
+        const updatedLevels = prev.map((std:any) =>
+          std.id === teacher.id ? { ...std,
+            class:null
+        }: std
+        );
+        return updatedLevels;
+      });
+    });
+
+    setClasses((prev:any[]) => {
+      const updatedLevels = prev.map((std:any) =>
+        std.id === values.id ? updatedData: std
+      );
+      return updatedLevels;
+    });
+  toast({
         title: "changes applied!",
         description: `changes applied Successfully`,
       });
@@ -219,6 +207,7 @@ function onSubmit(values:ClassFormValues) {
                 </FormItem>
               )}
             />
+            
                               <FormField
               control={form.control}
               name="level"
@@ -227,12 +216,10 @@ function onSubmit(values:ClassFormValues) {
                   <FormLabel>class level</FormLabel>
                   <FormControl>
                   <Select
-      
-                  onValueChange={(value) => {
-                   console.log(JSON.parse(value));
-                   
+                defaultValue={JSON.stringify(levels.find((level:any)=>level.id===field.value.id))}
+                  onValueChange={(value) => {        
                     const parsedValue = JSON.parse(value);
-                    const level={name:parsedValue.name,id:parsedValue.id}
+                    const level={level:parsedValue.level,id:parsedValue.id}
                     field.onChange(level);
                   }}
           
@@ -242,14 +229,14 @@ function onSubmit(values:ClassFormValues) {
                               id={`level`}
                               aria-label={`Select level`}
                             >
-                              <SelectValue placeholder="Select level" />
+                              <SelectValue placeholder="Select level"   />
                             </SelectTrigger>
                           </FormControl>
 
                           <SelectContent>
-                            {levels.map((level,index) => (
+                            {levels.map((level:any,index:number) => (
                               <SelectItem key={index} value={JSON.stringify(level)}>
-                                {level.name}
+                                {level.level}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -283,7 +270,7 @@ function onSubmit(values:ClassFormValues) {
                           </FormControl>
 
                           <SelectContent>
-                            {classNames.map((cls) => (
+                            {profile.classNames.map((cls:any) => (
                               <SelectItem key={cls} value={cls}>
                                 {cls}
                               </SelectItem>
@@ -339,12 +326,13 @@ function onSubmit(values:ClassFormValues) {
                   <FormLabel>Main Teacher</FormLabel>
                   <FormControl>
                   <Select
-      
+                  defaultValue={JSON.stringify(selectedTeachers.find((teacher)=>teacher?.id===field.value.id))}
                   onValueChange={(value) => {
-                   console.log(value);
-                   
+
                     const parsedValue = JSON.parse(value);
                     const mainteacher={name:parsedValue.name,id:parsedValue.id}
+            
+                    
                     field.onChange(mainteacher);
                   }}
      
@@ -382,7 +370,7 @@ function onSubmit(values:ClassFormValues) {
             <FormLabel>add students</FormLabel>
                 <MultiSelect
                     selected={field.value}
-                 options={students}
+                 options={allStudents}
                     {...field}
                     className="sm:w-[510px]"
                 />

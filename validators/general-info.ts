@@ -3,6 +3,7 @@ export const profileFormSchema =  z.object({
   email: z.string({ required_error: "Please select an email to display.",}).email(),
   bio: z.string().max(160).min(4),
   urls: z.array(z.object({value: z.string().url({ message: "Please enter a valid URL." }),})).optional(),
+  classNames:z.array(z.any()).optional(),
   schoolName: z.string().min(1, { message: "School name is required." }),
   phoneNumber: z.string().regex(/^\+\d{1,3} \d{1,14}$/, {
   message: "Phone number must be in the format +[country code] [number].",}),

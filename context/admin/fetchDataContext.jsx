@@ -9,9 +9,53 @@ export const AppContext = createContext();
 
 // Create the provider component
 export const  FetchDataProvider = ({ children }) => {
+  const [profile, setProfile] = useState([]);
   const [levels, setLevels] = useState([]);
   const [parents,setParents]=useState([])
   const [students,setStudents]=useState([]);
+  const [teachers,setTeachers]=useState([]);
+  const [classes,setClasses]=useState([])
+  useEffect(()=>{
+    const getClasses = async () => {
+      try {
+        const classesSnapshot = await getDocs(collection(db, 'Classes'));
+      
+        const classesData = classesSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           value:doc.data().className,
+           label:doc.data().className,}))
+       
+     
+          //console.table(parentsData);
+        setClasses(classesData)
+      } catch (error) {
+        console.error('Error fetching Teachers:', error);
+      }
+    };
+getClasses()
+  },[])
+  useEffect(()=>{
+    const getTeachers = async () => {
+      try {
+        const teachersSnapshot = await getDocs(collection(db, 'Teachers'));
+      
+        const TeachersData = teachersSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
+           joiningDate:new Date(doc.data().joiningDate.toDate()),
+           teacher: `${doc.data().firstName} ${doc.data().lastName}`,
+           value: `${doc.data().firstName} ${doc.data().lastName}`,
+           label: `${doc.data().firstName} ${doc.data().lastName}`,}))
+       
+     
+          //console.table(parentsData);
+        setTeachers(TeachersData)
+      } catch (error) {
+        console.error('Error fetching Teachers:', error);
+      }
+    };
+    getTeachers();
+  },[])
   useEffect(()=>{
     const getStudents = async () => {
       try {
@@ -38,7 +82,7 @@ setStudents(StudentsData)
     
     getStudents(); 
   },[])
-
+console.log(teachers);
 
   useEffect(() => {
     const getLevels = async () => {
@@ -81,7 +125,7 @@ setStudents(StudentsData)
     getLevels();
     getParents();
   }, []);
-  const [profile, setProfile] = useState([]);
+
 
   useEffect(() => { 
     const getProfile = async () => {
@@ -98,9 +142,8 @@ setStudents(StudentsData)
 
     getProfile();
   }, []);
-  console.log(students);
   return (
-    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents}}>
+    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents,teachers,setTeachers,classes,setClasses}}>
       {children}
     </AppContext.Provider>
   );

@@ -46,6 +46,18 @@ const defaultValues:ProfileFormValues = {
     { day: "Friday", start: "09:00", end: "17:00", state: "open" },
     { day: "Saturday", start: "10:00", end: "14:00", state: "open" },
     { day: "Sunday", start: "07:00", end: "18:00", state: "open" }
+  ],
+  classNames : [
+    "Class A",
+    "Class B",
+    "Class C",
+    "Class D",
+    "Class E",
+    "Class F",
+    "Class G",
+    "Class H",
+    "Class I",
+    "Class J"
   ]
 };
 
@@ -65,11 +77,15 @@ export function ProfileForm() {
     control: form.control,
     name: "urls",
   });
-
+  const { fields: classNames, append: appendClass } = useFieldArray({
+    control: form.control,
+    name: "classNames",
+  });
   const { fields: openDays } = useFieldArray({
     control: form.control,
     name: "openDays",
   });
+  
 
 
  
@@ -279,6 +295,38 @@ export function ProfileForm() {
             onClick={() => append({ value: "" })}
           >
             Add URL
+          </Button>
+        </div>
+        <div>
+          {classNames.map((field, index) => (
+            <FormField
+              control={form.control}
+              key={index}
+              name={`classNames.${index}`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={cn(index !== 0 && "sr-only")}>
+                    Classes
+                  </FormLabel>
+                  <FormDescription className={cn(index !== 0 && "sr-only")}>
+                    Add class rooms names.
+                  </FormDescription>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-2"
+            onClick={() => appendClass("")}
+          >
+            Add Classroom
           </Button>
         </div>
           <OpenDaysTable openDays={openDays} form={form}/>

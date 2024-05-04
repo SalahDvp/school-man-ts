@@ -14,20 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-import { Check, ChevronsUpDown, PlusCircle } from "lucide-react"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-
+import {PlusCircle } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -35,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { cn } from "@/lib/utils"
 import {
     Sheet,
     SheetClose,
@@ -46,95 +32,90 @@ import {
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet";
-  import { useFieldArray,} from "react-hook-form";
+
   import { ScrollArea } from "@/components/ui/scroll-area";
 import classSchema from "@/validators/classSchema"
 import { useToast } from "@/components/ui/use-toast"
 import * as React from "react"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import { MultiSelect } from "./multiselect"
-import { json } from "stream/consumers"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { useData } from "@/context/admin/fetchDataContext"
- 
-type Checked = DropdownMenuCheckboxItemProps["checked"]
- 
+import { addClass } from "@/lib/hooks/classes"
 
-// Array of teachers with names and IDs
-const allTeachers = [
-    { name: "Teacher 1", id: "1" },
-    { name: "Teacher 2", id: "2" },
-    { name: "Teacher 3", id: "3" },
-  ];
-  
-  // Array of students with names and IDs
-  const students = [
-    { name: "Student A", id: "101" },
-    { name: "Student B", id: "102" },
-    { name: "Student C", id: "103" },
-  ];
-  const classNames = [
-    "Class A",
-    "Class B",
-    "Class C",
-    "Class D",
-    "Class E",
-    "Class F",
-    "Class G",
-    "Class H",
-    "Class I",
-    "Class J"
-  ];
 
 
   
 export type ClassFormValues = z.infer<typeof classSchema>;
 export function ClassForm() {
-  const{levels}=useData()
+  const{levels,teachers,students,setClasses,setStudents,setTeachers,profile}=useData()
+  const allTeachers=teachers.map((teacher:any)=>({name:teacher.teacher,id:teacher.id}))
+  const allStudents=students.map((student:any)=>({name:student.student,id:student.id}))
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(classSchema),
     defaultValues: {
-        name: "Class A",
-        level:null,
-        className: "",
-        capacity: 30,
         teachers: [],
-        mainTeacher: { name: "Main Teacher", id: "3" },
-        mainStudent: { name: "Main Student", id: "4" },
-        students: [
-          { name: "Student 1", id: "5" },
-          { name: "Student 2", id: "6" },
-        ],
+        students: [],
+  
 },
   })
 
 const {toast}=useToast()
-const { reset, handleSubmit, control, formState,getValues,setValue,register,watch} = form;
+const { reset, formState,watch} = form;
 const {isSubmitting}=formState
 const [selectedTeachers, setSelectedTeachers] = React.useState<({ name: string; id: string; }|undefined)[]>(form.getValues('teachers'));
 
 React.useEffect(() => {
 
-  const subscription =  watch((value:any) => {console.log(value);setSelectedTeachers(value.teachers)});
+  const subscription =  watch((value:any) => {console.log(value);
+   setSelectedTeachers(value.teachers)});
   return () => subscription.unsubscribe();
 }, [watch]);
 
 
-function onSubmit(values:ClassFormValues) {
-    console.log(values)
+async function onSubmit(values:ClassFormValues) {
+  const classRef=await addClass(values)
+  setClasses((prev:ClassFormValues[])=>[{...values,id:classRef,
+    value:values.className,
+    label:values.className,
+    level:{level:values.level.level,id:values.level.id},
+    levelName:values.level.level},...prev])
+    values.students.forEach((student) => {
+
+    setStudents((prev:any[]) => {
+                const updatedLevels = prev.map((std:any) =>
+                  std.id === student.id ? { ...std,
+                    amountLeftToPay: values.level.fee,
+                    totalAmount: values.level.fee,
+                    startDate: values.level.start,
+                    nextPaymentDate: values.level.start,
+                    lastPaymentDate: values.level.start,
+                    level:values.level.level,
+                    class:{name:values.name,id:classRef}}: std
+                );
+                return updatedLevels;
+              });
+            });
+            values.teachers.forEach((teacher) => {
+
+            setTeachers((prev:any[]) => {
+                const updatedLevels = prev.map((std:any) =>
+                  std.id === teacher.id ? { ...std,
+                    class: {
+                        name: values.name,
+                        id: classRef
+                    }
+                }: std
+                );
+                return updatedLevels;
+              });
+            });
     toast({
         title: "changes applied!",
         description: `changes applied Successfully`,
       });
-      
+        reset()
 
   }
   return (
@@ -240,7 +221,7 @@ function onSubmit(values:ClassFormValues) {
                           </FormControl>
 
                           <SelectContent>
-                            {classNames.map((cls) => (
+                            {profile.classNames.map((cls:string) => (
                               <SelectItem key={cls} value={cls}>
                                 {cls}
                               </SelectItem>
@@ -339,7 +320,7 @@ function onSubmit(values:ClassFormValues) {
             <FormLabel>add students</FormLabel>
                 <MultiSelect
                     selected={field.value}
-                 options={students}
+                 options={allStudents}
                     {...field}
                     className="sm:w-[510px]"
                 />

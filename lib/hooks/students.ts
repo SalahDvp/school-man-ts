@@ -1,12 +1,15 @@
 import { db } from "@/firebase/firebase-config"
 import { z } from "zod";
-import { addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore"
+import { addDoc, arrayUnion, collection, deleteDoc, doc, updateDoc } from "firebase/firestore"
 import studentRegistrationSchema from "@/validators/auth";
 
 type StudentFormValues = z.infer<typeof studentRegistrationSchema> & {documents?:any[]};
 export const addStudent = async (student:StudentFormValues) => {
     try {
         const studentRef = await addDoc(collection(db, "Students"), student);
+        await updateDoc(doc(db,"Parents",student.parentId),{
+            children:arrayUnion({name:`${student.firstName} ${student.lastName}`,id:studentRef.id})
+        })
         console.log("Student added successfully:", studentRef.id);
         return studentRef.id; // Assuming you want to return the ID of the added Student
     } catch (error) {
