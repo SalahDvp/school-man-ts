@@ -22,7 +22,10 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { z } from "zod"
-
+import { useData } from "@/context/admin/fetchDataContext";
+import { updatePayment } from "@/lib/hooks/billing/otherPayments"
+import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment"
+import { updateDocuments } from "@/context/admin/hooks/useUploadFiles"
 type FormKeys =
   |"paymentTitle"
   |"paymentAmount"
@@ -35,7 +38,7 @@ type FormKeys =
   
 
 
-  type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema> & { [key: string]: string | Date | number; }
+  type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema> & { [key: string]: string | Date | number |any; }
 
   const fieldNames= [
     "paymentTitle",
@@ -76,19 +79,7 @@ type FormKeys =
     },
   ];
   
-  const payment: PaymentFormValues ={ 
-        id:"222",
-        paymentTitle: "John", 
-         paymentAmount:20000, 
-         typeofPayment: "john.doe@example.com", 
-         paymentDate:new Date(),
-         fromWho:"salah",
-         toWho:"youcef",
-         status:"paid",
-         notesTobeAdded:"kitchen needded to be fixed"
-        }
-    
-
+ 
   const payoutstatus =[
     
     {
@@ -103,21 +94,43 @@ type FormKeys =
   interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
+    payment:PaymentFormValues
   }
-const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
+  interface FileUploadProgress {
+    file: File;
+    name: string;
+    source:any;
+  }
+const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
   const { toast } = useToast();
+  const {setPayouts,setAnalytics}= useData()
+  const [openPayout,setOpenPayout]=useState(false)
   const [status, setstatus] = useState(false);
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
     const [openSubject, setOpenSubject] = useState();
+    const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
     const form =useForm<PaymentFormValues>({
       resolver: zodResolver(PaymentRegistrationSchema),
-           defaultValues: payment,
+           defaultValues:{  id:"222",
+           paymentTitle: "John", 
+            paymentAmount:20000, 
+            typeofPayment: "electricbill", 
+            paymentDate:new Date(),
+            fromWho:"salah",
+            toWho:"youcef",
+            status:"paid",
+            notesTobeAdded:"kitchen needded to be fixed"}
       
     });
-    const {formState,setValue,getValues } = form;
+    const {formState,setValue,getValues ,reset} = form;
     const { isSubmitting } = formState;
 
 
+    React.useEffect(() => {
+      reset()
+      console.log("reset",payment);
+    }, [payment])
     const renderInput = ({ fieldName, field }: any) => {
       switch (fieldName) {
         case "paymentDate":
@@ -182,15 +195,35 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
     
         return changes;
       };
-    function onSubmit(data:  PaymentFormValues) {
-        const changes = getChanges(data);
-            alert(changes);
-            toast({
-                title: "changes applied!",
-                description: `changes applied Successfully ${changes}`,
-              })
-      }
+      async function onSubmit(data: PaymentFormValues) {
+        const { value, label, ...updatedData } = data;
+        const month=getMonthInfo(updatedData.paymentDate)
+        await updatePayment(data,data.id,payment.paymentAmount)
+        const documents= await updateDocuments(payment.documents && payment.documents> 0?payment.documents:[],filesToUpload,'Billing/payouts/Payout',payment.id)
+       setPayouts((prev:any) => {
+          const updatedPayouts = prev.map((payout:PaymentFormValues) =>
+            payout.id === data.id? {...data,payout:payment.id,documents:documents} : payout
+          );
+          return updatedPayouts;
+        });
+        setAnalytics((prevState:any) => ({
+          data: {
+            ...prevState.data,
+            [month.abbreviation]: {
+              ...prevState.data[month.abbreviation],
+              expenses:prevState.data[month.abbreviation].expenses + (payment.paymentAmount-updatedData.salaryAmount)
+            }
+          },
+          totalExpenses: prevState.totalExpenses +  (payment.paymentAmount-updatedData.salaryAmount)
+        }));  
+          toast({
+              title: "Changes Applied!",
+              description: "Changes Applied Successfully",
+            })
+        
+            setOpen(false)
 
+    } 
     
   return (
     <Sheet open={open}  onOpenChange={setOpen}  >
@@ -229,7 +262,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
             </form>
           </Form>
           
-              {/* <ImageUpload/> */}
+              <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
 
         <SheetFooter className="mt-5">
           <SheetClose asChild>

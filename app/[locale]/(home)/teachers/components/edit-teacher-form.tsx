@@ -274,7 +274,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
       async function onSubmit(data: TeacherFormValues) {
         const { value, label, teacher, ...updatedData } = data;
         await updateTeacher(updatedData,data.id)
-        const documents= await updateDocuments(data.documents && data.documents> 0?data.documents:[],filesToUpload,'Teachers',data.id)
+        const documents= await updateDocuments(teacher.documents && teacher.documents> 0?teacher.documents:[],filesToUpload,'Teachers',data.id)
 
         setTeachers((prev:any) => {
           const updatedTeachers = prev.map((teacher:TeacherFormValues) =>

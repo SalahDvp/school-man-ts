@@ -13,21 +13,16 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { DataTableDemo } from "./components/table"
 import PaymentForm from "./components/paymentForm"
-import { useState } from "react"
-import SheetDemo from "./components/edit-payment"
 import { Overview } from "./components/area-chart"
 
 
 
  function Payouts() {
-
-  const [open,setOpen]=useState(false)
-
   return (
   
 
     <div className="flex flex-row min-h-screen w-full flex-col ">
-      <SheetDemo open={open} setOpen={setOpen}/>
+
       <div className="flex flex-col sm:gap-4 sm:py-4 ">
    
         <div className="grid flex items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
@@ -90,8 +85,7 @@ import { Overview } from "./components/area-chart"
       
         
          
-          <DataTableDemo setOpen={setOpen}/>
-
+          <DataTableDemo />
         
 
           </div>

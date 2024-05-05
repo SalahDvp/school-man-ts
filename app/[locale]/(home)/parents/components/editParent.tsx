@@ -193,7 +193,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
             const changes = getChanges(data);
             const {value, label,parent, ...updatedData} = data;
           await updateParent(updatedData,data.id)
-          const documents= await updateDocuments(data.documents && data.documents> 0?data.documents:[],filesToUpload,'Parents',data.id)
+          const documents= await updateDocuments(parent.documents && parent.documents> 0?parent.documents:[],filesToUpload,'Parents',parent.id)
           console.log("new odcuments",documents);
           
           setParents((prev:ParentFormValues[]) => {

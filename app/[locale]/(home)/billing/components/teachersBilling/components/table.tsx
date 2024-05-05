@@ -1,5 +1,5 @@
 "use client"
-
+import { teacherPaymentRegistrationSchema } from "@/validators/teacherSalarySchema";
 import * as React from "react"
 import {
   CaretSortIcon,
@@ -46,102 +46,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { z } from "zod"
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useData } from "@/context/admin/fetchDataContext"
+import SheetDemo from "./edit-teacher-salary"
 
- 
-type TeacherSalaryFormValues = {
-  id: string;
-  salaryTitle: string;
-  salaryAmount: number;
-  salaryDate: Date;
-  typeofTransaction: string;
-  monthOfSalary: string;
-  fromWho: string;
-  status: string;
-  teacher: {
-    name: string;
-    id: string;
-  };
+export type teacherSalary = {
   
+  salaryDate: string;
+  
+  
+
 };
-
-const salaryData=[
-    {
-        id: "dqweqew",
-        salaryTitle: "Monthly Salary",
-        salaryAmount: 5000,
-        salaryDate: new Date().toLocaleDateString('en-GB'),
-        typeofTransaction: "Bank Transfer",
-        monthOfSalary: "April",
-        fromWho: "Company XYZ",
-        status: "paid",
-        teacher: { name: "joi", id: "2222" },
-    },
-    {
-        id: "asdasd",
-        salaryTitle: "Yearly Bonus",
-        salaryAmount: 10000,
-        salaryDate: new Date().toLocaleDateString('en-GB'),
-        typeofTransaction: "Direct Deposit",
-        monthOfSalary: "December",
-        fromWho: "Company ABC",
-        status: "pending",
-        teacher: { name: "mary", id: "3333" },
-    },
-    {
-        id: "zxczxc",
-        salaryTitle: "Quarterly Incentive",
-        salaryAmount: 7500,
-        salaryDate:new Date().toLocaleDateString('en-GB'),
-        typeofTransaction: "Check",
-        monthOfSalary: "July",
-        fromWho: "Company PQR",
-        status: "paid",
-        teacher: { name: "peter", id: "4444" },
-    },
-    {
-        id: "rtyrty",
-        salaryTitle: "Performance Bonus",
-        salaryAmount: 12000,
-        salaryDate: new Date().toLocaleDateString('en-GB'),
-        typeofTransaction: "Bank Transfer",
-        monthOfSalary: "March",
-        fromWho: "Company LMN",
-        status: "pending",
-        teacher: { name: "sara", id: "5555" },
-    },
-    {
-        id: "fghfgh",
-        salaryTitle: "Annual Raise",
-        salaryAmount: 8000,
-        salaryDate:new Date().toLocaleDateString('en-GB'),
-        typeofTransaction: "Bank Transfer",
-        monthOfSalary: "January",
-        fromWho: "Company XYZ",
-        status: "paid",
-        teacher: { name: "alex", id: "6666" },
-    },
-    {
-        id: "vbnvbn",
-        salaryTitle: "Extra Hour Pay",
-        salaryAmount: 2000,
-        salaryDate:new Date().toLocaleDateString('en-GB'),
-        typeofTransaction: "Cash",
-        monthOfSalary: "August",
-        fromWho: "Company ABC",
-        status: "paid",
-        teacher: { name: "joe", id: "7777" },
-    },
-];
-
+export type TeacherSummary = {
+  salaryDate: string;
+}
 type Status = 'paid' | 'not paid' 
 
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  }
-  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
+type TeacherSalaryFormValues = z.infer<typeof teacherPaymentRegistrationSchema>  & {id:string };
+  export const DataTableDemo = () => {
+    const [open,setOpen]=React.useState(false)
+    const{teachersSalary,setTeachersSalary}= useData()
     
+    const [teacherSalary,setTeacherSalary]=React.useState<any>({
+      id:"qweqwe",
+      salaryTitle: "Monthly Salary",
+      salaryAmount: 5000,
+      salaryDate: new Date('2024-01-01'),
+      typeofTransaction:"Salary",
+      monthOfSalary:"May",
+      fromWho: "Company XYZ",
+      status:"paid",
+      teacher:{name:"joi",id:"2222"}
+  })
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'paid':
@@ -152,7 +90,7 @@ type Status = 'paid' | 'not paid'
       }
     }, []);
     
-   const columns: ColumnDef<any>[] = [
+   const columns: ColumnDef<TeacherSalaryFormValues>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -176,7 +114,8 @@ type Status = 'paid' | 'not paid'
       enableHiding: false,
     },
     {
-      accessorKey: "teacherName",
+id:"teacher",
+accessorFn: (row) => row.teacher.name,
       header: "Teacher",
       cell: ({ row }) => (
         <div className="capitalize">
@@ -193,8 +132,11 @@ type Status = 'paid' | 'not paid'
       accessorKey: "salaryDate",
       header: "Salary Date",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("salaryDate")}</div>
+       
+
+        <div className="capitalize hidden sm:table-cell"> {((row.getValue("salaryDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
       ),
+      
     },
     {
       accessorKey: "monthOfSalary",
@@ -231,7 +173,7 @@ type Status = 'paid' | 'not paid'
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original
+        const teacherSalary = row.original
   
         return (
           <DropdownMenu>
@@ -245,7 +187,7 @@ type Status = 'paid' | 'not paid'
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(teacherSalary)}>
                 View Payment
               </DropdownMenuItem>
               {/* <DropdownMenuItem>remove sa</DropdownMenuItem> */}
@@ -262,10 +204,15 @@ type Status = 'paid' | 'not paid'
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+  const openEditSheet = (teacherSalary:TeacherSalaryFormValues) => {
+    setTeacherSalary(teacherSalary)
+        setOpen(true); // Open the sheet after setting the level
+      };
+    
   const table = useReactTable({
-    data:salaryData,
+    data:teachersSalary,
     columns,
+    filterFromLeafRows: true, // filter and search through sub-rows
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -288,49 +235,41 @@ type Status = 'paid' | 'not paid'
     },
   })
  
-
-
-  
   return (
     <>
 <div className="flex items-center justify-between">
        
 
-    <Input
-          placeholder="Filter Salaries..."
-          value={(table.getColumn("teacher")?.getFilterValue() as { name: string; id: string } | undefined)?.name ?? ""}
-          onChange={(event) =>
-            table.getColumn("teacher.name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+<Input
+  placeholder="Filter Salaries..."
+  value={(table.getColumn("teacher")?.getFilterValue() as string) ?? ""}
+  onChange={(event) =>
+    table.getColumn("teacher")?.setFilterValue(event.target.value)
+  }
+  className="max-w-sm"
+/>
           <div className="flex items-center ml-auto">
-    <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+          <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline">
+      Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end">
+    {table.getAllColumns()
+      .filter((column) => column.getCanHide())
+      .map((column) => (
+        <DropdownMenuCheckboxItem
+          key={column.id}
+          checked={column.getIsVisible()}
+          onCheckedChange={() => column.toggleVisibility()}
+        >
+          {column.id} {/* Adjust to display appropriate name */}
+        </DropdownMenuCheckboxItem>
+      ))}
+  </DropdownMenuContent>
+</DropdownMenu>
+
         <Button variant="outline" className="ml-2">
        Export <File className="ml-2 h-4 w-4" />
       </Button>
@@ -423,6 +362,8 @@ type Status = 'paid' | 'not paid'
         </div>
       </div>
     </div>
+
+    <SheetDemo open={open} setOpen={setOpen}  teacherSalary={teacherSalary}/>
     </CardContent>
   </Card>
   </>

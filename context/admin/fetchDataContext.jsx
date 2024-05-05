@@ -16,7 +16,71 @@ export const  FetchDataProvider = ({ children }) => {
   const [teachers,setTeachers]=useState([]);
   const [classes,setClasses]=useState([])
   const [invoices,setInvoices]=useState({})
-  const [analytics,setAnalytics]=useState({data:{jan:{income:0,month:'jan'}},totalIncome:0})
+  const [analytics,setAnalytics]=useState({})
+  const [teachersSalary,setTeachersSalary]=useState([]);
+  const [payouts,setPayouts]=useState([]);
+  useEffect(()=>{
+    const getAnalytics=async()=>{
+      try {
+        const PayoutsSnapshot = await getDoc(doc(db, "Billing","analytics"));
+        const otherPayoutsSnapShot= await getDoc(doc(db, "Billing","payouts"));
+      
+        console.log("wedwe",PayoutsSnapshot.data());
+     
+       
+     
+          //console.table(parentsData);
+        setAnalytics({...PayoutsSnapshot.data(),...otherPayoutsSnapShot.data()})
+      } catch (error) {
+        console.error('Error fetching Payouts:', error);
+      }
+    };
+    getAnalytics()
+  },[])
+  console.log("anal",analytics);
+  useEffect(()=>{
+    const getPayouts = async () => {
+      try {
+        const PayoutsSnapshot = await getDocs(collection(db, "Billing","payouts","Payout"));
+      
+      
+        const PayoutsData = PayoutsSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           paymentDate:new Date(doc.data().paymentDate.toDate()),
+           payment:doc.id,
+           value:doc.id,
+           label:doc.id}))
+       
+     
+          //console.table(parentsData);
+        setPayouts(PayoutsData)
+      } catch (error) {
+        console.error('Error fetching Payouts:', error);
+      }
+    };
+    getPayouts()
+  },[])
+  useEffect(()=>{
+    const getTeachersSalary = async () => {
+      try {
+        const teachersSalarySnapshot = await getDocs(collection(db, "Billing","payouts","TeachersTransactions"));
+      
+        const TeachersSalaryData = teachersSalarySnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           salaryDate:new Date(doc.data().salaryDate.toDate()),
+           value:doc.id,
+           label:doc.id,
+           teacherSalary:doc.id
+          }))
+    
+          setTeachersSalary(TeachersSalaryData)
+      } catch (error) {
+        console.error('Error fetching Teachers:', error);
+      }
+    };
+    getTeachersSalary()
+  },[])
+
   useEffect(()=>{
     const getInvoices = async () => {
       try {
@@ -26,6 +90,7 @@ export const  FetchDataProvider = ({ children }) => {
            id: doc.id,
            value:doc.id,
            label:doc.id,
+           invoice:doc.id,
            paymentDate:new Date(doc.data().paymentDate.toDate())
             }))
        
@@ -164,7 +229,7 @@ setStudents(StudentsData)
     getProfile();
   }, []);
   return (
-    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents,teachers,setTeachers,classes,setClasses,invoices,setInvoices,analytics,setAnalytics}}>
+    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents,teachers,setTeachers,classes,setClasses,invoices,setInvoices,analytics,setAnalytics,teachersSalary,setTeachersSalary,payouts,setPayouts}}>
       {children}
     </AppContext.Provider>
   );

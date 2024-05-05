@@ -39,7 +39,9 @@ import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
-import { fetchFiles } from "@/context/admin/hooks/useUploadFiles";
+import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles";
+import { updateStudentInvoice } from "@/lib/hooks/billing/student-billing";
+import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 function addMonthsToDate(date: Date, monthsToAdd: number): Date {
   const newDate = new Date(date.getTime()); // Create a copy of the original date
   newDate.setMonth(newDate.getMonth() + monthsToAdd); // Add months to the date
@@ -317,10 +319,42 @@ const renderInput = (fieldName:string, field:any) => {
   }
 };
 
-  function onSubmit(data:StudentPaymentFormValues) {
+async function onSubmit(data: StudentPaymentFormValues) {
+  const { value, label, ...updatedData } = data;
+const month=getMonthInfo(updatedData.paymentDate)
+  await updateStudentInvoice(updatedData,invoice.id,invoice.paymentAmount)
+  const documents= await updateDocuments(invoice.documents && invoice.documents> 0?invoice.documents:[],filesToUpload,'Billing/payments/Invoices',invoice.id)
+  setInvoices((prev:any) => {
+    const updatedTeachers = prev.map((teacherSalarys:StudentPaymentFormValues) =>
+    teacherSalarys.id === invoice.id? {...data,teacherSalary:invoice.id,documents:documents} : teacherSalarys
+    );
+    return updatedTeachers;
+  });
+  setStudents((prev:any) => {
+    const updatedLevels = prev.map((student:any) =>
+      student.id === data.student.id ? { ...data,nextPaymentDate:updatedData.nextPaymentDate,
+        amountLeftToPay:updatedData.amountLeftToPay-updatedData.paymentAmount }: student
+    );
+    return updatedLevels;
+  });
+  setAnalytics((prevState:any) => ({
+    data: {
+      ...prevState.data,
+      [month.abbreviation]: {
+        ...prevState.data[month.abbreviation],
+        income:prevState.data[month.abbreviation].income + (invoice.paymentAmount-updatedData.paymentAmount)
+      }
+    },
+    totalIncome: prevState.totalIncome +   (invoice.paymentAmount-updatedData.paymentAmount)
+  }));  
+    toast({
+        title: "Changes Applied!",
+        description: "Changes Applied Successfully",
+      })
+  
+      setOpen(false)
 
-        console.log("eqwqewqweq",data);
-  }
+} 
 
   return (
  

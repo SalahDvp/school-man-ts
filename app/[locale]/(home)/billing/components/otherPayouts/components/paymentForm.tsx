@@ -29,6 +29,10 @@ import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addPayment } from "@/lib/hooks/billing/otherPayments";
+import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 
 const fieldNames = [
   "paymentTitle",
@@ -53,23 +57,22 @@ type FormKeys =
 
 
   type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>;
-
+  interface FileUploadProgress {
+    file: File;
+    name: string;
+    source:any;
+  }
 export default function PaymentForm() {
   const { toast } = useToast();
   const [status, setstatus] = useState(false);
+  const {payouts,setPayouts,setAnalytics}=useData()
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(PaymentRegistrationSchema),
     defaultValues: {
         id:"222",
-        paymentTitle: "John", 
-         paymentAmount:20000, 
-         typeofPayment: "electricbill", 
-         paymentDate:new Date(),
-         fromWho:"salah",
-         toWho:"youcef",
-         status:"paid",
-         notesTobeAdded:"kitchen needded to be fixed"
     },
   });
   const { reset, formState, setValue, getValues } = form;
@@ -78,19 +81,19 @@ export default function PaymentForm() {
 
   const Typeofpayments = [
     {
-      value: "electricbill",
-      label: "Electric Bill",
+      value: "RentExpenses",
+      label: "Rent Expenses",
     },
     {
-      value: "waterBill",
-      label: "Water Bill",
+      value: "billsExpenses",
+      label: "Bills (need to be explaind in the notes)",
     },
     {
-      value: "gazBill",
-      label: "Gaz Bill",
+      value: "groceriesExpensesl",
+      label: "Groceries Expensesl",
     },
     {
-      value: "Maintenance",
+      value: "maintenanceExpenses",
       label: "Maintenance",
     },
     {
@@ -98,7 +101,7 @@ export default function PaymentForm() {
       label: "Delivery",
     },
     {
-      value:"other"  ,
+      value:"otherExpenses"  ,
       label: "Other (should be described in the notes)",
     },
   ];
@@ -168,18 +171,30 @@ export default function PaymentForm() {
     }
   };
 
-  function onSubmit(data:PaymentFormValues) {
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        toast({
-          title: "Payment added!",
-          description: "Payment added Successfully",
-        });
-        console.log(data);
-        resolve();
-      }, 2000);
-    });
-  }
+  async function onSubmit(data:PaymentFormValues) {
+    const payoutId= await addPayment({...data,documents:[]})
+    const uploaded = await uploadFilesAndLinkToCollection("Billing/payouts/Payout", payoutId, filesToUpload);
+    const month=getMonthInfo(data.paymentDate)
+    setPayouts((prev:PaymentFormValues[])=>[{...data,id:payoutId,payout:payoutId,documents:uploaded,value:payoutId,
+      label:payoutId,},...prev])
+      setAnalytics((prevState:any) => ({
+        data: {
+          ...prevState.data,
+          [month.abbreviation]: {
+            ...prevState.data[month.abbreviation],
+            expenses:prevState.data[month.abbreviation].expenses + data.paymentAmount
+          }
+        },
+        totalExpenses: prevState.totalExpenses +  data.paymentAmount
+      }));  
+          toast({
+              title: "payout added!",
+              description: "payout added Successfully",
+            });
+    console.log(data);
+            reset(); 
+          
+          }
 
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
@@ -230,7 +245,7 @@ export default function PaymentForm() {
             </form>
           </Form>
 
-          {/* <ImageUpload /> */}
+          <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

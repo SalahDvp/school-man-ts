@@ -1,5 +1,5 @@
 "use client"
-
+import { format } from "date-fns"; 
 import * as React from "react"
 import {
   CaretSortIcon,
@@ -50,51 +50,15 @@ import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { z } from "zod"
 import { PaymentRegistrationSchema } from "@/validators/paymentSchema"
-const data= [
-  {
-      id: "222",
-      paymentTitle: "John",
-      paymentAmount: 20000,
-      typeofPayment: "john.doe@example.com",
-      paymentDate: new Date().toLocaleDateString('en-GB'),
-      fromWho: "salah",
-      toWho: "youcef",
-      status: "paid",
-      notesTobeAdded: "kitchen needed to be fixed"
-  },
-  {
-      id: "223",
-      paymentTitle: "Jane",
-      paymentAmount: 15000,
-      typeofPayment: "jane.smith@example.com",
-      paymentDate: new Date().toLocaleDateString('en-GB'),
-      fromWho: "mohamed",
-      toWho: "ben",
-      status: "pending",
-      notesTobeAdded: "bathroom renovation"
-  },
-  {
-      id: "224",
-      paymentTitle: "Alice",
-      paymentAmount: 18000,
-      typeofPayment: "alice.wonder@example.com",
-      paymentDate: new Date().toLocaleDateString('en-GB'),
-      fromWho: "emma",
-      toWho: "charlie",
-      status: "paid",
-      notesTobeAdded: "living room painting"
-  },
-  // Add more objects as needed
-];
+import { useData } from "@/context/admin/fetchDataContext"
+import SheetDemo from "./edit-payment"
+
 type Status = 'paid' | 'not paid' 
-type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
-
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
-  }
-  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ setOpen }) => {
+type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>  & {id:string };
+export const DataTableDemo = () => {
     
+  const [open,setOpen]=React.useState(false)
+    const {payouts,setPayouts}=useData()
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
         case 'paid':
@@ -104,7 +68,19 @@ type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
         // Default to white for unknown status
       }
     }, []);
-    
+
+    const [payment,setPayment]=React.useState<PaymentFormValues>({  
+      id:"222",
+      paymentTitle: "John", 
+       paymentAmount:20000, 
+       typeofPayment: "electricbill", 
+       paymentDate:new Date(),
+       fromWho:"salah",
+       toWho:"youcef",
+       status:"paid",
+       notesTobeAdded:"kitchen needded to be fixed"
+    })
+    const formattedJoiningDate = format(payment.paymentDate, "yyyy-MM-dd");
    const columns: ColumnDef<any>[] = [
     {
       id: "select",
@@ -147,7 +123,9 @@ type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
       accessorKey: "paymentDate",
       header: "Date",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("paymentDate")}</div>
+       
+
+        <div className="capitalize hidden sm:table-cell"> {((row.getValue("paymentDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
       ),
     },
     {
@@ -207,10 +185,14 @@ type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
+  const openEditSheet = (payout:PaymentFormValues) => {
+        setPayouts(payout)
+        setOpen(true); // Open the sheet after setting the level
+      };
+    
   const table = useReactTable({
-    data,
-   columns,
+    data:payouts,
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -233,9 +215,6 @@ type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
     },
   })
  
-
-
-  
   return (
     <>
 <div className="flex items-center justify-between">
@@ -368,6 +347,8 @@ type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>
         </div>
       </div>
     </div>
+    <SheetDemo open={open} setOpen={setOpen}  payment={payment}/>
+    
     </CardContent>
   </Card>
   </>

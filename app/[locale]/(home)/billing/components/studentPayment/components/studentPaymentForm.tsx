@@ -32,6 +32,7 @@ import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addPaymentTransaction } from "@/lib/hooks/billing/student-billing";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 
 const fieldNames: string[] = [
   'student',
@@ -259,6 +260,7 @@ const onSelected=(selectedStudent:any)=>{
   };
 
   async function onSubmit(data:StudentPaymentFormValues) {
+    const month= getMonthInfo(data.paymentDate)
     const transactionId=await addPaymentTransaction({...data,documents:[]})
     const uploaded = await uploadFilesAndLinkToCollection("Billing/payments/Invoices", transactionId, filesToUpload);
     setInvoices((prev:StudentPaymentFormValues[])=>[{...data,id:transactionId,invoice:transactionId,
@@ -267,7 +269,8 @@ const onSelected=(selectedStudent:any)=>{
     documents:uploaded},...prev])
     setStudents((prev:any) => {
       const updatedLevels = prev.map((student:any) =>
-        student.id === data.student.id ? { ...data,nextPaymentDate:data.nextPaymentDate,
+        student.id === data.student.id ? { ...student,
+          nextPaymentDate:data.nextPaymentDate,
           amountLeftToPay:data.amountLeftToPay-data.paymentAmount }: student
       );
       return updatedLevels;
@@ -275,9 +278,9 @@ const onSelected=(selectedStudent:any)=>{
     setAnalytics((prevState:any) => ({
       data: {
         ...prevState.data,
-        jan: {
-          ...prevState.data.jan,
-          income:prevState.data.jan.income + data.paymentAmount
+        [month.abbreviation]: {
+          ...prevState.data[month.abbreviation],
+          income:prevState.data[month.abbreviation].income + data.paymentAmount
         }
       },
       totalIncome: prevState.totalIncome +  data.paymentAmount

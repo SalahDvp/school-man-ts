@@ -108,7 +108,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open,student }) => {
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
 
   const form = useForm<StudentFormValues>({
-    resolver: zodResolver(studentRegistrationSchema),
+    //resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
       id: '123456',
       level: 'Intermediate',
@@ -262,7 +262,9 @@ useEffect(() => {
     const changes = getChanges(data);
     const { value, label, student, ...updatedData } = data;
     await updateStudent(updatedData,data.id)
-    const documents= await updateDocuments(data.documents && data.documents> 0?data.documents:[],filesToUpload,'Students',data.id)
+    console.log(data);
+    
+    const documents= await updateDocuments(student.documents && student.documents> 0?student.documents:[],filesToUpload,'Students',data.id)
 setStudents((prev:StudentFormValues[]) => {
   const updatedLevels = prev.map((student:StudentFormValues) =>
     student.id === data.id ? { ...data, id: data.id, student: `${data.firstName} ${data.lastName}`, documents: documents }: student
