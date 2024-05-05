@@ -1,24 +1,32 @@
-import { z } from 'zod';
 
-// Define the validation schema using Zod
-const levelSchema = z.object({
-    id: z.string().min(1, { message: 'ID is required' }) ,
-    level: z.string().min(1, { message: 'Level is required' }),
-    start: z.string().min(1, { message: 'Start date is required' }),
-    end: z.string().min(1, { message: 'End date is required' }),
-    fee: z.number().min(0, { message: 'Fee must be a positive number' }),
-    status: z.enum(["open", "closed"]),
-    registrationDeadline: z.string().min(1, { message: 'Registration deadline is required' }),
-    subjects: z.array( z.object({
+import { ZodObject,ZodSchema,z } from "zod";
+const levelSchema: ZodSchema<{
+  id: string;
+    level: string;
+    start: Date;
+    end: Date;
+    fee: number;
+    status: "open" | "closed";
+    registrationDeadline: Date;
+    subjects: Array<{ value: string; label: string }>;
+    prices: Array<any>;
+}> = z.object({
+  id: z.string().min(1, { message: 'ID is required' }),
+  level: z.string().min(1, { message: 'Level is required' }),
+  start: z.date().refine((value) => value > new Date(), { message: 'Please enter a valid date' }),
+  end: z.date().refine((value) => value > new Date(), { message: 'Please enter a valid date' }),
+  fee: z.number().min(0, { message: 'Fee must be a positive number' }),
+  status: z.enum(["open", "closed"]),
+  registrationDeadline: z.date().refine((value) => value > new Date(), { message: 'Please enter a valid date' }),
+  subjects: z.array(z.object({
       value: z.string(),
-      label:z.string(),
-    })).min(1, { message: 'At least one subject is required' }),
-    prices: z.array(  z.object({
+      label: z.string(),
+  })).min(1, { message: 'At least one subject is required' }),
+  prices: z.array(z.object({
       name: z.string(),
-      period: z.enum(["1 month", "2 months","4 months","1 year"]),
-
+      period: z.enum(["1 month", "2 months", "4 months", "1 year"]),
       price: z.number(),
-    })).min(1, { message: 'At least one method is required' }),
+  })).min(1, { message: 'At least one method is required' }),
 });
 
 export default levelSchema;
