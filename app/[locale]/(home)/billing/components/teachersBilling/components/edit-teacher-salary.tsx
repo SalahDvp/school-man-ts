@@ -127,8 +127,11 @@ interface openModelProps {
 
 const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => {
   const { toast } = useToast();
-  const{teachersSalary,setTeachersSalary}=useData()
+  const{setTeachersSalary}=useData()
   const {teachers}= useData()
+
+  console.log("transaction",teacherSalary)
+
   const [status, setstatus] = useState(false);
   const [monthModal,setMonthModal]=useState(false)
   const [teacherModal,setTeacherModal]=useState(false)
@@ -136,20 +139,21 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
 
     const form =useForm<TeacherSalaryFormValues>({
       resolver: zodResolver(teacherPaymentRegistrationSchema),
-           defaultValues:teacherSalary
-      
+           defaultValues:{
+         
+           }
     });
     const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
 
+    React.useEffect(() => {
+      reset(teacherSalary)
+      console.log("reset",teacherSalary);
+    }, [teacherSalary])
 
     const teacherNames = teachers.map((teacher_: { firstName: string; lastName: string; id:string}) => {
       // Combine and trim first and last name to remove leading/trailing spaces
       const combinedName = `${teacher_.firstName.trim()} ${teacher_.lastName.trim()}`;
-      
-      
-  
-     
     
       return {
         label: combinedName, // For use in UI components like dropdowns
@@ -158,10 +162,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
       };
     });
 
-    React.useEffect(() => {
-      reset(teacherSalary)
-      console.log("reset",teacherSalary);
-    }, [teacherSalary])
+    
 
     const renderInput = (fieldName:string, field:any) => {
         switch (fieldName) {
@@ -217,13 +218,13 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
                 setOpen={setTeacherModal}
               placeHolder="Teacher"
               options={teacherNames}
-              value={getValues(teachersSalary.name)}
+              value={getValues("teacher")?.name} 
               onSelected={(selectedValue) => {
                 const selectedTeacher = teacherNames.find(
-                    (teacher: { value: string; }) => teacher.value === selectedValue
+                    (teacher:any) => teacher.value === selectedValue
                   );
-               {selectedTeacher && form.setValue(fieldName, {name:selectedTeacher?.value,id:selectedTeacher?.id})}
-              }} // Set the value based on the form's current value for the field
+               {selectedTeacher && form.setValue("teacher", {name:selectedTeacher?.value,id:selectedTeacher?.id})}
+              }}
             />
           );
             

@@ -77,19 +77,7 @@ type FormKeys =
     },
   ];
   
-  const payment: PaymentFormValues ={ 
-        id:"222",
-        paymentTitle: "John", 
-         paymentAmount:20000, 
-         typeofPayment: "john.doe@example.com", 
-         paymentDate:new Date(),
-         fromWho:"salah",
-         toWho:"youcef",
-         status:"paid",
-         notesTobeAdded:"kitchen needded to be fixed"
-        }
-    
-
+ 
   const payoutstatus =[
     
     {

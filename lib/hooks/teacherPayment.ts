@@ -1,9 +1,11 @@
 
 
 import { db } from "@/firebase/firebase-config"
-import { addDoc, collection, deleteDoc, doc, updateDoc ,setDoc} from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, updateDoc ,setDoc,increment} from "firebase/firestore"
 import { teacherPaymentRegistrationSchema } from "@/validators/teacherSalarySchema";
 import { z } from "zod";
+
+
 
 
 
@@ -15,10 +17,29 @@ export const addTeacherSalary = async (transaction:TeacherSalaryFormValues) => {
         await setDoc(doc(db, "Teachers", transaction.teacher.id, "TeacherSalary", teacherTransRef.id), {   ref: teacherTransRef.id, }); 
     
         // Reference to the added document
-            console.log("Tracher Salary added successfully:",teacherTransRef.id );    
+        console.log("Tracher Salary added successfully:",teacherTransRef.id );    
+        await updateDoc(doc(db, "Billing", "payouts"), {
+            teachersExpenses: increment(transaction.salaryAmount),
+            
+        });
+        await updateDoc(doc(db, "Billing","analytics"), {
+            totalExpenses:increment(transaction.salaryAmount),
+            [`data.${transaction.monthOfSalary}.expenses`]: increment(transaction.salaryAmount)
+
+        });
+        /*await updateDoc(doc(db, "Billing", "analytics"), {
+            totalIncome: increment(transaction.paymentAmount),
+            "data.jan.income": increment(transaction.paymentAmount)
+        });
+        await updateDoc(doc(db,"Teachers",transaction.student.id),{
+            nextPaymentDate:transaction.nextPaymentDate,
+            amountLeftToPay:transaction.amountLeftToPay-transaction.paymentAmount
+        })
+
+        [`data.${month}.expenses`]
+        
+        */
         return teacherTransRef;
-        
-        
         // Assuming you want to return the ID of the added Tracher Salary
     } catch (error) {
         console.error("Error adding Tracher Salary:", error);
@@ -50,6 +71,8 @@ export const deleteTeacherSalary = async(transactionID:string)=>{
     } 
 }
 
-function increment(salaryAmount: any) {
-    throw new Error("Function not implemented.");
-}
+//function increment(salaryAmount: any) {
+//    throw new Error("Function not implemented.");
+//}
+
+

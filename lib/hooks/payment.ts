@@ -1,7 +1,7 @@
 
 
 import { db } from "@/firebase/firebase-config"
-import { addDoc, collection, deleteDoc, doc, updateDoc ,setDoc} from "firebase/firestore"
+import { addDoc, collection, deleteDoc, doc, updateDoc ,setDoc,increment} from "firebase/firestore"
 import { PaymentRegistrationSchema } from "@/validators/paymentSchema";
 import { z } from "zod";
 
@@ -14,8 +14,21 @@ export const addPayment = async (transaction:PaymentFormValues) => {
         const paymentTransRef = await addDoc(collection(db, "Billing","payouts","Payout"), transaction);
     
         // Reference to the added document
-            console.log("Payout Salary added successfully:",paymentTransRef.id );    
-        return paymentTransRef;
+        const key = transaction.typeofPayment; 
+        console.log("Payout Salary added successfully:",paymentTransRef.id );  
+        await updateDoc(doc(db, "Billing", "payouts"), {
+            
+            [key]: increment(transaction.paymentAmount),
+            
+        });
+            return paymentTransRef; 
+          /*  await updateDoc(doc(db, "Billing","analytics"), {
+                totalExpenses:increment(transaction.salaryAmount),
+                [`data.${transaction.monthOfSalary}.expenses`]: increment(transaction.salaryAmount)
+    
+            });
+            */  
+        
         
         
         // Assuming you want to return the ID of the added Payout Salary
@@ -49,6 +62,3 @@ export const deletePayment = async(transactionID:string)=>{
     } 
 }
 
-function increment(salaryAmount: any) {
-    throw new Error("Function not implemented.");
-}

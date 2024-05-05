@@ -136,14 +136,8 @@ type TeacherSalaryFormValues = z.infer<typeof teacherPaymentRegistrationSchema> 
       accessorKey: "salaryDate",
       header: "Salary Date",
       cell: ({ row }) => {
-        const rawDate:any = row.getValue("salaryDate");
-        let formattedDate
-        const date = new Date(rawDate.seconds * 1000 + rawDate.nanoseconds / 1e6);
-        formattedDate = format(date, "yyyy-MM-dd");
-                                     // Assuming this is a Date object
-        console.log(rawDate);
-        
-        return <div>{formattedDate}</div>;
+        const rawDate = row.getValue("salaryDate"); // Assuming this is a Date object
+        return <div>{format(new Date(rawDate), "yyyy-MM-dd")}</div>;
       },
       
     },

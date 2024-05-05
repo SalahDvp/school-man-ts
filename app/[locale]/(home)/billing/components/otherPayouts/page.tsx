@@ -91,7 +91,7 @@ import { Overview } from "./components/area-chart"
         
          
           <DataTableDemo setOpen={setOpen}/>
-
+          <SheetDemo open={open} setOpen={setOpen} payment={undefined}/>
         
 
           </div>

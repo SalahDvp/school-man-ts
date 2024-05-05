@@ -81,19 +81,19 @@ export default function PaymentForm() {
 
   const Typeofpayments = [
     {
-      value: "electricbill",
-      label: "Electric Bill",
+      value: "RentExpenses",
+      label: "Rent Expenses",
     },
     {
-      value: "waterBill",
-      label: "Water Bill",
+      value: "billsExpenses",
+      label: "Bills (need to be explaind in the notes)",
     },
     {
-      value: "gazBill",
-      label: "Gaz Bill",
+      value: "groceriesExpensesl",
+      label: "Groceries Expensesl",
     },
     {
-      value: "Maintenance",
+      value: "maintenanceExpenses",
       label: "Maintenance",
     },
     {
@@ -101,7 +101,7 @@ export default function PaymentForm() {
       label: "Delivery",
     },
     {
-      value:"other"  ,
+      value:"otherExpenses"  ,
       label: "Other (should be described in the notes)",
     },
   ];

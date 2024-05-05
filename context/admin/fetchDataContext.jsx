@@ -99,7 +99,7 @@ export const  FetchDataProvider = ({ children }) => {
       
         const TeachersSalaryData = teachersSalarySnapshot.docs.map((doc) => ({ ...doc.data(),
            id: doc.id,
-           
+           salaryDate:new Date(doc.data().salaryDate.toDate()),
            //dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
            //joiningDate:new Date(doc.data().joiningDate.toDate()),
            //teacher: `${doc.data().firstName} ${doc.data().lastName}`
@@ -121,7 +121,7 @@ export const  FetchDataProvider = ({ children }) => {
       
         const PayoutsData = PayoutsSnapshot.docs.map((doc) => ({ ...doc.data(),
            id: doc.id,
-           
+           paymentDate:new Date(doc.data().paymentDate.toDate()),
            payment: `${doc.data().firstName} ${doc.data().lastName}`}))
        
      

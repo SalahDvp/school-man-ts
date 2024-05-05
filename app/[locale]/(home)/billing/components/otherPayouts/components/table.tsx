@@ -69,7 +69,7 @@ export const DataTableDemo = () => {
       }
     }, []);
 
-    const [payment,setPayment]=React.useState<TeacherFormValues>({  
+    const [payment,setPayment]=React.useState<PaymentFormValues>({  
       paymentTitle: "John", 
       paymentAmount:20000, 
       typeofPayment: "electricbill", 
@@ -121,7 +121,10 @@ export const DataTableDemo = () => {
     {
       accessorKey: "paymentDate",
       header: "Date",
-      
+      cell: ({ row }) => {
+        const rawDate = row.getValue("paymentDate"); // Assuming this is a Date object
+        return <div>{format(new Date(rawDate), "yyyy-MM-dd")}</div>;
+      },
     },
     {
       accessorKey: "status",
@@ -342,6 +345,8 @@ export const DataTableDemo = () => {
         </div>
       </div>
     </div>
+    <SheetDemo open={open} setOpen={setOpen}  payment={payment}/>
+    
     </CardContent>
   </Card>
   </>
