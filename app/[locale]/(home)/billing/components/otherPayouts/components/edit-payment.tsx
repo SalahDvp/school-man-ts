@@ -37,7 +37,11 @@ type FormKeys =
 
 
   type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema> & { [key: string]: string | Date | number; }
-
+  interface openModelProps {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    open: boolean; // Specify the type of setOpen
+    payment:PaymentFormValues;
+  }
   const fieldNames= [
     "paymentTitle",
     "paymentAmount",
@@ -89,10 +93,19 @@ type FormKeys =
       label: "Not Paid",
     },
   ]
-  interface openModelProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
+
+  const payment: PaymentFormValues={
+
+    paymentTitle: "John", 
+    paymentAmount:20000, 
+    typeofPayment: "electricbill", 
+    paymentDate:new Date(),
+    fromWho:"salah",
+    toWho:"youcef",
+    status:"paid",
+    notesTobeAdded:"kitchen needded to be fixed"
   }
+ 
 const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
   const { toast } = useToast();
   const {setPayouts}= useData()
