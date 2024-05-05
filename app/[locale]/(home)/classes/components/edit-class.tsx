@@ -50,7 +50,7 @@ interface SheetDemoProps {
 const EditClassForm: React.FC<SheetDemoProps> = ({ cls,setOpen,open }) => {
 
   const form = useForm<any>({
-    //resolver: zodResolver(classSchema),
+    resolver: zodResolver(classSchema),
     defaultValues: {
       "name": "Math Class",
       "level": {"name":"Elementary","id":"1"},

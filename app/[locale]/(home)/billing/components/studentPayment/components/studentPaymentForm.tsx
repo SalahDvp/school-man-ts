@@ -29,20 +29,26 @@ import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { addPaymentTransaction } from "@/lib/hooks/billing/student-billing";
+import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 
 const fieldNames: string[] = [
   'student',
   'parent',
   'level',
   'class',
+  "amountLeftToPay",
   'paymentPlan',
-  'paymentTitle',
   'paymentAmount',
+  'nextPaymentDate',
+  'paymentTitle',
   'paymentDate',
   'fromWho',
   'typeofTransaction',
   'status',
-  'description'
+  'description',
+
 ];
 
 
@@ -58,10 +64,25 @@ type FormKeys =
   | 'level'
   | 'class'
   | 'paymentPlan'
+  |  "amountLeftToPay"
+  |  'nextPaymentDate'
   | 'status';
 
 type StudentPaymentFormValues = z.infer<typeof studentPaymentSchema>;
+function addMonthsToDate(date: Date, monthsToAdd: number): Date {
+  const newDate = new Date(date.getTime()); // Create a copy of the original date
+  newDate.setMonth(newDate.getMonth() + monthsToAdd); // Add months to the date
+  return newDate;
+}
 
+function parsePaymentPlan(paymentPlan: string, startDate: Date): Date | null {
+  const match = paymentPlan.match(/(\d+)\s+months?/i); // Match the number of months in the string
+  if (match) {
+    const months = parseInt(match[1]); // Extract and parse the number of months
+    return addMonthsToDate(startDate, months); // Add months to the startDate and return the new date
+  }
+  return null; // Return null if the paymentPlan string does not match the expected format
+}
 const typeofTransaction = [
   {
     value: "CreditCard",
@@ -85,117 +106,19 @@ const studentPaymentStatus =[
     label: "Not Paid",
   },
 ]
-const studentList= [
-  {
-    "id": "2",
-    "name": "Jane Smith",
-    "status": "active",
-    "level": "Grade 5",
-    "joiningDate": "2022-09-10",
-    "leftAmountToPay": 200,
-    "registrationStatus": "accepted",
-    "startDate": "2022-09-01",
-    "lastPaymentDate": "2023-04-01",
-    "nextPaymentDate": "2023-05-01",
-    "totalAmount": 1500,
-    "amountLeftToPay": 200,
-    "value": "Jane Smith",
-    "label": "Jane Smith",
-    "parent": {
-      "name": "Rebecca",
-      "id": "2"
-    },
-    "class": {
-      "name": "5A"
-    }
-  },
-  {
-    "id": "3",
-    "name": "Alice Johnson",
-    "status": "suspended",
-    "level": "Grade 3",
-    "joiningDate": "2021-02-15",
-    "leftAmountToPay": 500,
-    "registrationStatus": "pending",
-    "startDate": "2021-02-10",
-    "lastPaymentDate": "2023-03-15",
-    "nextPaymentDate": "2023-04-15",
-    "totalAmount": 1000,
-    "amountLeftToPay": 500,
-    "value": "Alice Johnson",
-    "label": "Alice Johnson",
-    "parent": {
-      "name": "George",
-      "id": "3"
-    },
-    "class": {
-      "name": "3B"
-    }
-  },
-  {
-    "id": "4",
-    "name": "Charlie Brown",
-    "status": "graduated",
-    "level": "Kindergarten",
-    "joiningDate": "2020-08-01",
-    "leftAmountToPay": 0,
-    "registrationStatus": "completed",
-    "startDate": "2020-08-01",
-    "lastPaymentDate": "2022-06-01",
-    "nextPaymentDate": null,
-    "totalAmount": 1800,
-    "amountLeftToPay": 0,
-    "value": "Charlie Brown",
-    "label": "Charlie Brown",
-    "parent": {
-      "name": "Eleanor",
-      "id": "4"
-    },
-    "class": {
-      "name": "6C"
-    }
-  },
-  {
-    "id": "5",
-    "name": "Michael Lee",
-    "status": "expelled",
-    "level": "Grade 2",
-    "joiningDate": "2023-01-20",
-    "leftAmountToPay": 700,
-    "registrationStatus": "rejected",
-    "startDate": "2023-01-15",
-    "lastPaymentDate": "2023-02-20",
-    "nextPaymentDate": "2023-02-20",
-    "totalAmount": 800,
-    "amountLeftToPay": 700,
-    "value": "Michael Lee",
-    "label": "Michael Lee",
-    "parent": {
-      "name": "Benjamin",
-      "id": "5"
-    },
-    "class": {
-      "name": "2D"
-    }
-  }
-]
-
-
-
-const levels=[
-{id: "1",
-level: "Kindergarten",
-fee: 1000,
-paymentPlans:[{id: 'PP001', name: 'Monthly Plan', period: '1 month', fee: 500 ,value:'Monthly Plan',label:'Monthly Plan'}]}
-]
-
+interface FileUploadProgress {
+  file: File;
+  name: string;
+  source:any;
+}
 export default function StudentPaymentForm() {
   const { toast } = useToast();
+  const {students,levels,setInvoices,setStudents,setAnalytics}=useData()
   const [status, setstatus] = useState(false);
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const [studentModal,setStudentModal]=React.useState(false)
   const [paymentPlanModal,setPaymentPlanModal]=React.useState(false)
-const [student,setStudent]=useState()
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
   const form = useForm<StudentPaymentFormValues>({
     resolver: zodResolver(studentPaymentSchema),
   });
@@ -208,11 +131,11 @@ const paymentPlans = React.useMemo(() => {
 
   
   if (studentValue) {
-    const selectedLevel = levels.find(level => level.level === studentValue);
+    const selectedLevel = levels.find((level:any) => level.level === studentValue);
 
     if (selectedLevel) {
 
-      return selectedLevel.paymentPlans;
+      return selectedLevel.prices.map((price:any)=>({...price,label:price.name,value:price.name}));
     }
   }
   return [];
@@ -221,6 +144,7 @@ const onSelected=(selectedStudent:any)=>{
   form.setValue("class",selectedStudent.class.name)
   form.setValue("parent",selectedStudent.parent)
   form.setValue("level",selectedStudent.level)
+  form.setValue("amountLeftToPay",selectedStudent.amountLeftToPay)
 }
   const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
@@ -245,16 +169,15 @@ const onSelected=(selectedStudent:any)=>{
               open={studentModal}
               setOpen={setStudentModal}
               placeHolder="Student"
-              options={studentList}
-              value={getValues("student")?.name}
+              options={students}
+              value={getValues("student")?.student}
               onSelected={(selectedValue) => {
-                const selectedStudent = studentList.find((student) => student.value === selectedValue);
+                const selectedStudent = students.find((student:any) => student.value === selectedValue);
                 if (selectedStudent) {
                   const { value, label, ...rest } = selectedStudent; 
                   const updatedStudent:any = { ...rest };
                   onSelected(updatedStudent); 
-                  console.log(updatedStudent);
-                  form.setValue(fieldName, {name:selectedStudent.name,value:selectedStudent.value,label:selectedStudent.label,id:selectedStudent.id}); 
+                  form.setValue(fieldName, {value:selectedStudent.value,label:selectedStudent.label,id:selectedStudent.id,student:selectedStudent.student,nextPaymentDate:selectedStudent.nextPaymentDate}); 
                 }
               }}
          
@@ -312,29 +235,59 @@ const onSelected=(selectedStudent:any)=>{
             value={getValues("paymentPlan")?.name}
             onSelected={(selectedValue) => {
               const paymentPlan = paymentPlans?.find(
-                (plan) => plan?.value === selectedValue
+                (plan:any) => plan?.value === selectedValue
               );
               if (paymentPlan) {
                 form.setValue(fieldName, paymentPlan)
-                form.setValue("paymentAmount",paymentPlan.fee)
+                form.setValue("paymentAmount",paymentPlan.price)
+                
+                const newDate = parsePaymentPlan(paymentPlan.period, getValues("student").nextPaymentDate);
+                if(newDate){
+                  form.setValue("nextPaymentDate",newDate)
+
+                }
               }
             }}
           />
 
           )
-
-         
-          
-       
-     
-            default:
+          case "nextPaymentDate":
+            return (<Input {...field} value={field.value?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} readOnly/>)
+                      default:
         return <Input {...field} />;
     }
   };
 
-  function onSubmit(data:StudentPaymentFormValues) {
-
-        console.log("eqwqewqweq",data);
+  async function onSubmit(data:StudentPaymentFormValues) {
+    const transactionId=await addPaymentTransaction({...data,documents:[]})
+    const uploaded = await uploadFilesAndLinkToCollection("Billing/payments/Invoices", transactionId, filesToUpload);
+    setInvoices((prev:StudentPaymentFormValues[])=>[{...data,id:transactionId,invoice:transactionId,
+    value:transactionId,
+    label:transactionId,
+    documents:uploaded},...prev])
+    setStudents((prev:any) => {
+      const updatedLevels = prev.map((student:any) =>
+        student.id === data.student.id ? { ...data,nextPaymentDate:data.nextPaymentDate,
+          amountLeftToPay:data.amountLeftToPay-data.paymentAmount }: student
+      );
+      return updatedLevels;
+    });
+    setAnalytics((prevState:any) => ({
+      data: {
+        ...prevState.data,
+        jan: {
+          ...prevState.data.jan,
+          income:prevState.data.jan.income + data.paymentAmount
+        }
+      },
+      totalIncome: prevState.totalIncome +  data.paymentAmount
+    }));  
+          toast({
+              title: "invoicet added!",
+              description: "Student invoice added Successfully",
+            });
+    console.log(data);
+            reset(); 
   }
 
   return (
@@ -385,8 +338,8 @@ const onSelected=(selectedStudent:any)=>{
               ))}
             </form>
           </Form>
+          <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
 
-          <ImageUpload />
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

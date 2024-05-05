@@ -38,7 +38,22 @@ import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import { z } from "zod";
+import { useData } from "@/context/admin/fetchDataContext";
+import { fetchFiles } from "@/context/admin/hooks/useUploadFiles";
+function addMonthsToDate(date: Date, monthsToAdd: number): Date {
+  const newDate = new Date(date.getTime()); // Create a copy of the original date
+  newDate.setMonth(newDate.getMonth() + monthsToAdd); // Add months to the date
+  return newDate;
+}
 
+function parsePaymentPlan(paymentPlan: string, startDate: Date): Date | null {
+  const match = paymentPlan.match(/(\d+)\s+months?/i); // Match the number of months in the string
+  if (match) {
+    const months = parseInt(match[1]); // Extract and parse the number of months
+    return addMonthsToDate(startDate, months); // Add months to the startDate and return the new date
+  }
+  return null; // Return null if the paymentPlan string does not match the expected format
+}
 const fieldNames: string[] = [
   'student',
   'parent',
@@ -69,7 +84,7 @@ type FormKeys =
   | 'paymentPlan'
   | 'status';
 
-type StudentPaymentFormValues = z.infer<typeof studentPaymentSchema>;
+type StudentPaymentFormValues = z.infer<typeof studentPaymentSchema> & { [key: string]: string | Date | number | any;};
 
 const typeofTransaction = [
   {
@@ -94,120 +109,30 @@ const studentPaymentStatus =[
     label: "Not Paid",
   },
 ]
-const studentList= [
-  {
-    "id": "2",
-    "name": "Jane Smith",
-    "status": "active",
-    "level": "Grade 5",
-    "joiningDate": "2022-09-10",
-    "leftAmountToPay": 200,
-    "registrationStatus": "accepted",
-    "startDate": "2022-09-01",
-    "lastPaymentDate": "2023-04-01",
-    "nextPaymentDate": "2023-05-01",
-    "totalAmount": 1500,
-    "amountLeftToPay": 200,
-    "value": "Jane Smith",
-    "label": "Jane Smith",
-    "parent": {
-      "name": "Rebecca",
-      "id": "2"
-    },
-    "class": {
-      "name": "5A"
-    }
-  },
-  {
-    "id": "3",
-    "name": "Alice Johnson",
-    "status": "suspended",
-    "level": "Grade 3",
-    "joiningDate": "2021-02-15",
-    "leftAmountToPay": 500,
-    "registrationStatus": "pending",
-    "startDate": "2021-02-10",
-    "lastPaymentDate": "2023-03-15",
-    "nextPaymentDate": "2023-04-15",
-    "totalAmount": 1000,
-    "amountLeftToPay": 500,
-    "value": "Alice Johnson",
-    "label": "Alice Johnson",
-    "parent": {
-      "name": "George",
-      "id": "3"
-    },
-    "class": {
-      "name": "3B"
-    }
-  },
-  {
-    "id": "4",
-    "name": "Charlie Brown",
-    "status": "graduated",
-    "level": "Kindergarten",
-    "joiningDate": "2020-08-01",
-    "leftAmountToPay": 0,
-    "registrationStatus": "completed",
-    "startDate": "2020-08-01",
-    "lastPaymentDate": "2022-06-01",
-    "nextPaymentDate": null,
-    "totalAmount": 1800,
-    "amountLeftToPay": 0,
-    "value": "Charlie Brown",
-    "label": "Charlie Brown",
-    "parent": {
-      "name": "Eleanor",
-      "id": "4"
-    },
-    "class": {
-      "name": "6C"
-    }
-  },
-  {
-    "id": "5",
-    "name": "Michael Lee",
-    "status": "expelled",
-    "level": "Grade 2",
-    "joiningDate": "2023-01-20",
-    "leftAmountToPay": 700,
-    "registrationStatus": "rejected",
-    "startDate": "2023-01-15",
-    "lastPaymentDate": "2023-02-20",
-    "nextPaymentDate": "2023-02-20",
-    "totalAmount": 800,
-    "amountLeftToPay": 700,
-    "value": "Michael Lee",
-    "label": "Michael Lee",
-    "parent": {
-      "name": "Benjamin",
-      "id": "5"
-    },
-    "class": {
-      "name": "2D"
-    }
-  }
-]
+
 
 interface openModelProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   open: boolean; // Specify the type of setOpen
+  invoice:StudentPaymentFormValues
+}
+interface FileUploadProgress {
+  file: File;
+  name: string;
+  source:any;
+
 }
 
-const levels=[
-{id: "1",
-level: "Kindergarten",
-fee: 1000,
-paymentPlans:[{id: 'PP001', name: 'Monthly Plan', period: '1 month', fee: 500 ,value:'Monthly Plan',label:'Monthly Plan'}]}
-]
-
-const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open }) => {
+const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open,invoice }) => {
   const { toast } = useToast();
+  const {students,levels,setInvoices,setStudents,setAnalytics}=useData()
+
   const [status, setstatus] = useState(false);
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const [studentModal,setStudentModal]=React.useState(false)
   const [paymentPlanModal,setPaymentPlanModal]=React.useState(false)
- const [student,setStudent]=useState()
+  const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+
   const form = useForm<StudentPaymentFormValues>({
     resolver: zodResolver(studentPaymentSchema),
     defaultValues:{
@@ -217,7 +142,7 @@ const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open }) => {
         "typeofTransaction": "CreditCard",
         "fromWho": "ddqwdqwd",
         "student": {
-            "name": "Charlie Brown",
+            "student": "Charlie Brown",
             "value": "Charlie Brown",
             "label": "Charlie Brown",
             "id": "4"
@@ -229,10 +154,9 @@ const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open }) => {
         "level": "Kindergarten",
         "class": "6C",
         "paymentPlan": {
-            "id": "PP001",
             "name": "Monthly Plan",
             "period": "1 month",
-            "fee": 500,
+            "price": 500,
             "value": "Monthly Plan",
             "label": "Monthly Plan"
         },
@@ -243,133 +167,155 @@ const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open }) => {
   const { reset, formState, setValue, getValues,watch } = form;
   const { isSubmitting } = formState;
 
-const watchField=watch('level')
-const paymentPlans = React.useMemo(() => {
-  const studentValue = form.getValues("level");
-  if (studentValue) {
-    const selectedLevel = levels.find(level => level.level === studentValue);
-    if (selectedLevel) {
 
-      return selectedLevel.paymentPlans;
-    }
-  }
-  return [];
-}, [form]);
-const onSelected=(selectedStudent:any)=>{
-  form.setValue("class",selectedStudent.class.name)
-  form.setValue("parent",selectedStudent.parent)
-  form.setValue("level",selectedStudent.level)
-}
-  const renderInput = (fieldName:string, field:any) => {
-    switch (fieldName) {
-      case "paymentDate":
-        return (
-          <CalendarDatePicker
-            {...field}
-            date={getValues("paymentDate")}
-            setDate={(selectedValue) => {
-              if (selectedValue === undefined) {
-                // Handle undefined case if needed
-              } else {
-                form.setValue(fieldName, selectedValue);
-              }
-            }}
-          />
-        );
-        case "student":
-          return (
-            <Combobox
-              {...field}
-              open={studentModal}
-              setOpen={setStudentModal}
-              placeHolder="Student"
-              options={studentList}
-              value={getValues("student")?.name}
-              onSelected={(selectedValue) => {
-                const selectedStudent = studentList.find((student) => student.value === selectedValue);
-                if (selectedStudent) {
-                  const { value, label, ...rest } = selectedStudent; 
-                  const updatedStudent:any = { ...rest };
-                  onSelected(updatedStudent); 
-                  console.log(updatedStudent);
-                  setStudent(updatedStudent)
-                  form.setValue(fieldName, {name:selectedStudent.name,value:selectedStudent.value,label:selectedStudent.label,id:selectedStudent.id}); 
-                }
-              }}
-         
-            />
-
-          );
- 
-      case "status":
-        return (
-          <Combobox
-            {...field}
-            open={status}
-            setOpen={setstatus}
-            placeHolder="status"
-            options={studentPaymentStatus}
-            value={getValues("status")}
-            onSelected={(selectedValue) => {
-              form.setValue(fieldName, selectedValue);
-            }} // Set the value based on the form's current value for the field
-          />
-        );
-      case "typeofTransaction":
-        return (
-          <Combobox
-            {...field}
-            open={openTypeofpayment}
-            setOpen={setOpenTypeofpayment}
-            placeHolder="typeofTransaction"
-            options={typeofTransaction}
-            value={getValues("typeofTransaction")}
-            onSelected={(selectedValue) => {
- 
-              form.setValue(fieldName, selectedValue);
-            }}
-          />
-        );
+  React.useEffect(() => {
+    const downloadFiles = async () => {
+      if (invoice && invoice.documents) {
+        const files=await fetchFiles(invoice.documents)
+        console.log("files",files);
         
-        case "paymentAmount":
-            return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
-
-        case "parent" :
-          return (<Input {...field}  value={getValues("parent")?.name} readOnly/>)
-          
-        case "level" :
-          return (<Input {...field}  value={getValues("level")} readOnly/>)
-
-        case "paymentPlan":
-          return (
-            <Combobox
+        setFilesToUpload(files);
+      }
+    };
+  
+    if (invoice) {
+      console.log("studwnt loaded");
+      
+      reset(invoice)
+      downloadFiles();
+    }
+  }, [invoice])
+  const paymentPlans = React.useMemo(() => {
+    const studentValue = form.getValues("level");
+  
+    
+    if (studentValue) {
+      const selectedLevel = levels.find((level:any) => level.level === studentValue);
+  
+      if (selectedLevel) {
+  
+        return selectedLevel.prices.map((price:any)=>({...price,label:price.name,value:price.name}));
+      }
+    }
+    return [];
+  }, [form,watch('level')]);
+  const onSelected=(selectedStudent:any)=>{
+    form.setValue("class",selectedStudent.class.name)
+    form.setValue("parent",selectedStudent.parent)
+    form.setValue("level",selectedStudent.level)
+    form.setValue("amountLeftToPay",selectedStudent.amountLeftToPay)
+  }
+const renderInput = (fieldName:string, field:any) => {
+  switch (fieldName) {
+    case "paymentDate":
+      return (
+        <CalendarDatePicker
+          {...field}
+          date={getValues("paymentDate")}
+          setDate={(selectedValue) => {
+            if (selectedValue === undefined) {
+              // Handle undefined case if needed
+            } else {
+              form.setValue(fieldName, selectedValue);
+            }
+          }}
+        />
+      );
+      case "student":
+        return (
+          <Combobox
             {...field}
-            open={paymentPlanModal}
-            setOpen={setPaymentPlanModal}
-            placeHolder="Payment plan"
-            options={paymentPlans}
-            value={getValues("paymentPlan")?.name}
+            open={studentModal}
+            setOpen={setStudentModal}
+            placeHolder="Student"
+            options={students}
+            value={getValues("student")?.student}
             onSelected={(selectedValue) => {
-              const paymentPlan = paymentPlans?.find(
-                (plan) => plan?.value === selectedValue
-              );
-              if (paymentPlan) {
-                form.setValue(fieldName, paymentPlan)
-                form.setValue("paymentAmount",paymentPlan.fee)
+              const selectedStudent = students.find((student:any) => student.value === selectedValue);
+              if (selectedStudent) {
+                const { value, label, ...rest } = selectedStudent; 
+                const updatedStudent:any = { ...rest };
+                onSelected(updatedStudent); 
+                form.setValue(fieldName, {value:selectedStudent.value,label:selectedStudent.label,id:selectedStudent.id,student:selectedStudent.student,nextPaymentDate:selectedStudent.nextPaymentDate}); 
               }
             }}
+       
           />
 
-          )
+        );
 
-         
-          
-       
-     
-            default:
-        return <Input {...field} />;
-    }
-  };
+    case "status":
+      return (
+        <Combobox
+          {...field}
+          open={status}
+          setOpen={setstatus}
+          placeHolder="status"
+          options={studentPaymentStatus}
+          value={getValues("status")}
+          onSelected={(selectedValue) => {
+            form.setValue(fieldName, selectedValue);
+          }} // Set the value based on the form's current value for the field
+        />
+      );
+    case "typeofTransaction":
+      return (
+        <Combobox
+          {...field}
+          open={openTypeofpayment}
+          setOpen={setOpenTypeofpayment}
+          placeHolder="typeofTransaction"
+          options={typeofTransaction}
+          value={getValues("typeofTransaction")}
+          onSelected={(selectedValue) => {
+
+            form.setValue(fieldName, selectedValue);
+          }}
+        />
+      );
+      
+      case "paymentAmount":
+          return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
+
+      case "parent" :
+        return (<Input {...field}  value={getValues("parent")?.name} readOnly/>)
+        
+      case "level" :
+        return (<Input {...field}  value={getValues("level")} readOnly/>)
+
+      case "paymentPlan":
+        return (
+          <Combobox
+          {...field}
+          open={paymentPlanModal}
+          setOpen={setPaymentPlanModal}
+          placeHolder="Payment plan"
+          options={paymentPlans}
+          value={getValues("paymentPlan")?.name}
+          onSelected={(selectedValue) => {
+            const paymentPlan = paymentPlans?.find(
+              (plan:any) => plan?.value === selectedValue
+            );
+            if (paymentPlan) {
+              form.setValue(fieldName, paymentPlan)
+              form.setValue("paymentAmount",paymentPlan.price)
+              
+              const newDate = parsePaymentPlan(paymentPlan.period, getValues("student").nextPaymentDate);
+              if(newDate){
+                form.setValue("nextPaymentDate",newDate)
+
+              }
+            }
+          }}
+        />
+
+        )
+        case "nextPaymentDate":
+          return (<Input {...field} value={field.value?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} readOnly/>)
+                    default:
+      return <Input {...field} />;
+  }
+};
 
   function onSubmit(data:StudentPaymentFormValues) {
 
@@ -408,7 +354,7 @@ const onSelected=(selectedStudent:any)=>{
             </form>
           </Form>
 
-          <ImageUpload />
+  <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
 
 
      <SheetFooter className="mt-5">

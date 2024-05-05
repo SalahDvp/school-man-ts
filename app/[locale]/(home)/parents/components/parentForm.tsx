@@ -149,7 +149,7 @@ type FormKeys =
 
   async function onSubmit(data: ParentFormValues) {
     try {
-      const parentId = await addParent({...data,documets:[]});
+      const parentId = await addParent({...data,documents:[]});
       const uploaded = await uploadFilesAndLinkToCollection("Parents", parentId, filesToUpload);
       
       setParents((prev: ParentFormValues[]) => [

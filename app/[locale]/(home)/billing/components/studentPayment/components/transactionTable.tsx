@@ -49,77 +49,54 @@ import {
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { useData } from "@/context/admin/fetchDataContext"
+import EditStudentPaymentForm from "./editStudentPaymentForm"
 
-const data: Student[] = [
-    {
-        id: "1",
-        student: "John Doe",
-        totalAmount: 4000,
-        level: "Intermediate",
-        lastPaymentDate: "2023-01-15",
-        leftAmountToPay: 0,
-        nextPaymentDate:"2023-01-15"
-      },
-      {
-        id: "2",
-        student: "Jane Smith",
-        totalAmount:400, 
-        level: "Beginner",
-        lastPaymentDate: "2022-11-20",
-        leftAmountToPay: 150,
-        nextPaymentDate:"2023-01-15"
-      },
-      {
-        id: "3",
-        student: "Michael Johnson",
-        totalAmount: 200,
-        level: "Advanced",
-        lastPaymentDate: "2023-03-10",
-        leftAmountToPay: 200,
-        nextPaymentDate:"2023-01-15"
-      },
-      {
-        id: "4",
-        student: "John Doe",
-        totalAmount: 200,
-        level: "Intermediate",
-        lastPaymentDate: "2023-01-15",
-        leftAmountToPay: 0,
-        nextPaymentDate:"2023-01-15"
-      },
-      {
-        id: "5",
-        student: "Jane Smith",
-        totalAmount: 4000,
-        level: "Beginner",
-        lastPaymentDate: "2022-11-20",
-        leftAmountToPay: 150,
-        nextPaymentDate:"2023-01-15"
-      },
 
-]
-type Status = 'accepted' | 'pending' | 'rejected';
-export type Student = {
-    id: string;
-    student: string;
-    totalAmount: number;
-    level: string;
-    lastPaymentDate: string;
-    leftAmountToPay: number;
-    nextPaymentDate:string;
+type Status = 'paid' | 'not paid' | 'rejected';
+
+
+
+  export const TransactionDataTableDemo= () => {
+    const {invoices}=useData()
+    const [invoice,setInvoice]=React.useState<any>({
+      "paymentTitle": "dwqdqwdqwd",
+      "paymentAmount": 500,
+      "paymentDate":new Date("2024-04-26"),
+      "typeofTransaction": "CreditCard",
+      "fromWho": "ddqwdqwd",
+      "student": {
+          "student": "Charlie Brown",
+          "value": "Charlie Brown",
+          "label": "Charlie Brown",
+          "id": "4"
+      },
+      "parent": {
+          "name": "Eleanor",
+          "id": "4"
+      },
+      "level": "Kindergarten",
+      "class": "6C",
+      "paymentPlan": {
+          "name": "Monthly Plan",
+          "period": "1 month",
+          "price": 500,
+          "value": "Monthly Plan",
+          "label": "Monthly Plan"
+      },
+      "status": "paid",
+      "description": "eeee"
+  })
+  const [open,setOpen]=React.useState(false)
+  const openEditSheet = (student:any) => {
+    setInvoice(student)
+    setOpen(true); // Open the sheet after setting the level
   };
-
- interface TransactionDataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    open: boolean; // Specify the type of setOpen
-  }
-  export const TransactionDataTableDemo: React.FC<TransactionDataTableDemoProps> = ({ setOpen }) => {
-    
     const getStatusColor = React.useCallback((status:Status) => {
       switch (status) {
-        case 'accepted':
+        case 'paid':
           return '#2ECC71'; // Green for accepted
-        case 'pending':
+        case 'not paid':
           return '#F1C40F'; // Yellow for pending
         case 'rejected':
           return '#E74C3C'; // Red for rejected
@@ -128,7 +105,7 @@ export type Student = {
       }
     }, []);
     
-   const columns: ColumnDef<Student>[] = [
+   const columns: ColumnDef<any>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -151,49 +128,26 @@ export type Student = {
       enableSorting: false,
       enableHiding: false,
     },
-    {
-      accessorKey: "student",
-      header: "Student",
-      cell: ({ row }) => (
-        <div className="capitalize">
-           <div className="font-medium">{row.getValue("student")}</div>
-                              <div className="hidden text-sm text-muted-foreground md:inline">
-                              {row.getValue("email")}
-                              </div>
-        </div>
-      ),
-    },
+  
     {
       accessorKey: "id",
       header: "Trasaction ID",
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("id")}</div>,
     },
     {
-      accessorKey: "totalAmount",
-      header: "totalAmount",
+      accessorKey: "student",
+      header: "Student",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("totalAmount")}</div>
+        <div className="capitalize">
+           <div className="font-medium">{row.original.student.student}</div>
+        </div>
       ),
     },
     {
-      accessorKey: "lastPaymentDate",
-      header: "Transaction Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("lastPaymentDate")}</div>
-      ),
-    },
-    {
-      accessorKey: "nextPaymentDate",
-      header: "Next Payment Date",
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("nextPaymentDate")}</div>
-      ),
-    },
-    {
-      accessorKey: "leftAmountToPay",
-      header: () => <div className="text-right">Amount left</div>,
+      accessorKey: "paymentAmount",
+      header: "Amount",
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("leftAmountToPay"))
+        const amount = parseFloat(row.getValue("paymentAmount"))
   
         // Format the amount as a dollar amount
         const formatted = new Intl.NumberFormat("en-US", {
@@ -201,15 +155,39 @@ export type Student = {
           currency: "DZD",
         }).format(amount)
   
-        return <div className="text-right font-medium">{formatted}</div>
+        return <div className=" font-medium">{formatted}</div>
       },
     },
+    {
+      accessorKey: "paymentDate",
+      header: "Transaction Date",
+      cell: ({ row }) => (
+       
 
+        <div className="capitalize hidden sm:table-cell"> {((row.getValue("paymentDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+      ),
+    },
+    {
+      accessorKey: "status",
+      header: "Payment Status",
+      cell: ({ row }) => (
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
+      ),
+    },
+    {
+      accessorKey: "fromWho",
+      header: "from",
+      cell: ({ row }) => (
+        <div className="capitalize">
+           <div className="font-medium">{row.getValue("fromWho")}</div>
+        </div>
+      ),
+    },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original
+        const invoice = row.original
   
         return (
           <DropdownMenu>
@@ -223,7 +201,7 @@ export type Student = {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(invoice)}>
                 View Transaction Details
               </DropdownMenuItem>
              
@@ -242,7 +220,7 @@ export type Student = {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data,
+    data:invoices,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -405,6 +383,7 @@ export type Student = {
         </div>
       </div>
       </div>
+      <EditStudentPaymentForm open={open} setOpen={setOpen} invoice={invoice}/>
     </CardContent>
   </Card>
 

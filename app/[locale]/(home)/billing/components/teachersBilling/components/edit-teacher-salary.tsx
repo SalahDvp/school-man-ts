@@ -1,6 +1,6 @@
 
 "use client"
-import React,{useState,useCallback} from "react"
+import React,{useState,useCallback, useEffect} from "react"
 import { Input } from "@/components/ui/input"
 import {
   Sheet,
@@ -274,7 +274,8 @@ const [teacherModal,setTeacherModal]=useState(false)
             );
             case "salaryAmmount":
                 return (<Input {...field} onChange={event => field.onChange(+event.target.value)}/>)
-    
+               
+
           default:
             return <Input {...field} />;
         }
@@ -338,8 +339,7 @@ const [teacherModal,setTeacherModal]=useState(false)
           
             </form>
           </Form>
-          
-              <ImageUpload/>
+{/*  <ImageUpload/> */}
 
         <SheetFooter className="mt-5">
           <SheetClose asChild>

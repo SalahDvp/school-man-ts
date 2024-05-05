@@ -229,7 +229,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open }) => {
             </form>
           </Form>
           
-              <ImageUpload/>
+              {/* <ImageUpload/> */}
 
         <SheetFooter className="mt-5">
           <SheetClose asChild>

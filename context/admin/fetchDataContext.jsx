@@ -15,6 +15,29 @@ export const  FetchDataProvider = ({ children }) => {
   const [students,setStudents]=useState([]);
   const [teachers,setTeachers]=useState([]);
   const [classes,setClasses]=useState([])
+  const [invoices,setInvoices]=useState({})
+  const [analytics,setAnalytics]=useState({data:{jan:{income:0,month:'jan'}},totalIncome:0})
+  useEffect(()=>{
+    const getInvoices = async () => {
+      try {
+        const invoicesSnapshot = await getDocs(collection(db, 'Billing',"payments","Invoices"));
+      
+        const invoicesData = invoicesSnapshot.docs.map((doc) => ({ ...doc.data(),
+           id: doc.id,
+           value:doc.id,
+           label:doc.id,
+           paymentDate:new Date(doc.data().paymentDate.toDate())
+            }))
+       
+     
+          //console.table(parentsData);
+        setInvoices(invoicesData)
+      } catch (error) {
+        console.error('Error fetching Teachers:', error);
+      }
+    };
+getInvoices()
+  },[])
   useEffect(()=>{
     const getClasses = async () => {
       try {
@@ -23,7 +46,8 @@ export const  FetchDataProvider = ({ children }) => {
         const classesData = classesSnapshot.docs.map((doc) => ({ ...doc.data(),
            id: doc.id,
            value:doc.data().className,
-           label:doc.data().className,}))
+           label:doc.data().className,
+          }))
        
      
           //console.table(parentsData);
@@ -82,7 +106,6 @@ setStudents(StudentsData)
     
     getStudents(); 
   },[])
-console.log(teachers);
 
   useEffect(() => {
     const getLevels = async () => {
@@ -115,8 +138,6 @@ console.log(teachers);
 
           }))
        
-     
-          //console.table(parentsData);
         setParents(parentsData)
       } catch (error) {
         console.error('Error fetching levels:', error);
@@ -143,7 +164,7 @@ console.log(teachers);
     getProfile();
   }, []);
   return (
-    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents,teachers,setTeachers,classes,setClasses}}>
+    <AppContext.Provider value={{levels,setLevels,setParents,parents,profile,setProfile,students,setStudents,teachers,setTeachers,classes,setClasses,invoices,setInvoices,analytics,setAnalytics}}>
       {children}
     </AppContext.Provider>
   );

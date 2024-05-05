@@ -4,22 +4,17 @@ import React from "react"
 
 import StudentPaymentForm from "./components/studentPaymentForm"
 import { StudentPaymentTable } from "./components/studentPaymentTable"
-import StudentDetails from "./components/studentDetails"
+
 
 import {TransactionDataTableDemo} from './components/transactionTable'
 import EditStudentPaymentForm from './components/editStudentPaymentForm'
 
  function Studentpayment() {
 
-  const [openStudentDetails,setOpenStudentDetails]=React.useState(false)
-
-  const [openTransactionDetails,setOpenTransactionDetails]=React.useState(false)
-
   return (
   
     <div className="flex flex-row min-h-screen w-full flex-col ">
-     <StudentDetails open={openStudentDetails} setOpen={setOpenStudentDetails}/>
-     <EditStudentPaymentForm open={openTransactionDetails} setOpen={setOpenTransactionDetails}/>
+
 
       <div className="flex flex-col sm:gap-4 sm:py-4 ">
    
@@ -28,8 +23,8 @@ import EditStudentPaymentForm from './components/editStudentPaymentForm'
 
         
          
-          <StudentPaymentTable setOpen={setOpenStudentDetails}/>
-          <TransactionDataTableDemo setOpen={setOpenTransactionDetails} open={false}/>
+          <StudentPaymentTable />
+          <TransactionDataTableDemo />
 
         
 

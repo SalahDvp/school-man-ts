@@ -230,7 +230,7 @@ export default function PaymentForm() {
             </form>
           </Form>
 
-          <ImageUpload />
+          {/* <ImageUpload /> */}
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

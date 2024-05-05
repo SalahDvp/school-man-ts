@@ -2,7 +2,7 @@ import { db } from "@/firebase/firebase-config"
 import { addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore"
 import { ParentRegistrationSchema } from "@/validators/parentSchema";
 import { z } from "zod";
-type ParentFormValues = z.infer<typeof ParentRegistrationSchema> & {documets?:any[]};
+type ParentFormValues = z.infer<typeof ParentRegistrationSchema> & {documents?:any[]};
 export const addParent = async (parent:ParentFormValues) => {
     try {
         const parentRef = await addDoc(collection(db, "Parents"), parent);

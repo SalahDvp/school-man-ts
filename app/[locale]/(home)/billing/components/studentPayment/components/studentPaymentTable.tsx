@@ -47,65 +47,48 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { File } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { z } from "zod"
-import { PaymentRegistrationSchema } from "@/validators/paymentSchema"
-const data:StudentData[] = [
-    {
-      id: "1",
-      name: "Charlie Brown",
-      level: "Kindergarten",
-      nextPaymentDate: "2024-05-26",
-      amountLeftToPay: 500,
+import { useData } from "@/context/admin/fetchDataContext"
+import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
+
+  export const StudentPaymentTable= () => {
+    const {students}=useData()
+    const [open,setOpen]=React.useState(false)
+    const [student,setStudent]=React.useState<any>({  
+      id: '123456',
+      level: 'Intermediate',
+      year: '2024',
+      firstName: 'John',
+      lastName: 'Doe',
+      dateOfBirth: new Date('1990-01-01'),
+      gender: 'male',
+      address: '123 Main St',
+      city: 'Anytown',
+      state: 'State',
+      postalCode: '12345',
+      country: 'Country',
+      parentFullName: 'Jane Doe',
+      parentFirstName: 'Jane',
+      parentLastName: 'Doe',
+      parentEmail: 'jane.doe@example.com',
+      parentPhone: '123-456-7890',
+      parentId: '654321',
+      emergencyContactName: 'Emergency Contact',
+      emergencyContactPhone: '987-654-3210',
+      medicalConditions: null,
+      status: 'Active',
+      joiningDate: new Date(),
+      registrationStatus: 'Registered',
+      startDate: new Date(),
+      lastPaymentDate: new Date(),
+      nextPaymentDate: new Date(),
       totalAmount: 1000,
-      parentPhone:"055555555"
-    },
-    {
-      id: "2",
-      name: "Lucy van Pelt",
-      level: "Grade 3",
-      nextPaymentDate: "2024-05-28",
-      amountLeftToPay: 300,
-      totalAmount: 800,
-      parentPhone:"055555555"
-    },
-    {
-      id: "3",
-      name: "Linus van Pelt",
-      level: "Grade 6",
-      nextPaymentDate: "2024-05-30",
-      amountLeftToPay: 200,
-      totalAmount: 600,
-      parentPhone:"055555555"
-    },
-  ];
-  
-type Status = 'paid' | 'not paid' 
-type StudentData = {
-    id: string;
-    name: string;
-    level: string;
-    nextPaymentDate: string;
-    amountLeftToPay: number;
-    totalAmount: number;
-    parentPhone:string
-  };
-
- interface DataTableDemoProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
-  }
-  export const StudentPaymentTable: React.FC<DataTableDemoProps> = ({ setOpen }) => {
-    
-    const getStatusColor = React.useCallback((status:Status) => {
-      switch (status) {
-        case 'paid':
-          return '#2ECC71'; // Green for accepted
-        case 'not paid':
-          return '#E74C3C'; // Yellow for pending
-        // Default to white for unknown status
-      }
-    }, []);
+      amountLeftToPay: 500,
+      class: { name: 'Class Name', id: 'class123' },
+    })
+    const openEditSheet = (student:any) => {
+      setStudent(student)
+      setOpen(true); // Open the sheet after setting the level
+    };
     
    const columns: ColumnDef<any>[] = [
     {
@@ -131,11 +114,11 @@ type StudentData = {
       enableHiding: false,
     },
     {
-      accessorKey: "name",
+      accessorKey: "student",
       header: "Name",
       cell: ({ row }) => (
         <div className="capitalize">
-           <div className="font-medium">{row.getValue("name")}</div>
+           <div className="font-medium">{row.getValue("student")}</div>
 
         </div>
       ),
@@ -149,7 +132,9 @@ type StudentData = {
       accessorKey: "nextPaymentDate",
       header: "Next payment Date",
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("nextPaymentDate")}</div>
+        <div className="lowercase hidden sm:table-cell">
+{((row.getValue("nextPaymentDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+        </div>
       ),
     },
     {
@@ -194,7 +179,7 @@ type StudentData = {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original
+        const student = row.original
   
         return (
           <DropdownMenu>
@@ -208,8 +193,8 @@ type StudentData = {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
- Student payment details
+              <DropdownMenuItem onClick={()=>openEditSheet(student)}>
+                View Student
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -226,7 +211,7 @@ type StudentData = {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data,
+    data:students,
    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -385,6 +370,8 @@ type StudentData = {
         </div>
       </div>
     </div>
+    <SheetDemo open={open} setOpen={setOpen}  student={student}/>
+
     </CardContent>
   </Card>
   </>

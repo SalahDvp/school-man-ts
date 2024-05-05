@@ -39,7 +39,7 @@ const fieldNames = [
     "teacher"
 ];
 type FormKeys = "salaryTitle" | "salaryAmount" | "salaryDate" | "typeofTransaction" | "monthOfSalary" | "fromWho";
- 
+
 type TeacherSalaryFormValues=z.infer<typeof teacherPaymentRegistrationSchema>;
 
 
@@ -75,7 +75,7 @@ const teachers = [
       subject: "Physical Education",
     },
   ];
-  
+
   const Typeofpayments = [
     {
       value: "Salary",
@@ -85,7 +85,7 @@ const teachers = [
       value: "Other",
       label: "other",
     },
-    
+
   ];
 
   const MonthOfYear = [
@@ -138,9 +138,9 @@ const teachers = [
       label: "December",
     },
   ];
-    
+
   const Salarystatus =[
-    
+
     {
       value:"paid"  ,
       label: "Paid",
@@ -175,7 +175,7 @@ const [teacherModal,setTeacherModal]=useState(false)
   const { isSubmitting } = formState;
 
 
-  
+
 
   const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
@@ -194,7 +194,7 @@ const [teacherModal,setTeacherModal]=useState(false)
           />
         );
 
-      case "monthOfSalary": 
+      case "monthOfSalary":
       return (
         <Combobox
         {...field}
@@ -205,7 +205,7 @@ const [teacherModal,setTeacherModal]=useState(false)
         value={getValues("monthOfSalary")}
         onSelected={(selectedValue) => {
           form.setValue(fieldName, selectedValue);
-        }} 
+        }}
       />
       );
 
@@ -240,7 +240,7 @@ const [teacherModal,setTeacherModal]=useState(false)
               }} // Set the value based on the form's current value for the field
             />
           );
-        
+
       case "typeofTransaction":
         return (
           <Combobox
@@ -325,7 +325,7 @@ const [teacherModal,setTeacherModal]=useState(false)
             </form>
           </Form>
 
-          <ImageUpload />
+          {/* <ImageUpload /> */}
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
