@@ -7,7 +7,6 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
-import { useTranslation } from "react-i18next";
 interface User {
   id: number;
   name: string;
@@ -25,7 +24,7 @@ const calculateDaysUntilNextPayment = (nextPaymentDate: string): number => {
   };
   const StudentPayment: React.FC<UserCardProps> = ({ user }) => {
     const daysUntilNextPayment = calculateDaysUntilNextPayment(user.nextPaymentDate);
-    const {t} =useTranslation()
+
     return (
       <div
         className={`flex items-center p-4 rounded-lg shadow-md transition hover:bg-gray-100 dark:hover:bg-gray-700 ${
@@ -42,7 +41,7 @@ const calculateDaysUntilNextPayment = (nextPaymentDate: string): number => {
         </div>
         <div className="ml-auto text-right">
           <p className="text-sm font-medium text-blue-600 dark:text-blue-300">
-            {t('next_payment_date')}: {format(parseISO(user.nextPaymentDate), "yyyy-MM-dd")}
+            next_payment_date: {format(parseISO(user.nextPaymentDate), "yyyy-MM-dd")}
           </p>
           <p
             className={`text-sm ${

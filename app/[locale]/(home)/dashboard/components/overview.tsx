@@ -1,12 +1,10 @@
 "use client"
 
-import { useTranslation } from "react-i18next"
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 
 
 export function Overview() {
-  const {t}= useTranslation()
   const data = [
     {
       name: "jan",
@@ -66,7 +64,7 @@ export function Overview() {
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => t(`${value}`)} // Translate x-axis labels
+
         />
         <YAxis
           stroke="#888888"

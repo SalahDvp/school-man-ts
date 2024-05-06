@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from 'react';
 import { auth } from '@/firebase/firebase-config';
 import { signIn } from "@/lib/auth"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/navigation"
 import { useUser } from "@/lib/auth";
 
 import { redirect } from "next/navigation";
@@ -28,9 +28,14 @@ router.push('/dashboard')
       window.alert(error);
     }
   }
-  const user = useUser();
- if (user) return redirect('/dashboard') 
- if (user === false) return <>Auth loading...</>;
+  // const user = useUser();
+  // if (user) {
+  //   return router.push('/dashboard')
+  // }
+
+  // if (user === false) {
+  //   return <>Auth loading...</>;
+  // }
   return (
     <div className="w-full lg:grid lg:grid-cols-2  min-h-screen">
       <div className="flex items-center justify-center py-12">

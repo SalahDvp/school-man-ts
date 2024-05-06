@@ -1,5 +1,5 @@
 
-import Image from "next/image"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,40 +17,30 @@ import {
 import { CalendarDateRangePicker } from "./components/date-range-picker"
 import { Overview } from "./components/overview"
 import { RecentSales } from "./components/recent-sales"
-import initTranslations from "@/app/i18n"
-import TranslationsProvider from "@/components/TranslationsProvider"
-const i18nNamespaces = ['dashboard'];
- async function Page({params:{locale}}) {
-  const { t, resources } = await initTranslations(locale, i18nNamespaces);
 
-  console.log("dqwdqwd",locale);
-  
-  const rate="+20.1"
-  const days="20"
+ async function Page() {
+
   return (
-    <TranslationsProvider
-    namespaces={i18nNamespaces}
-    locale={locale}
-    resources={resources}>
+
   <div className="flex-1 space-y-4 p-8 pt-6" >
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">{t('dashboard')}</h2>
+            <h2 className="text-3xl font-bold tracking-tight">dashboard</h2>
             <div className="flex items-center space-x-2">
               <CalendarDateRangePicker />
-              <Button>{t('download')}</Button>
+              <Button>download</Button>
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+              <TabsTrigger value="overview">overview</TabsTrigger>
               <TabsTrigger value="analytics" disabled>
-              {t('analytics')}
+analytics
               </TabsTrigger>
               <TabsTrigger value="reports" disabled>
-              {t('reports')}
+reports
               </TabsTrigger>
               <TabsTrigger value="notifications" disabled>
-              {t('notifications')}
+notifications
               </TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
@@ -58,7 +48,7 @@ const i18nNamespaces = ['dashboard'];
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                  {t('total_revenue')}
+total_revenue
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -76,14 +66,14 @@ const i18nNamespaces = ['dashboard'];
                   <CardContent>
                     <div className="text-2xl font-bold">$45,231.89</div>
                     <p className="text-xs text-muted-foreground">
-                      {t('from_last_month',{rate})}
+from_last_month
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                    {t('subscriptions')}
+subscriptions
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -103,13 +93,13 @@ const i18nNamespaces = ['dashboard'];
                   <CardContent>
                     <div className="text-2xl font-bold">+2350</div>
                     <p className="text-xs text-muted-foreground">
-                    {t('from_last_month',{rate})}
+from_last_month
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('sales')}</CardTitle>
+                    <CardTitle className="text-sm font-medium">sales</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -127,14 +117,14 @@ const i18nNamespaces = ['dashboard'];
                   <CardContent>
                     <div className="text-2xl font-bold">+12,234</div>
                     <p className="text-xs text-muted-foreground">
-{t('from_last_month',{rate})}
+from_last_month
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      {t('active_now')}
+active_now
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +142,7 @@ const i18nNamespaces = ['dashboard'];
                   <CardContent>
                     <div className="text-2xl font-bold">+573</div>
                     <p className="text-xs text-muted-foreground">
-                     {t('since_last_hour',{rate})}
+   since_last_hour
                     </p>
                   </CardContent>
                 </Card>
@@ -160,7 +150,7 @@ const i18nNamespaces = ['dashboard'];
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-4">
                   <CardHeader>
-                    <CardTitle>{t('overview')}</CardTitle>
+                    <CardTitle>overview</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
                     <Overview />
@@ -168,13 +158,13 @@ const i18nNamespaces = ['dashboard'];
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>{t('upcoming_payments')}</CardTitle>
+                    <CardTitle>upcoming_payments</CardTitle>
                     <CardDescription>
-                    {t('students_with_payments_due',{days:'20'})}
+   students_with_payments_due
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RecentSales  params={locale}/>
+                    <RecentSales />
                   </CardContent>
                 </Card>
               </div>
@@ -184,7 +174,7 @@ const i18nNamespaces = ['dashboard'];
 
         </div>
     
-    </TranslationsProvider>
+
   )
 }
 export default Page

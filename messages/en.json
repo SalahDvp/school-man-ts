@@ -1,0 +1,15 @@
+{
+  "Index": {
+    "title": "Hello world!"
+  },
+  "students": {
+    "students": "Students",
+    "this-week": "This Week",
+    "this-month": "This Month",
+    "10-from-last-month": "+10% from last month",
+    "create-student": "Create student",
+    "copy-link": "Copy Link"
+  },
+  "create-student": "Create student",
+  "anyone-with-the-link-can-create-this-document": "Anyone with the link can create this document."
+}

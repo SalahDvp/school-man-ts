@@ -1,5 +1,5 @@
 "use client"
-import Link from "next/link"
+import { Link } from "@/navigation"
 import { CircleUser, Menu, Package2, SchoolIcon, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,8 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "../(home)/dashboard/components/theme-mode"
-import { usePathname, useRouter } from "next/navigation"
-import LanguageChange from "@/components/LanguageChanger"
+import { usePathname, useRouter } from "@/navigation"
 export default function Header(){
 const pathname=usePathname()
 
@@ -171,7 +170,6 @@ const pathname=usePathname()
           </DropdownMenuContent>
         </DropdownMenu>
         <ModeToggle/>
-        <LanguageChange/>
       </div>
     </header>
     )

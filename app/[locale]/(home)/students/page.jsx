@@ -17,16 +17,18 @@ import SheetDemo from "./components/editStudent"
 import { Overview } from "./components/area-chart"
 import { Breadcrumb,BreadcrumbList ,BreadcrumbLink,BreadcrumbItem,BreadcrumbSeparator,BreadcrumbPage} from "@/components/ui/breadcrumb"
 import Link from "next/link"
-
+import {useTranslations} from "next-intl"
 
 function Dashboard() {
   const [open,setOpen]=useState(false)
+  const {t}=useTranslations("students")
+  
   return (
   
     <div className="flex-1 space-y-4 p-8 pt-6">
 
 <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Students</h2>
+            <h2 className="text-3xl font-bold tracking-tight">{t('students')}</h2>
 
           </div>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
@@ -37,7 +39,7 @@ function Dashboard() {
                 x-chunk="dashboard-05-chunk-0"
               >
       <CardHeader className="pb-2">
-      <CardDescription>Students</CardDescription>
+      <CardDescription>{t('students')}</CardDescription>
                   <Overview/>
            
            
@@ -45,7 +47,7 @@ function Dashboard() {
               </Card>
               <Card x-chunk="dashboard-05-chunk-1">
                 <CardHeader className="pb-2">
-                  <CardDescription>This Week</CardDescription>
+                  <CardDescription>{t('this-week')}</CardDescription>
                   <CardTitle className="text-4xl">$1,329</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -59,13 +61,12 @@ function Dashboard() {
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
-                  <CardDescription>This Month</CardDescription>
+                  <CardDescription>{t('this-month')}</CardDescription>
                   <CardTitle className="text-4xl">$5,329</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    +10% from last month
-                  </div>
+                    {t('10-from-last-month')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={12} aria-label="12% increase" />
@@ -75,9 +76,10 @@ function Dashboard() {
              x-chunk="dashboard-05-chunk-0"
               >
                 <CardHeader className="pb-3">
-                  <CardTitle>Create student</CardTitle>
+                  <CardTitle>{t('create-student')}</CardTitle>
                   <CardDescription className="max-w-lg text-balance leading-relaxed">
-            Anyone with the link can create this document.
+            {t('Anyone with the link can create this document.')}
+
                   </CardDescription>
                 </CardHeader>
                 <CardFooter className="flex items-center justify-between"> {/* Adjust flex properties */}
@@ -85,8 +87,7 @@ function Dashboard() {
       <Input value="http://example.com/link/to/document" readOnly     />
     </div>
     <Button variant="secondary" className="shrink-0">
-      Copy Link
-    </Button>
+      {t('copy-link')} </Button>
   </CardFooter>
               </Card>
             </div>

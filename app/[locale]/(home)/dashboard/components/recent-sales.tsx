@@ -1,9 +1,7 @@
 
 import React from "react";
-import TranslationsProvider from "@/components/TranslationsProvider";
-import initTranslations from "@/app/i18n";
 import StudentPayment from "./studen-payment-table";
-import { useTranslation } from "react-i18next";
+
 interface User {
   id: number;
   name: string;
@@ -15,7 +13,7 @@ interface User {
 
 
 
-export async function RecentSales({params}) {
+export async function RecentSales() {
   const users: User[] = [
     {
       id: 1,
@@ -36,12 +34,11 @@ export async function RecentSales({params}) {
       nextPaymentDate: "2025-05-01",
     },
   ];
-  const { t } = await initTranslations(params, ['dashboard']);
+
   
   return (
 
     <div className="space-y-4">
-      <h1>{t('dashboard')}</h1>
       {users.map((user) => (
         <StudentPayment key={user.id} user={user} />
       ))}
