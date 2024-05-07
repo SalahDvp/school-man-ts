@@ -119,7 +119,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
         console.log("reset",teacherSalary);
         downloadFiles();
       }
-    }, [teacherSalary])
+    }, [teacherSalary,reset])
 
     const teacherNames = teachers.map((teacher_: { firstName: string; lastName: string; id:string}) => {
       // Combine and trim first and last name to remove leading/trailing spaces

@@ -34,7 +34,7 @@ export default function DashboardPage() {
             <TabsList>
             <TabsTrigger value="teachers">{t("teachers")}</TabsTrigger>
               <TabsTrigger value="payouts">{t('payouts')}</TabsTrigger>
-              <TabsTrigger value="students">{t('students')}</TabsTrigger>
+              <TabsTrigger value="students">{t("Students")}</TabsTrigger>
               <TabsTrigger value="analytics">{t('analytics')}</TabsTrigger>
             </TabsList>
             <TabsContent value="analytics" className="space-y-4">

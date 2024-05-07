@@ -52,6 +52,8 @@ import { useData } from "@/context/admin/fetchDataContext"
 import { ParentRegistrationSchema } from "@/validators/parentSchema"
 import { z } from "zod"
 import SheetDemo from "./editParent"
+import { useTranslations } from "next-intl"
+import { exportTableToExcel } from "@/components/excelExport"
 export type ParentSummary = {
     id: string;
     parent: string;
@@ -80,7 +82,7 @@ export type parent = {
     const [open,setOpen]=React.useState(false)
       const {parents,setParents}=useData()
    
-      
+      const t=useTranslations()
       const [parent,setParent]=React.useState<ParentFormValues>({  
       id:"dqwd",
       firstName: "John",
@@ -138,7 +140,8 @@ export type parent = {
     },
     {
       accessorKey: "parent",
-      header: "Parent",
+      header: () => <div className="">{t('parent')}</div>,
+
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.getValue("parent")}</div>
@@ -150,24 +153,27 @@ export type parent = {
     },
     {
       accessorKey: "numberOfChildren",
-      header: "numberOfChildren",
+      header: () => <div>{t('number-of-children-0')}</div>,
+
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("numberOfChildren")}</div>,
     },
     {
       accessorKey: "paymentStatus",
-      header: "Payment Status",
+      header: () => <div >{t('payment-status-0')}</div>,
+
       cell: ({ row }) => (
         <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("paymentStatus"))}}>{row.getValue("paymentStatus")}</Badge>
       ),
     },
     {
       accessorKey: "parentPhone",
-      header: "Phone Number",
+      header: () => <div>{t('phone-number')}</div>,
+
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("parentPhone")}</div>,
     },
     {
       accessorKey: "totalPayment",
-      header: () => <div className="text-right">total Payment</div>,
+      header: () => <div className="text-right">{t('total-payment-0')}</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("totalPayment"))
   
@@ -191,17 +197,16 @@ export type parent = {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(parent)}>
-                View Parent
-              </DropdownMenuItem>
+                {t('view-parent')} </DropdownMenuItem>
               {/* <DropdownMenuItem>View payment details</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -246,7 +251,9 @@ export type parent = {
     },
   })
  
-
+  const handleExport = () => {
+    exportTableToExcel(t('parents-table'), 'parents-table');
+  };
 
   
   return (
@@ -255,7 +262,7 @@ export type parent = {
        
 
     <Input
-          placeholder="Filter parent..."
+          placeholder={t('filter-parent-0')}
           value={(table.getColumn("parent")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("parent")?.setFilterValue(event.target.value)
@@ -266,7 +273,7 @@ export type parent = {
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -283,31 +290,29 @@ export type parent = {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {t(column.id)}
                   </DropdownMenuCheckboxItem>
                 )
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" className="ml-2">
-       Export <File className="ml-2 h-4 w-4" />
+        <Button variant="outline" className="ml-2" onClick={handleExport}>
+       {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
     </div>
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Parents</CardTitle>
+      <CardTitle>{t('your-parents')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic parent Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+      {t('introducing-our-dynamic-parent-dashboard-for-seamless-management-and-insightful-analysis')} </CardDescription>
     </CardHeader>
     <CardContent>     
     <div className="w-full">
  
       <div className="rounded-md border">
-        <Table>
+        <Table id="parents-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -349,8 +354,7 @@ export type parent = {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -359,7 +363,7 @@ export type parent = {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -368,16 +372,14 @@ export type parent = {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
     </div>

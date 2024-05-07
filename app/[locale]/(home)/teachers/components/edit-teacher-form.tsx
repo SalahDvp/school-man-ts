@@ -179,7 +179,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
       downloadFiles()
     }
    
-    }, [teacher])
+    }, [teacher,reset])
     const renderInput = (fieldName:string, field:any) => {
         switch (fieldName) {
           case "dateOfBirth":

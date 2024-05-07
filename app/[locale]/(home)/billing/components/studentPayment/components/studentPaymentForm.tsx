@@ -128,6 +128,7 @@ const t=useTranslations()
       label: t('not-paid'),
     },
   ]
+  const watchlevel=watch('level')
 const paymentPlans = React.useMemo(() => {
   const studentValue = form.getValues("level");
 
@@ -141,10 +142,10 @@ const paymentPlans = React.useMemo(() => {
     }
   }
   return [];
-}, [form,watch('level')]);
+}, [form,levels]);
 const onSelected=(selectedStudent:any)=>{
   form.setValue("class",selectedStudent.class.name)
-  form.setValue("parent",selectedStudent.parent)
+  form.setValue("parent",{name:selectedStudent.parentFullName,id:selectedStudent.parentId})
   form.setValue("level",selectedStudent.level)
   form.setValue("amountLeftToPay",selectedStudent.amountLeftToPay)
 }
@@ -164,6 +165,20 @@ const onSelected=(selectedStudent:any)=>{
             }}
           />
         );
+        case "nextPaymentDate":
+          return (
+            <CalendarDatePicker
+              {...field}
+              date={getValues("nextPaymentDate")}
+              setDate={(selectedValue) => {
+                if (selectedValue === undefined) {
+                  // Handle undefined case if needed
+                } else {
+                  form.setValue(fieldName, selectedValue);
+                }
+              }}
+            />
+          );
         case "student":
           return (
             <Combobox

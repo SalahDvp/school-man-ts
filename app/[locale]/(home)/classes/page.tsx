@@ -60,6 +60,7 @@ import EditClassForm from "@/app/[locale]/(home)/classes/components/edit-class"
 import { ClassFormValues } from "@/app/[locale]/(home)/classes/components/new-class"
 import { useData } from "@/context/admin/fetchDataContext"
 import { useTranslations } from "next-intl"
+import { exportTableToExcel } from "@/components/excelExport"
 
 
 function Classes() {
@@ -177,6 +178,9 @@ function Classes() {
           table.getColumn("levelName")?.setFilterValue(classType);
         } 
       };
+      const handleExport = () => {
+        exportTableToExcel(t('classes-table'), 'classes-table');
+      };
   return (
 
       <div className="flex flex-col sm:gap-4 sm:py-4 ">
@@ -219,7 +223,7 @@ function Classes() {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-                <Button  variant="outline" className="gap-1">
+                <Button  variant="outline" className="gap-1" onClick={handleExport}>
                   <File className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     {t('export')} </span>
@@ -240,7 +244,7 @@ function Classes() {
                     {t('manage-your-classes-and-view-their-details')} </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Table>
+                  <Table id="classes-table">
                   <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

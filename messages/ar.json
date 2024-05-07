@@ -3,13 +3,17 @@
     "title": "مرحبا بالعالم!"
   },
   "students": {
-    "students": "Students",
-    "this-week": "This Week",
+    "students": "طلاب",
+    "this-week": "هذا الاسبوع",
     "25-from-last-week": "25% عن الأسبوع الماضي",
     "10-from-last-month": "10% عن الشهر الماضي",
     "copy-link": "نسخ الوصلة",
     "create-student": "إنشاء الطالب",
-    "this-month": "هذا الشهر"
+    "this-month": "هذا الشهر",
+    "drag-files-0": "سحب الملفات",
+    "click-to-upload-files-and-40-files-should-be-under-10-mb-and-41-and-41": "انقر لتحميل الملفات ويجب أن يكون حجم الملفات أقل من 10 ميغابايت",
+    "studetns-per-class": "الطلاب لكل فصل",
+    "average-number-of-students-per-class": "متوسط ​​عدد الطلاب في الفصل الواحد"
   },
   "teachers": "معلمون",
   "this-week": "هذا الاسبوع",
@@ -359,5 +363,66 @@
   "income": "دخل",
   "this-is-the-address-of-your-school-or-organization": "هذا هو عنوان مدرستك أو مؤسستك.",
   "you-made-x-transactions-this-week": "لقد أجريت {increase} معاملات هذا الأسبوع.",
-  "total-expenses": "المصروفات الكلية"
+  "total-expenses": "المصروفات الكلية",
+  "drag-files-0": "سحب الملفات",
+  "click-to-upload-files-and-40-files-should-be-under-10-mb-and-41-and-41": "انقر لتحميل الملفات ويجب أن يكون حجم 40 ملفًا أقل من 10 ميغابايت و41",
+  "files-to-upload": "الملفات للتحميل",
+  "duo-or-overduo": "متأخر",
+  "days-left-0": "ايام متبقية",
+  "create-student-0": "إنشاء الطالب",
+  "parentEmail": "البريد الإلكتروني للوالدين",
+  "parentFullName": "الاسم الكامل للوالد",
+  "parentPhone": "هاتف الوالدين",
+  "parentFirstName": "الاسم الأول للوالدين",
+  "parentLastName": "الاسم الأخير للوالد",
+  "total-amount-1": "المبلغ الإجمالي",
+  "joining-date-0": "تاريخ الانضمام",
+  "total-payment-0": "المبلغ الإجمالي",
+  "phone-number": "رقم التليفون",
+  "payment-status-0": "حالة السداد",
+  "number-of-children-0": "عدد الاطفال",
+  "introducing-our-dynamic-parent-dashboard-for-seamless-management-and-insightful-analysis": "نقدم لكم لوحة التحكم الرئيسية الديناميكية الخاصة بنا للإدارة السلسة والتحليل الثاقب.",
+  "accept-registration": "قبول التسجيل",
+  "filter-parent-0": "تصفية الوالدين...",
+  "numberOfChildren": "عدد الاطفال",
+  "secondParentName": "اسم الوالد الثاني",
+  "secondParentPhone": "هاتف الوالد الثاني",
+  "view-parent": "عرض الوالدين",
+  "make-changes-to-your-parent-here-click-save-when-youre-done": "قم بإجراء تغييرات على والديك هنا. \nانقر فوق حفظ عند الانتهاء.",
+  "toggle-user-menu": "تبديل قائمة المستخدم",
+  "support": "يدعم",
+  "logout": "تسجيل خروج",
+  "Students": "طلاب",
+  "teachers-0": "معلمون",
+  "toggle-navigation-menu": "تبديل قائمة التنقل",
+  "manage-your-account-settings-and-set-e-mail-preferences": "إدارة إعدادات حسابك وتعيين تفضيلات البريد الإلكتروني.",
+  "label": "ملصق",
+  "ar": "ع",
+  "LocaleSwitcher": {
+    "locale": "ar",
+    "label": "arabic"
+  },
+  "en": "أون",
+  "language": "لغة",
+  "my-account": "حسابي",
+  "locale": "{locale, select, de {العربية Arabic} en {🇺🇸 English} other {غير معروف Unknown}}",
+  "cur": "العربية",
+  "students-table": "جدول الطلاب",
+  "teachers-table": "طاولة المعلمة",
+  "classes-table": "جدول الفصول",
+  "teachers-salary-table": "جدول رواتب المعلمين",
+  "students-payments-table": "جدول مدفوعات الطلاب",
+  "students-payments-transactions-table": "جدول معاملات مدفوعات الطلاب",
+  "other-payments-transactions-table": "معاملات الدفع الأخرى",
+  "number-of-students": "عدد الطلاب",
+  "net-profit": "صافي الربح",
+  "number-of-teachers": "عدد المعلمين",
+  "total-teachers": "إجمالي المعلمين",
+  "students-per-teacher": "الطلاب لكل معلم",
+  "dzd-average-expence-per-teacher": "DZD متوسط ​​التكلفة لكل معلم",
+  "total-amount-to-be-paid-by-the-end-of-the-year": "المبلغ الإجمالي الواجب سداده بحلول نهاية العام",
+  "teacher-expenses-over-total-expenses": "نفقات المعلم على إجمالي النفقات",
+  "the-teacher-expenses-percentage": "نسبة نفقات المعلم",
+  "total-payouts": "إجمالي الدفعات",
+  "total-expences": "إجمالي النفقات"
 }

@@ -52,6 +52,7 @@ import { Badge } from "@/components/ui/badge"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-teacher-salary"
 import { useTranslations } from "next-intl";
+import { exportTableToExcel } from "@/components/excelExport";
 
 export type teacherSalary = {
   
@@ -234,7 +235,9 @@ header:() => <div>{t('teacher')}</div>,
       },
     },
   })
- 
+  const handleExport = () => {
+    exportTableToExcel(t('teachers-salary-table'), 'teachers-salary-table');
+  };
   return (
     <>
 <div className="flex items-center justify-between">
@@ -270,7 +273,7 @@ header:() => <div>{t('teacher')}</div>,
   </DropdownMenuContent>
 </DropdownMenu>
 
-        <Button variant="outline" className="ml-2">
+        <Button variant="outline" className="ml-2" onClick={handleExport}>
        {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
@@ -286,7 +289,7 @@ header:() => <div>{t('teacher')}</div>,
     <div className="w-full">
  
       <div className="rounded-md border">
-        <Table>
+        <Table id="teachers-salary-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

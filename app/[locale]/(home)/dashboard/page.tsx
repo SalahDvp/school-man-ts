@@ -1,5 +1,6 @@
-
+"use client"
 import { Button } from "@/components/ui/button"
+import * as React from "react"
 import {
   Card,
   CardContent,
@@ -17,13 +18,92 @@ import { CalendarDateRangePicker } from "./components/date-range-picker"
 import { Overview } from "./components/overview"
 import { RecentSales } from "./components/recent-sales"
 import { useTranslations } from "next-intl"
+import { useData } from "@/context/admin/fetchDataContext";
+interface AnalyticsData {
+  data: {
+    [key: string]: {
+      month: string;
+      income: number;
+      expenses: number;
+    };
+  };
+}
 
+interface AnalyticsResult {
+  totalIncome: number;
+  profit: number;
+  rate: number;
+  rateNp: number;
+}
+
+const calculateAnalytics = (analyticsData: AnalyticsData): AnalyticsResult => {
+  let totalIncome = 0;
+  let profit = 0;
+  let rate = 0; // Growth rate for total income
+  let rateNp = 0; // Growth rate for net profit
+  const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+
+  if (analyticsData && analyticsData.data) {
+    // Convert `data` to an array of records
+    const records = Object.values(analyticsData.data);
+
+    // Find the record for the current month
+    const currentMonthData = records.find(
+      (record) => record.month === currentMonth
+    );
+
+    // Find the record for the previous month
+    const previousMonthIndex = new Date().getMonth() - 1;
+    const previousMonth = new Date(new Date().setMonth(previousMonthIndex)).toLocaleString('default', { month: 'long' });
+    const previousMonthData = records.find(
+      (record) => record.month === previousMonth
+    );
+
+    if (currentMonthData) {
+      totalIncome = currentMonthData.income;
+      const currentProfit = totalIncome - currentMonthData.expenses;
+      profit = currentProfit;
+      if (previousMonthData) {
+        const previousIncome = previousMonthData.income;
+        const previousProfit = previousIncome - previousMonthData.expenses;
+
+        // Calculate the growth rate for total income
+        if (previousIncome !== 0) {
+          rate = ((totalIncome - previousIncome) / previousIncome) * 100;
+          rate = parseFloat(rate.toFixed(2)); // Convert to number with 2 decimal places
+        } else {
+          console.warn("Previous month's income is zero. Cannot calculate growth rate.");
+        }
+
+        // Calculate the growth rate for net profit
+        if (previousProfit !== 0) {
+          rateNp = ((currentProfit - previousProfit) / previousProfit) * 100;
+          rateNp = parseFloat(rateNp.toFixed(2)); // Convert to number with 2 decimal places
+        } else {
+          console.warn("Previous month's net profit is zero. Cannot calculate net profit growth rate.");
+        }
+      } else {
+        console.warn(`Data for the previous month (${previousMonth}) not found.`);
+      }
+    } else {
+      console.warn(`Data for the current month (${currentMonth}) not found.`);
+    }
+  } else {
+    console.error("`analyticsData.data` is undefined. Check data initialization.");
+  }
+
+  return { totalIncome, profit, rate, rateNp };
+};
 function Page() {
+const {analytics,students,teachers}=useData();
+const number_of_students=students.length
+  const number_of_teachers=teachers.length
   const t =useTranslations()
-  const rate="+20"
-  const days="20"
-  return (
+  const { totalIncome, profit, rate, rateNp } = calculateAnalytics(analytics);
+ 
+  
 
+return (
   <div className="flex-1 space-y-4 p-8 pt-6" >
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">{t('dashboard')}</h2>
@@ -53,30 +133,33 @@ function Page() {
                   {t('total-revenue')}
                     </CardTitle>
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
+  className="h-4 w-4 text-muted-foreground"
+>
+  <ellipse cx="12" cy="8" rx="10" ry="4" />
+  <path d="M2 8v8c0 2.2 4.5 4 10 4s10-1.8 10-4V8" />
+  <path d="M2 12c0 2.2 4.5 4 10 4s10-1.8 10-4" />
+</svg>
+
+
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">DZD45,231.89</div>
+                    <div className="text-2xl font-bold">{totalIncome} DZD</div>
                     <p className="text-xs text-muted-foreground">
-                      {t('from-last-month',{rate})}
+                      {t('from-last-month',{rate:rate})}
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                    {t('subscriptions')}
-                    </CardTitle>
+                    {t('Students')} </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -93,15 +176,14 @@ function Page() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
+                    <div className="text-2xl font-bold">{number_of_students}</div>
                     <p className="text-xs text-muted-foreground">
-                    {t('from-last-month',{rate:"20"})}
-                    </p>
+                   {t('number-of-students')} </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t('sales')}</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('net-profit')}</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -117,35 +199,34 @@ function Page() {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
+                    <div className="text-2xl font-bold">{profit} DZD</div>
                     <p className="text-xs text-muted-foreground">
-{t('from-last-month',{rate:"20"})}
+{t('from-last-month',{rate:rateNp})}
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      {t('active-now')}
-                    </CardTitle>
+                      {t('teachers-0')} </CardTitle>
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      className="h-4 w-4 text-muted-foreground"
-                    >
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                    </svg>
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+  strokeWidth="2"
+  className="h-4 w-4 text-muted-foreground"
+>
+  <path d="M22 9l-10-5L2 9l10 5 10-5zm-10 7v4m6-4a6 6 0 01-12 0" />
+</svg>
+
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
+                    <div className="text-2xl font-bold">{number_of_teachers}</div>
                     <p className="text-xs text-muted-foreground">
-                     {t('since-last-hour',{rate:"20"})}
-                    </p>
+                    {t('number-of-teachers')} </p>
                   </CardContent>
                 </Card>
               </div>

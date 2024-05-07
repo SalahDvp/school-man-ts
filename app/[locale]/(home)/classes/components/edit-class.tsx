@@ -92,7 +92,7 @@ const {isSubmitting}=formState
 const [selectedTeachers, setSelectedTeachers] = React.useState<({ name: string; id: string; }|undefined)[]>(form.getValues('teachers'));
 React.useEffect(() => {
   reset(cls)
-}, [cls])
+}, [cls,reset])
 React.useEffect(() => {
 
   const subscription =  watch((value:any) => {setSelectedTeachers(value.teachers)});

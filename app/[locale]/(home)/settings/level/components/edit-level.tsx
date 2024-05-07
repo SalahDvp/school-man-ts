@@ -105,7 +105,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     reset(level)
     console.log("reset",level);
     
- }, [level])
+ }, [level,reset])
   const { fields:subjects, append:appendSubject,remove:removeSubject} = useFieldArray({
     control: form.control,
     name: "subjects",

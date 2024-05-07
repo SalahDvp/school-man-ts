@@ -14,9 +14,18 @@ import { DataTableDemo } from "./components/teachers-table";
 import TeacherForm from "./components/teacherForm";
 import { Overview } from "./components/area-chart";
 import { useTranslations } from "next-intl";
-
+import { useData } from "@/context/admin/fetchDataContext";
 function Dashboard() {
   const t=useTranslations()
+  const {teachers,students,analytics}= useData()
+
+  console.log('teachers',teachers.length);
+  const number_of_students = students.length
+  const number_of_teachers = teachers.length
+  const teacherExpences = analytics.teachersExpenses
+
+
+
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
@@ -33,25 +42,25 @@ function Dashboard() {
             </Card>
             <Card x-chunk="dashboard-05-chunk-1">
               <CardHeader className="pb-2">
-                <CardDescription>{t('this-week')}</CardDescription>
-                <CardTitle className="text-4xl">15 </CardTitle>
+                <CardDescription>{t('total-teachers')}</CardDescription>
+                <CardTitle className="text-4xl">{number_of_teachers} </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-muted-foreground">
-                  {t('teached-classes')} </div>
+                  {number_of_students/number_of_teachers} {t('students-per-teacher')} </div>
               </CardContent>
               <CardFooter>
-                <Progress value={80} aria-label={t('increase',{increase:25})} />
+                <Progress value={(number_of_students/number_of_teachers)*100} aria-label={t('increase',{increase:25})} />
               </CardFooter>
             </Card>
             <Card x-chunk="dashboard-05-chunk-2">
               <CardHeader className="pb-2">
-                <CardDescription>{t('this-month')}</CardDescription>
-                <CardTitle className="text-4xl">45 </CardTitle>
+                <CardDescription>{t('total-expences-on-teachers')}</CardDescription>
+                <CardTitle className="text-4xl">{teacherExpences} DZD</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-muted-foreground">
-                  {t('teached-classses')} </div>
+                {teacherExpences/number_of_teachers} {t('dzd-average-expence-per-teacher')} </div>
               </CardContent>
               <CardFooter>
                 <Progress value={67} aria-label={t('increase',{increase:25})}  />

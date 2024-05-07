@@ -96,7 +96,7 @@ const t=useTranslations()
     reset(profile)
     console.log("reset",profile);
     
-  }, [profile])
+  }, [profile,reset])
   
 
   const {toast} = useToast()
@@ -191,7 +191,7 @@ const t=useTranslations()
             <FormItem>
               <FormLabel>{t('phonen-number')}</FormLabel>
               <FormControl>
-                <Input placeholder="+1 1234567890" {...field} onChange={event => field.onChange(+event.target.value)}/>
+                <Input placeholder="+1 1234567890" {...field}/>
               </FormControl>
               <FormDescription>
                 {t('the-phone-number-should-be-in-the-format-country-code-number')} </FormDescription>

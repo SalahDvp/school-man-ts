@@ -32,6 +32,7 @@ import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addParent } from "@/lib/hooks/parents";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+import { useTranslations } from "next-intl";
 const fieldNames = [
   "firstName",
   "lastName",
@@ -97,6 +98,7 @@ type FormKeys =
       totalPayment:0,
     }
   });
+  const t=useTranslations()
   const { reset, formState, setValue, getValues,watch } = form;
   const { isSubmitting } = formState;
 
@@ -122,7 +124,7 @@ type FormKeys =
               {...field}
               open={openGender}
               setOpen={setOpenGender}
-              placeHolder="gender"
+              placeHolder={t("gender")}
               options={genders}
               value={getValues("gender")} // Set the value based on the form's current value for the field
               onSelected={(selectedValue) => {
@@ -153,15 +155,15 @@ type FormKeys =
       const uploaded = await uploadFilesAndLinkToCollection("Parents", parentId, filesToUpload);
       
       setParents((prev: ParentFormValues[]) => [
-        ...prev,
+       
         { ...data, id: parentId, parent: `${data.firstName} ${data.lastName}`,     
         value: `${data.firstName} ${data.lastName}`,
-        label: `${data.firstName} ${data.lastName}`, documents: uploaded },
+        label: `${data.firstName} ${data.lastName}`, documents: uploaded },...prev
       ]);
   
       toast({
-        title: "Parent added!",
-        description: "Parent added Successfully",
+        title: t('changes-applied-1'),
+        description: t(`changes-applied-Successfully`),
       });
       console.log(data);
       reset();
@@ -177,8 +179,7 @@ type FormKeys =
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Create Parent
-          </CardTitle>
+            {t('create-parent')} </CardTitle>
           <CardDescription></CardDescription>
         </div>
 
@@ -191,8 +192,7 @@ type FormKeys =
           >
             <ResetIcon className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Reset details
-            </span>
+              {t('reset-details')} </span>
           </Button>
         </div>
       </CardHeader>
@@ -210,7 +210,7 @@ type FormKeys =
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                       <FormMessage />
@@ -232,8 +232,7 @@ type FormKeys =
             type="submit"
             onClick={form.handleSubmit(onSubmit)}
           >
-            Submit
-          </LoadingButton>
+            {t('submit')} </LoadingButton>
         </div>
       </CardFooter>
     </Card>

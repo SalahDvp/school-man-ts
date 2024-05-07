@@ -187,7 +187,8 @@ const t=useTranslations()
       reset(invoice)
       downloadFiles();
     }
-  }, [invoice])
+  }, [invoice,reset])
+  const watchlevel=watch('level')
   const paymentPlans = React.useMemo(() => {
     const studentValue = form.getValues("level");
   
@@ -201,7 +202,7 @@ const t=useTranslations()
       }
     }
     return [];
-  }, [form,watch('level')]);
+  }, [form,levels]);
   const onSelected=(selectedStudent:any)=>{
     form.setValue("class",selectedStudent.class.name)
     form.setValue("parent",selectedStudent.parent)
@@ -224,6 +225,20 @@ const renderInput = (fieldName:string, field:any) => {
           }}
         />
       );
+      case "nextPaymentDate":
+        return (
+          <CalendarDatePicker
+            {...field}
+            date={getValues("nextPaymentDate")}
+            setDate={(selectedValue) => {
+              if (selectedValue === undefined) {
+                // Handle undefined case if needed
+              } else {
+                form.setValue(fieldName, selectedValue);
+              }
+            }}
+          />
+        );
       case "student":
         return (
           <Combobox

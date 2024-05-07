@@ -54,10 +54,11 @@ const getMonthAbbreviation = (fullMonth:string) => {
   const monthIndex = monthNames.findIndex((month) => month.toLowerCase() === fullMonth.toLowerCase());
   return monthIndex !== -1 ? monthNames[monthIndex].slice(0, 3) : '';
 };
-const data:any[]=Object.keys(useData().analytics.data).map((key:any) => ({
-  month:getMonthAbbreviation(useData().analytics.data[key].month),
-  income: useData().analytics.data[key].income || 0,
-  expenses: useData().analytics.data[key].expenses || 0,
+const { analytics } = useData();
+const data:any[]=Object.keys(analytics.data).map((key:any) => ({
+  month:getMonthAbbreviation(analytics.data[key].month),
+  income:analytics.data[key].income || 0,
+  expenses:analytics.data[key].expenses || 0,
 }));
 const getCurrentMonthData = () => {
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });

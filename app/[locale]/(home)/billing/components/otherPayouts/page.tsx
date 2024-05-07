@@ -1,6 +1,5 @@
 
 "use client"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -9,16 +8,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { DataTableDemo } from "./components/table"
 import PaymentForm from "./components/paymentForm"
 import { Overview } from "./components/area-chart"
 import { useTranslations } from "next-intl"
-
+import { useData } from "@/context/admin/fetchDataContext";
 
  function Payouts() {
   const t=useTranslations()
+
+  const { analytics}= useData()
+  const total_expences = analytics.totalExpenses
+  const total_payouts = analytics.RentExpenses+analytics.billsExpenses+analytics.groceriesExpenses+analytics.maintenanceExpenses+analytics.other
++analytics.otherExpenses+analytics.rentExpenses
+const pecentage = ((total_payouts/total_expences)*100).toFixed(2)
   return (
   
 
@@ -42,12 +46,12 @@ import { useTranslations } from "next-intl"
               </Card>
               <Card x-chunk="dashboard-05-chunk-1">
                 <CardHeader className="pb-2">
-                  <CardDescription>Paid</CardDescription>
-                  <CardTitle className="text-4xl">$5,329 </CardTitle>
+                  <CardDescription>{t('total-expences')}</CardDescription>
+                  <CardTitle className="text-4xl">{total_expences} DZD </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    {t('this-month')} </div>
+                  {t('this-year')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={80} aria-label="25% increase" />
@@ -55,12 +59,12 @@ import { useTranslations } from "next-intl"
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
-                  <CardDescription>{t('not-paid')}</CardDescription>
-                  <CardTitle className="text-4xl">$15,329</CardTitle>
+                  <CardDescription>{t('total-payouts')}</CardDescription>
+                  <CardTitle className="text-4xl">{total_payouts} DZD</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    {t('this-year')} </div>
+                  {t('this-year')}</div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={67} aria-label="12% increase" />
@@ -69,7 +73,7 @@ import { useTranslations } from "next-intl"
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
                   <CardDescription>{t('avreage-expences')}</CardDescription>
-                  <CardTitle className="text-4xl">$7,329</CardTitle>
+                  <CardTitle className="text-4xl">{pecentage} %</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">

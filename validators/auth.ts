@@ -2,7 +2,6 @@ import { ZodSchema, z } from 'zod';
 const studentRegistrationSchema = z.object({
   id: z.string(),
   level: z.string(),
-  year: z.string(),
   firstName: z.string(),
   lastName: z.string(),
   dateOfBirth:z.date().refine((value:Date) => value < new Date(), { message: 'Please enter a valid date of birth.' }),

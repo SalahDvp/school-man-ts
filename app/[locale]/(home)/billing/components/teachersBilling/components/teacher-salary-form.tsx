@@ -41,9 +41,10 @@ const fieldNames = [
     "typeofTransaction",
     "monthOfSalary",
     "fromWho",
+    "status",
 
 ];
-type FormKeys = "salaryTitle" | "salaryAmount" | "salaryDate" | "typeofTransaction" | "monthOfSalary" | "fromWho";
+type FormKeys = "salaryTitle" | "salaryAmount" | "salaryDate" | "typeofTransaction" | "monthOfSalary" | "fromWho"|"status";
  
 type TeacherSalaryFormValues=z.infer<typeof teacherPaymentRegistrationSchema>;
 
@@ -264,7 +265,7 @@ const [teacherModal,setTeacherModal]=useState(false)
           ...prevState.data,
           [month.abbreviation]: {
             ...prevState.data[month.abbreviation],
-            expenses:prevState.datadata[month.abbreviation].expenses + data.salaryAmount
+            expenses:prevState.data[month.abbreviation].expenses + data.salaryAmount
           }
         },
         totalExpenses: prevState.totalExpenses +  data.salaryAmount
@@ -325,7 +326,8 @@ toast({
             </form>
           </Form>
 
-          {/* <ImageUpload /> */}
+          <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
+
         </CardContent>
       </ScrollArea>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">

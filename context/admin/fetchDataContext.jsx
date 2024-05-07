@@ -155,7 +155,7 @@ getClasses()
            dateOfBirth:new Date(doc.data().dateOfBirth.toDate()),
            joiningDate:new Date(doc.data().joiningDate.toDate()),
            lastPaymentDate:new Date(doc.data().joiningDate.toDate()),
-           nextPaymentDate:new Date(doc.data().joiningDate.toDate()),
+           nextPaymentDate:new Date(doc.data().nextPaymentDate.toDate()),
            startDate:new Date(doc.data().joiningDate.toDate()),
            student: `${doc.data().firstName} ${doc.data().lastName}`,
            value: `${doc.data().firstName} ${doc.data().lastName}`,

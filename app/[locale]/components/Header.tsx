@@ -14,15 +14,18 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "../(home)/dashboard/components/theme-mode"
 import { usePathname, useRouter } from "@/navigation"
+import { useTranslations } from "next-intl"
+import LocaleSwitcher from "@/components/LocaleSwitcher"
+
 export default function Header(){
 const pathname=usePathname()
 
-
+const t=useTranslations()
     return(
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
-          href="#"
+          href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <SchoolIcon className="h-6 w-6" />
@@ -31,49 +34,42 @@ const pathname=usePathname()
         <Link
           href="/dashboard"
           className={`${
-            pathname === '/dashboard' || pathname === '/ar/dashboard'
+            pathname === '/dashboard' 
               ? 'text-black-500 dark:text-white'
               : 'text-muted-foreground hover:text-foreground foreground transition-colors'
           }`}
         >
-          Dashboard
-        </Link>
+          {t('dashboard')} </Link>
         <Link
           href="/students"
           className={`${pathname=== '/students' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-         Students
-        </Link>
+         {t('Students')} </Link>
         <Link
           href="/teachers"
           className={`${pathname=== '/teachers' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Teachers
-        </Link>
+          {t('teachers-0')} </Link>
         <Link
            href="/parents"
            className={`${pathname=== '/parents' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
            >
-          Parents
-        </Link>
+          {t('parents')} </Link>
         <Link
           href="/classes"
           className={`${pathname=== '/classes' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Classes
-        </Link>
+          {t('classes')} </Link>
         <Link
           href="/billing"
           className={`${pathname=== '/billing' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Billing
-        </Link>
+          {t('billing')} </Link>
         <Link
           href="/settings"
           className={`${pathname=== '/settings' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Settings
-        </Link>
+          {t('settings')} </Link>
       </nav>
       <Sheet>
         <SheetTrigger asChild>
@@ -83,7 +79,7 @@ const pathname=usePathname()
             className="shrink-0 md:hidden"
           >
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle navigation menu</span>
+            <span className="sr-only">{t('toggle-navigation-menu')}</span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left">
@@ -91,7 +87,7 @@ const pathname=usePathname()
 
    
             <Link
-          href="#"
+          href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
           <SchoolIcon className="h-6 w-6" />
@@ -99,77 +95,77 @@ const pathname=usePathname()
         </Link>
         <Link
           href="/dashboard"
-          className={`${pathname=== '/dashboard' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
+          className={`${
+            pathname === '/dashboard'
+              ? 'text-black-500 dark:text-white'
+              : 'text-muted-foreground hover:text-foreground foreground transition-colors'
+          }`}
         >
-          Dashboard
-        </Link>
+          {t('dashboard')} </Link>
         <Link
           href="/students"
           className={`${pathname=== '/students' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-         Students
-        </Link>
+         {t('Students')} </Link>
         <Link
           href="/teachers"
           className={`${pathname=== '/teachers' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Teachers
-        </Link>
+          {t('teachers-0')} </Link>
         <Link
            href="/parents"
            className={`${pathname=== '/parents' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
            >
-          Parents
-        </Link>
+          {t('parents')} </Link>
         <Link
           href="/classes"
           className={`${pathname=== '/classes' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Classes
-        </Link>
+          {t('classes')} </Link>
         <Link
           href="/billing"
           className={`${pathname=== '/billing' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Billing
-        </Link>
+          {t('billing')} </Link>
         <Link
           href="/settings"
           className={`${pathname=== '/settings' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
-          Settings
-        </Link>
+          {t('settings')} </Link>
           </nav>
         </SheetContent>
       </Sheet>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+
         <form className="ml-auto flex-1 sm:flex-initial">
-          <div className="relative">
+
+          {/* <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search products..."
               className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
             />
-          </div>
+          </div> */}
         </form>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">
               <CircleUser className="h-5 w-5" />
-              <span className="sr-only">Toggle user menu</span>
+              <span className="sr-only">{t('toggle-user-menu')}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem>{t('settings')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('support')}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem>{t('logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <ModeToggle/>
+        <LocaleSwitcher/>
       </div>
     </header>
     )

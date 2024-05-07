@@ -14,16 +14,38 @@ import { useData } from "@/context/admin/fetchDataContext";
 
 
 
+type MonthName = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | 'July' | 'August' | 'September' | 'October' | 'November' | 'December';
 
 
 export function CardsMetric() {
-
+const {analytics}=useData()
 const t=useTranslations()
-const data:any[]=Object.keys(useData().analytics.data).map((key:any) => ({
-  month: useData().analytics.data[key].month,
-  income: useData().analytics.data[key].income || 0,
-  expenses: useData().analytics.data[key].expenses || 0,
-}));
+const data = analytics?.data
+  ? Object.keys(analytics.data)
+      .map((key) => ({
+        month: analytics.data[key].month as MonthName, // Assert the type of month
+        income: analytics.data[key].income || 0,
+        expenses: analytics.data[key].expenses || 0,
+      }))
+      .sort((a, b) => {
+        const monthsOrder: Record<MonthName, number> = {
+          January: 1,
+          February: 2,
+          March: 3,
+          April: 4,
+          May: 5,
+          June: 6,
+          July: 7,
+          August: 8,
+          September: 9,
+          October: 10,
+          November: 11,
+          December: 12,
+        };
+
+        return monthsOrder[a.month] - monthsOrder[b.month];
+      })
+  : [];
 
 
   return (

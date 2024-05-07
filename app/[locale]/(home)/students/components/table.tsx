@@ -48,11 +48,12 @@ import {
 import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-
+import {exportTableToExcel} from '@/components/excelExport'
 import SheetDemo from "./editStudent"
 import  studentRegistrationSchema  from "@/validators/auth";
 import { useData } from "@/context/admin/fetchDataContext";
 import { z } from "zod"
+import { useTranslations } from "next-intl"
 
 type Status = 'accepted' | 'pending' | 'rejected';
 export type StudentSummary = {
@@ -67,11 +68,11 @@ export type StudentSummary = {
   type StudentFormValues = z.infer<typeof studentRegistrationSchema>  & {id:string };
   export const DataTableDemo = () => {
     const [open,setOpen]=React.useState(false)
+    const t=useTranslations()
     const {students}=useData()
     const [student,setStudent]=React.useState<StudentFormValues>({  
       id: '123456',
       level: 'Intermediate',
-      year: '2024',
       firstName: 'John',
       lastName: 'Doe',
       dateOfBirth: new Date('1990-01-01'),
@@ -142,7 +143,8 @@ export type StudentSummary = {
     },
     {
       accessorKey: "student",
-      header: "Student",
+      header: () => <div >{t('student')}</div>,
+
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.getValue("student")}</div>
@@ -154,19 +156,21 @@ export type StudentSummary = {
     },
     {
       accessorKey: "level",
-      header: "Level",
+      header: () => <div >{t('level')}</div>,
+
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: () => <div >{t('status')}</div>,
+
       cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{row.getValue("status")}</div>
+        <div className="capitalize hidden sm:table-cell">{t(row.getValue("status"))}</div>
       ),
     },
     {
       accessorKey: "joiningDate",
-      header: "Joining Date",
+      header: () => <div >{t('joining-date-0')}</div>,
       cell: ({ row }) => (
         <div className="lowercase hidden sm:table-cell">
 {((row.getValue("joiningDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -175,7 +179,8 @@ export type StudentSummary = {
     },
     {
       accessorKey: "totalAmount",
-      header: () => <div className="text-right">total Amount</div>,
+      header: () => <div className="text-right">{t('total-amount-1')}</div>,
+
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("totalAmount"))
   
@@ -192,7 +197,7 @@ export type StudentSummary = {
 
     {
       accessorKey: "amountLeftToPay",
-      header: () => <div className="text-right">Amount left</div>,
+      header: () => <div className="text-right">{t('amount-left')}</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("amountLeftToPay"))
   
@@ -216,23 +221,21 @@ export type StudentSummary = {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
               <DropdownMenuItem
               disabled={row.getValue("registrationStatus")==="accepted"}
                 onClick={() => navigator.clipboard.writeText(student.id)}
               >
-                accept registration
-              </DropdownMenuItem>
+                {t('accept-registration')} </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(student)}>
-                View Student
-              </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+                {t('view-student')} </DropdownMenuItem>
+              <DropdownMenuItem>{t('view-payment-details')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -273,8 +276,9 @@ export type StudentSummary = {
   })
  
 
-
-  
+  const handleExport = () => {
+    exportTableToExcel(t('students-table'), 'students-table');
+  };
   return (
     <>
 
@@ -282,7 +286,7 @@ export type StudentSummary = {
        
     
     <Input
-          placeholder="Filter student..."
+          placeholder={t('filter-student')}
           value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("student")?.setFilterValue(event.target.value)
@@ -293,7 +297,7 @@ export type StudentSummary = {
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -310,14 +314,14 @@ export type StudentSummary = {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {t(column.id)}
                   </DropdownMenuCheckboxItem>
                 )
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" className="ml-2">
-       Export <File className="ml-2 h-4 w-4" />
+        <Button variant="outline" className="ml-2" onClick={handleExport}>
+       {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
  
@@ -325,17 +329,15 @@ export type StudentSummary = {
     <ScrollArea className="w-full whitespace-nowrap rounded-md border">
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Students</CardTitle>
+      <CardTitle>{t('your-students')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic student Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+      {t('introducing-our-dynamic-student-dashboard-for-seamless-management-and-insightful-analysis')} </CardDescription>
     </CardHeader>
     <CardContent>     
 
  
  
-        <Table>
+        <Table id="students-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -377,8 +379,7 @@ export type StudentSummary = {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -387,7 +388,7 @@ export type StudentSummary = {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -396,16 +397,14 @@ export type StudentSummary = {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
       <SheetDemo open={open} setOpen={setOpen}  student={student}/>

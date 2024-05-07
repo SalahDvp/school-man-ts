@@ -5,6 +5,7 @@ import { usePathname } from "@/navigation"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
@@ -15,7 +16,7 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 
 export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
   const pathname = usePathname()
-
+  const t=useTranslations()
   return (
     <nav
       className={cn(
@@ -36,7 +37,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
             "justify-start"
           )}
         >
-          {item.title}
+          {t(item.title)}
         </Link>
       ))}
     </nav>

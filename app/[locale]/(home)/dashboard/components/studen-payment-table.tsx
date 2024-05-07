@@ -17,12 +17,14 @@ interface User {
 interface UserCardProps {
   user: User;
   title:string;
+  daysLeft:string;
+  duo:string;
 }
 const calculateDaysUntilNextPayment = (nextPaymentDate: Date): number => {
   const today = new Date();
   return differenceInCalendarDays(nextPaymentDate, today);
 };
-  const StudentPayment: React.FC<UserCardProps> = ({ user,title }) => {
+  const StudentPayment: React.FC<UserCardProps> = ({ user,title,daysLeft,duo }) => {
     const daysUntilNextPayment = calculateDaysUntilNextPayment(user.nextPaymentDate);
 
     return (
@@ -49,8 +51,8 @@ const calculateDaysUntilNextPayment = (nextPaymentDate: Date): number => {
             }`}
           >
             {daysUntilNextPayment > 0
-              ? `${daysUntilNextPayment} day${daysUntilNextPayment === 1 ? "" : "s"} left`
-              : "Due or overdue"}
+              ? `${daysUntilNextPayment} ${daysLeft}`
+              : duo}
           </p>
         </div>
       </div>

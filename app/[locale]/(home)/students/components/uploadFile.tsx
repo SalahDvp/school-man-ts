@@ -59,7 +59,7 @@ const OtherColor = {
 };
 
 const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUpload }) => {
-    const t=useTranslations("students")
+    const t=useTranslations()
 
   const getFileIconAndColor = (file: File) => {
     if (file.type.includes(FileTypes.Image)) {
@@ -102,7 +102,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUploa
 
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+  const onDrop =async (acceptedFiles: File[]) => {
     setFilesToUpload((prevUploadProgress) => {
       return [
         ...prevUploadProgress,
@@ -115,7 +115,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUploa
         }),
       ];
     });
-  }, []);
+  };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
   const handleDownload = (fileUploadProgress:FileUploadProgress) => {
@@ -141,10 +141,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUploa
             </div>
 
             <p className="mt-2 text-sm text-gray-600">
-              <span className="font-semibold">{t('drag-files')}</span>
+              <span className="font-semibold">{t('drag-files-0')}</span>
             </p>
             <p className="text-xs text-gray-500">
-              {t('click-to-upload-files-and-40-files-should-be-under-10-mb-and-41')}  &#41;</p>
+              {t('click-to-upload-files-and-40-files-should-be-under-10-mb-and-41-and-41')}</p>
           </div>
         </label>
 
@@ -161,8 +161,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUploa
         <div>
           <ScrollArea className="h-40">
             <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
-              Files to upload
-            </p>
+              {t('files-to-upload')} </p>
             <div className="space-y-2 pr-3">
               {filesToUpload.map((fileUploadProgress) => {
                 return (

@@ -5,14 +5,41 @@ import { useTranslations } from "next-intl";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
 
+type MonthName = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | 'July' | 'August' | 'September' | 'October' | 'November' | 'December';
 
 export function Overview() {
 const t=useTranslations()
-  const data:any[]=Object.keys(useData().analytics.data).map((key:any) => ({
-    month: useData().analytics.data[key].month,
-    income: useData().analytics.data[key].income || 0,
-    expenses: useData().analytics.data[key].expenses || 0,
-  }));
+const { analytics } = useData(); // Retrieve analytics data
+
+
+const data = analytics?.data
+  ? Object.keys(analytics.data)
+      .map((key) => ({
+        month: analytics.data[key].month as MonthName, // Assert the type of month
+        income: analytics.data[key].income || 0,
+        expenses: analytics.data[key].expenses || 0,
+      }))
+      .sort((a, b) => {
+        const monthsOrder: Record<MonthName, number> = {
+          January: 1,
+          February: 2,
+          March: 3,
+          April: 4,
+          May: 5,
+          June: 6,
+          July: 7,
+          August: 8,
+          September: 9,
+          October: 10,
+          November: 11,
+          December: 12,
+        };
+
+        return monthsOrder[a.month] - monthsOrder[b.month];
+      })
+  : [];
+
+
   return (
 <ResponsiveContainer width="100%" height={350}>
   <BarChart data={data}>
@@ -29,6 +56,7 @@ const t=useTranslations()
       tickLine={false}
       axisLine={false}
       tickFormatter={(value) => `DZD${value}`}
+      tick={{ dx: 5 }} // Adjust dy value as needed
     />
     <Bar
       dataKey="income"
@@ -39,7 +67,7 @@ const t=useTranslations()
     />
     <Bar
       dataKey="expenses"
-      fill="#8884d8" // Purple color for expenses bars
+      fill="#DE3163" // Purple color for expenses bars
       radius={[4, 4, 0, 0]}
       stackId="a"
     />
@@ -60,7 +88,7 @@ const t=useTranslations()
                           <div className="flex flex-col">
                             <span className="text-[0.70rem] uppercase text-muted-foreground">
                               {t('expenses')} </span>
-                              <span className="font-bold text-muted-foreground" style={{ color: '#8884d8' }}>
+                              <span className="font-bold text-muted-foreground" style={{ color: '#DE3163' }}>
   {payload[1].value}
 </span>
                           </div>

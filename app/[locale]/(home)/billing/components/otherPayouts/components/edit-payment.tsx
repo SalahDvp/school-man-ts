@@ -25,7 +25,7 @@ import { z } from "zod"
 import { useData } from "@/context/admin/fetchDataContext";
 import { updatePayment } from "@/lib/hooks/billing/otherPayments"
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment"
-import { updateDocuments } from "@/context/admin/hooks/useUploadFiles"
+import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles"
 import { useTranslations } from "next-intl"
 type FormKeys =
   |"paymentTitle"
@@ -130,9 +130,22 @@ const payoutstatus =[
 
 
     React.useEffect(() => {
-      reset()
-      console.log("reset",payment);
-    }, [payment])
+      const downloadFiles = async () => {
+        if (payment && payment.documents) {
+        
+          const files=await fetchFiles(payment.documents)
+          console.log("files",files);
+          
+          setFilesToUpload(files);
+        }
+      };
+    
+      if (payment) {
+
+      reset(payment)
+      console.log("reset",payment)
+      }
+    }, [payment,reset])
     const renderInput = ({ fieldName, field }: any) => {
       switch (fieldName) {
         case "paymentDate":

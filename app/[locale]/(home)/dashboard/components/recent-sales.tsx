@@ -23,7 +23,7 @@ const {students}=useData()
     <ScrollArea className="h-[350px]">
     <div className="space-y-4">
       {students.map((user:any) => (
-        <StudentPayment key={user.id} user={user} title={t("next-payment-date")}/>
+        <StudentPayment key={user.id} user={user} title={t("next-payment-date")} daysLeft={t('days-left-0')} duo={t('duo-or-overduo')}/>
       ))}
     </div>
  </ScrollArea>

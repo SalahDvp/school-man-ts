@@ -53,6 +53,7 @@ import { PaymentRegistrationSchema } from "@/validators/paymentSchema"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-payment"
 import { useTranslations } from "next-intl";
+import { exportTableToExcel } from "@/components/excelExport";
 
 type Status = 'paid' | 'not paid' 
 type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>  & {id:string };
@@ -170,7 +171,7 @@ export const DataTableDemo = () => {
               <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>setOpen(true)}>
+              <DropdownMenuItem onClick={()=>openEditSheet(payment)}>
                 {t('view-payment')} </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -178,6 +179,7 @@ export const DataTableDemo = () => {
       },
     },
   ]
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -186,7 +188,7 @@ export const DataTableDemo = () => {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const openEditSheet = (payout:PaymentFormValues) => {
-        setPayouts(payout)
+       setPayment(payout)
         setOpen(true); // Open the sheet after setting the level
       };
     
@@ -214,7 +216,9 @@ export const DataTableDemo = () => {
       },
     },
   })
- 
+  const handleExport = () => {
+    exportTableToExcel(t('other-payments-transactions-table'), 'other-payments-transactions-table');
+  };
   return (
     <>
 <div className="flex items-center justify-between">
@@ -255,7 +259,7 @@ export const DataTableDemo = () => {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" className="ml-2">
+        <Button variant="outline" className="ml-2" onClick={handleExport}>
        {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
@@ -271,7 +275,7 @@ export const DataTableDemo = () => {
     <div className="w-full">
  
       <div className="rounded-md border">
-        <Table>
+        <Table id="other-payments-transactions-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

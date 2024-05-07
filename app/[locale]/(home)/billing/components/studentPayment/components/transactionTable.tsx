@@ -52,6 +52,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useData } from "@/context/admin/fetchDataContext"
 import EditStudentPaymentForm from "./editStudentPaymentForm"
 import { useTranslations } from "next-intl"
+import { exportTableToExcel } from "@/components/excelExport"
 
 
 type Status = 'paid' | 'not paid' | 'rejected';
@@ -251,7 +252,9 @@ type Status = 'paid' | 'not paid' | 'rejected';
   })
  
 
-
+  const handleExport = () => {
+    exportTableToExcel(t('students-payments-transactions-table'), 'students-payments-transactions-table');
+  };
   
   return (
     <>
@@ -304,7 +307,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
                  })}
              </DropdownMenuContent>
            </DropdownMenu>
-           <Button variant="outline" className="ml-2">
+           <Button variant="outline" className="ml-2" onClick={handleExport}>
           {t('export')} <File className="ml-2 h-4 w-4" />
          </Button>
        </div>
@@ -313,7 +316,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
  
        <div className="rounded-md border mt-5">
 
-        <Table>
+        <Table id="students-payments-transactions-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

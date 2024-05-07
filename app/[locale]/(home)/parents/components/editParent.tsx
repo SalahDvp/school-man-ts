@@ -25,6 +25,7 @@ import { z } from "zod"
 import { updateParent } from "@/lib/hooks/parents"
 import { useData } from "@/context/admin/fetchDataContext"
 import {fetchFiles, updateDocuments} from "@/context/admin/hooks/useUploadFiles"
+import { useTranslations } from "next-intl"
 
 
   
@@ -53,16 +54,7 @@ interface openModelProps {
     "salary",
     "totalPayment"
   ];
-  const genders = [
-    {
-      value: "male",
-      label: "Male",
-    },
-    {
-      value: "female",
-      label: "Female",
-    },
-  ];
+
   interface FileUploadProgress {
     file: File;
     name: string;
@@ -91,6 +83,17 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
     const {setParents}=useData()
     const [openGender,setOpenGender]=useState(false)
     const [filesToUpload,setFilesToUpload]=useState<FileUploadProgress[]>([]);
+    const t=useTranslations()
+    const genders = [
+      {
+        value: "male",
+        label: t("Male"),
+      },
+      {
+        value: "female",
+        label: t("Female"),
+      },
+    ];
     const form =useForm<ParentFormValues>({
       resolver: zodResolver(ParentRegistrationSchema),
            defaultValues:{  
@@ -129,7 +132,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
         reset(parent)
         downloadFiles();
       }
-    }, [parent])
+    }, [parent,reset])
     
    const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
@@ -153,7 +156,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
               {...field}
               open={openGender}
               setOpen={setOpenGender}
-              placeHolder="gender"
+              placeHolder={t("gender")}
               options={genders}
               value={getValues("gender")} // Set the value based on the form's current value for the field
               onSelected={(selectedValue) => {
@@ -202,10 +205,10 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
             );
             return updatedLevels;
           });
-            toast({
-                title: "changes applied!",
-                description: `changes applied Successfully ${changes}`,
-              })
+          toast({
+            title: t('changes-applied-1'),
+            description: t(`changes-applied-Successfully`),
+          });
           
               setOpen(false)
 
@@ -218,10 +221,9 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
    <SheetContent className=" sm:max-w-[650px]">
       <ScrollArea className="h-screen pb-20 "> 
         <SheetHeader>
-          <SheetTitle>Edit Parent</SheetTitle>
+          <SheetTitle>{t('edit-parent')}</SheetTitle>
           <SheetDescription>
-            Make changes to your Parent here. Click save when you're done.
-          </SheetDescription>
+            {t('make-changes-to-your-parent-here-click-save-when-youre-done')} </SheetDescription>
         </SheetHeader>
         <Form {...form}>
             <form>
@@ -234,7 +236,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
              
              render={({ field }) => (
               <FormItem style={{marginBottom:15}} >
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl  >
                       {renderInput(fieldName,field)}
                       </FormControl>
@@ -255,8 +257,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
           <SheetClose asChild>
             
           <LoadingButton loading={isSubmitting} type="submit"    onClick={form.handleSubmit(onSubmit)}>
-            Save changes
-      </LoadingButton>
+            {t('save-changes')} </LoadingButton>
           </SheetClose>
         </SheetFooter>
         </ScrollArea>

@@ -51,6 +51,7 @@ import { z } from "zod"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-teacher-form"
 import { useTranslations } from "next-intl"
+import { exportTableToExcel } from "@/components/excelExport"
 
 
 type Status = 'active' | 'suspended' | 'expelled';
@@ -254,7 +255,9 @@ export type teacher = {
   })
  
 
-
+  const handleExport = () => {
+    exportTableToExcel(t('teachers-table'), 'teachers-table');
+  };
   
   return (
     <>
@@ -296,7 +299,7 @@ export type teacher = {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" className="ml-2">
+        <Button variant="outline" className="ml-2" onClick={handleExport}>
        {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
@@ -312,7 +315,7 @@ export type teacher = {
     <div className="w-full">
  
       <div className="rounded-md border">
-        <Table>
+        <Table id="teachers-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

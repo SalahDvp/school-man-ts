@@ -19,9 +19,8 @@ export const teacherPaymentRegistrationSchema: ZodSchema<{
     salaryTitle: z.string().min(2, 'Please enter a value between 2 and 50 characters.').max(50, 'Please enter a value between 2 and 50 characters.'),
     salaryAmount: z.number().min(2, 'Please enter a value between 2 and 50 characters.'),
     salaryDate: z.date().refine((value:Date) => value < new Date(), { message: 'Please enter a valid date ' }),
-    typeofTransaction: z.string().min(5, 'Please enter a value between 5 and 255 characters.').max(255, 'Please enter a value between 5 and 255 characters.'),
+    typeofTransaction: z.string(),
     monthOfSalary: z.string().min(2, 'Please enter a value between 2 and 50 characters.').max(50, 'Please enter a value between 2 and 50 characters.'),
    fromWho: z.string().min(2, 'Please enter a value between 2 and 50 characters.').max(50, 'Please enter a value between 2 and 50 characters.'), 
-  status: z.string().min(2, 'Please enter a value between 2 and 50 characters.').max(50, 'Please enter a value between 2 and 50 characters.'), 
-
+  status: z.string(),
 })

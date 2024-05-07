@@ -13,16 +13,32 @@ import { useData } from '@/context/admin/fetchDataContext';
 
 function CardsRevenue() {
 const t=useTranslations()
-const getMonthAbbreviation = (fullMonth:string) => {
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const {analytics}=useData()
+const getMonthAbbreviation = (fullMonth: string) => {
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
   const monthIndex = monthNames.findIndex((month) => month.toLowerCase() === fullMonth.toLowerCase());
   return monthIndex !== -1 ? monthNames[monthIndex].slice(0, 3) : '';
 };
-const data:any[]=Object.keys(useData().analytics.data).map((key:any) => ({
-  month:getMonthAbbreviation(useData().analytics.data[key].month),
-  income: useData().analytics.data[key].income || 0,
-  expenses: useData().analytics.data[key].expenses || 0,
-}));
+
+const data: any[] = Object.keys(analytics.data)
+  .map((key: any) => ({
+    month: getMonthAbbreviation(analytics.data[key].month),
+    income: analytics.data[key].income || 0,
+    expenses: analytics.data[key].expenses || 0,
+  }))
+  .sort((a, b) => {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const aIndex = monthNames.findIndex(month => month.toLowerCase().startsWith(a.month.toLowerCase()));
+    const bIndex = monthNames.findIndex(month => month.toLowerCase().startsWith(b.month.toLowerCase()));
+    return aIndex - bIndex;
+  });
+
 const getCurrentMonthData = () => {
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });
   return data.find(item => item.month === currentMonth);

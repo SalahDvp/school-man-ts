@@ -50,6 +50,7 @@ import { File } from "lucide-react"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
 import { useTranslations } from "next-intl"
+import { exportTableToExcel } from "@/components/excelExport"
 
   export const StudentPaymentTable= () => {
     const {students}=useData()
@@ -240,7 +241,9 @@ import { useTranslations } from "next-intl"
   })
  
 
-
+  const handleExport = () => {
+    exportTableToExcel(t('students-payments-table'), 'students-payments-table');
+  };
   
   return (
     <>
@@ -292,13 +295,13 @@ import { useTranslations } from "next-intl"
                  })}
              </DropdownMenuContent>
            </DropdownMenu>
-           <Button variant="outline" className="ml-2">
+           <Button variant="outline" className="ml-2" onClick={handleExport}>
           {t('export')} <File className="ml-2 h-4 w-4" />
          </Button>
        </div>
        </div>
       <div className="rounded-md border mt-5">
-        <Table>
+        <Table id="students-payments-table">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

@@ -25,6 +25,9 @@ export const addPaymentTransaction = async (transaction:StudentPaymentFormValues
             nextPaymentDate:transaction.nextPaymentDate,
             amountLeftToPay:transaction.amountLeftToPay-transaction.paymentAmount
         })
+        await updateDoc(doc(db,"Parents",transaction.parent.id),{
+            totalPayment:increment(transaction.paymentAmount)
+        })
         console.log("parent added successfully:");
         return transactionRef.id; // Assuming you want to return the ID of the added parent
     } catch (error) {
@@ -37,17 +40,19 @@ export const addPaymentTransaction = async (transaction:StudentPaymentFormValues
 export const updateStudentInvoice = async(updatedtransaction:StudentPaymentFormValues,transactionID:string,oldSalary:number)=>{
     try {
         const month=getMonthInfo(updatedtransaction.paymentDate)
-           await updateDoc(doc(db, "Billing","payouts","TeachersTransactions",transactionID), updatedtransaction);
+           await updateDoc(doc(db, "Billing","payments","Invoices",transactionID), updatedtransaction);
 
     if(oldSalary!=updatedtransaction.paymentAmount){
-        await updateDoc(doc(db, "Billing", "payouts"), {
-            teachersExpenses: increment(updatedtransaction.paymentAmount-oldSalary),
-            
-        });
+        await updateDoc(doc(db,"Students",updatedtransaction.student.id),{
+            amountLeftToPay:increment(updatedtransaction.paymentAmount-oldSalary)
+        })
+        await updateDoc(doc(db,"Parents",updatedtransaction.parent.id),{
+            totalPayment:increment(updatedtransaction.paymentAmount-oldSalary)
+        })
         await updateDoc(doc(db, "Billing","analytics"), {
-            totalExpenses:increment(updatedtransaction.paymentAmount-oldSalary),
-            [`data.${month.abbreviation}.expenses`]: increment(updatedtransaction.paymentAmount-oldSalary)
 
+            [`data.${month.abbreviation}.income`]: increment(updatedtransaction.paymentAmount-oldSalary),
+            totalIncome: increment(updatedtransaction.paymentAmount-oldSalary),
         });
     }
              
@@ -61,7 +66,7 @@ export const updateStudentInvoice = async(updatedtransaction:StudentPaymentFormV
 }
 export const deleteTeacherSalary = async(transactionID:string)=>{
     try {
-            await deleteDoc(doc(db, "Billing","payouts","TeachersTransactions",transactionID));
+            await deleteDoc(doc(db,  "Billing","payments","Invoices",transactionID));
         console.log("Tracher Salary deleted successfully:");
         return true; // Assuming you want to return the ID of the added Tracher Salary
     } catch (error) {

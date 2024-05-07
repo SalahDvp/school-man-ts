@@ -32,13 +32,13 @@ import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addStudent } from "@/lib/hooks/students";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+import { useTranslations } from "next-intl";
 
 const fieldNames = [
   "firstName",
   "lastName",
   "dateOfBirth",
   "gender",
-  "year",
   "address",
   "city",
   "state",
@@ -69,7 +69,6 @@ type FormKeys =
   | "lastName"
   | "dateOfBirth"
   | "gender"
-  | "year"
   | "address"
   | "city"
   | "state"
@@ -92,7 +91,7 @@ export default function StudentForm() {
   const { toast } = useToast();
   const {parents,setStudents}= useData();
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
-
+const t=useTranslations()
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
   const form = useForm<StudentFormValues>({
@@ -159,7 +158,7 @@ export default function StudentForm() {
             {...field}
             open={open}
             setOpen={setOpen}
-            placeHolder="parents"
+            placeHolder={t("parents")}
             options={parents}
             value={getValues("parentFullName")}
             onSelected={(selectedValue) => {
@@ -188,7 +187,7 @@ export default function StudentForm() {
             {...field}
             open={openGender}
             setOpen={setOpenGender}
-            placeHolder="gender"
+            placeHolder={t("gender")}
             options={genders}
             value={getValues("gender")}
             onSelected={(selectedValue) => {
@@ -212,10 +211,10 @@ export default function StudentForm() {
     value: `${data.firstName} ${data.lastName}`,
     label: `${data.firstName} ${data.lastName}`,
     documents:uploaded},...prev])
-          toast({
-              title: "student added!",
-              description: "Student added Successfully",
-            });
+    toast({
+      title: t('changes-applied-1'),
+      description: t(`changes-applied-Successfully`),
+    });
     console.log(data);
             reset(); 
           
@@ -227,8 +226,7 @@ export default function StudentForm() {
     <CardHeader className="flex flex-row items-start bg-muted/50">
       <div className="grid gap-0.5">
         <CardTitle className="group flex items-center gap-2 text-lg">
-          Create Student
-        </CardTitle>
+          {t('create-student-0')} </CardTitle>
         <CardDescription></CardDescription>
       </div>
 
@@ -241,8 +239,7 @@ export default function StudentForm() {
         >
           <ResetIcon className="h-3.5 w-3.5" />
           <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-            Reset details
-          </span>
+            {t('reset-details')} </span>
         </Button>
       </div>
     </CardHeader>
@@ -260,7 +257,7 @@ export default function StudentForm() {
                 name={fieldName as FormKeys}
                 render={({ field }) => (
                   <FormItem style={{ marginBottom: 15 }}>
-                    <FormLabel>{fieldName}</FormLabel>
+                    <FormLabel>{t(fieldName)}</FormLabel>
                     <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                     <FormMessage />
@@ -281,8 +278,7 @@ export default function StudentForm() {
           type="submit"
           onClick={form.handleSubmit(onSubmit)}
         >
-          Submit
-        </LoadingButton>
+          {t('submit')} </LoadingButton>
       </div>
     </CardFooter>
   </Card>

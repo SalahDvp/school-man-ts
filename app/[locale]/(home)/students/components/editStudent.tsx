@@ -31,6 +31,7 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { z } from "zod";
 import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles";
 import { updateStudent } from "@/lib/hooks/students";
+import { useTranslations } from "next-intl";
 type FormKeys =
   | "firstName"
   | "lastName"
@@ -106,7 +107,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open,student }) => {
   const [openGender, setOpenGender] = useState(false);
   const {parents,setStudents}=useData()
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
-
+const t=useTranslations()
   const form = useForm<StudentFormValues>({
     //resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
@@ -162,7 +163,7 @@ useEffect(() => {
       reset(student)
       downloadFiles();
     }
-  }, [student])
+  }, [student,reset])
   const renderInput = (fieldName: string, field:any) => {
     switch (fieldName) {
       case "dateOfBirth":
@@ -201,7 +202,7 @@ useEffect(() => {
             {...field}
             open={openParent}
             setOpen={setOpenParent}
-            placeHolder="parents"
+            placeHolder={t("parents")}
             options={parents}
             value={getValues("parentFullName")}
             onSelected={(selectedValue) => {
@@ -230,7 +231,7 @@ useEffect(() => {
             {...field}
             open={openGender}
             setOpen={setOpenGender}
-            placeHolder="gender"
+            placeHolder={t("gender")}
             options={genders}
             value={getValues("gender")}
             onSelected={(selectedValue) => {
@@ -271,10 +272,10 @@ setStudents((prev:StudentFormValues[]) => {
   );
   return updatedLevels;
 });
-    toast({
-      title: "changes applied!",
-      description: `changes applied Successfully ${changes}`,
-    });
+toast({
+  title: t('changes-applied-1'),
+  description: t(`changes-applied-Successfully`),
+});
 
 
   }
@@ -285,10 +286,9 @@ setStudents((prev:StudentFormValues[]) => {
    <SheetContent className=" sm:max-w-[650px]">
         <ScrollArea className="h-screen pb-20 ">
           <SheetHeader>
-            <SheetTitle>Edit Student</SheetTitle>
+            <SheetTitle>{t('edit-student')}</SheetTitle>
             <SheetDescription>
-              Make changes to your student here. Click save when you're done.
-            </SheetDescription>
+              {t('make-changes-to-your-student')} </SheetDescription>
           </SheetHeader>
           <Form {...form}>
             <form>
@@ -299,7 +299,7 @@ setStudents((prev:StudentFormValues[]) => {
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>
                         {renderInput(fieldName,field)}
                       </FormControl>
@@ -322,8 +322,7 @@ setStudents((prev:StudentFormValues[]) => {
                 type="submit"
                 onClick={form.handleSubmit(onSubmit)}
               >
-                Save changes
-              </LoadingButton>
+                {t('save-changes')} </LoadingButton>
             </SheetClose>
           </SheetFooter>
         </ScrollArea>
