@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import {NextIntlClientProvider, useMessages} from 'next-intl';
+import { unstable_setRequestLocale } from "next-intl/server";
 
 const APP_NAME = "PWA App";
 const APP_DEFAULT_TITLE = "My Awesome PWA App";
@@ -56,7 +57,9 @@ interface RootLayoutProps {
   params: {locale: string};
 }
 const RootLayout: React.FC<RootLayoutProps> = ({ children,  params: {locale} }) => {
+  unstable_setRequestLocale(locale);
   const messages=useMessages()
+
   return (
     <html lang={locale}>
       <body className={cn("min-h-screen bg-background font-sans antialiased",fontSans.variable)}>  
