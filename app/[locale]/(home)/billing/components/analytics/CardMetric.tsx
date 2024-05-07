@@ -9,32 +9,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useTranslations } from "next-intl";
+import { useData } from "@/context/admin/fetchDataContext";
 
 
-const data = [
-  { name: "Jan", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Feb", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Mar", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Apr", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "May", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Jun", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Jul", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Aug", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Sep", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Oct", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Nov", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-  { name: "Dec", income: Math.floor(Math.random() * 5000) + 1000, expenses: Math.floor(Math.random() * 5000) + 1000 },
-];
+
 
 
 export function CardsMetric() {
+
+const t=useTranslations()
+const data:any[]=Object.keys(useData().analytics.data).map((key:any) => ({
+  month: useData().analytics.data[key].month,
+  income: useData().analytics.data[key].income || 0,
+  expenses: useData().analytics.data[key].expenses || 0,
+}));
 
 
   return (
 
     <Card className="col-span-4">
     <CardHeader>
-      <CardTitle>Overview</CardTitle>
+      <CardTitle>{t('overview')}</CardTitle>
     </CardHeader>
     <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={350}>
@@ -55,16 +51,14 @@ export function CardsMetric() {
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex flex-col">
                             <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Income
-                            </span>
+                              {t('income')} </span>
                             <span className="font-bold text-muted-foreground">
                               {payload[0].value}
                             </span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Expenses
-                            </span>
+                              {t('expenses')} </span>
                             <span className="font-bold">
                               {payload[1].value}
                             </span>
@@ -109,18 +103,20 @@ export function CardsMetric() {
                 }
               />
                     <XAxis
-          dataKey="name"
+          dataKey="month"
           stroke="#888888"
           fontSize={12}
           tickLine={false}
           axisLine={false}
+          scale="point"
         />
         <YAxis
           stroke="#888888"
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `$${value}`}
+          tickFormatter={(value) => `DZD${value}`}
+          
         />
             </LineChart>
           </ResponsiveContainer>

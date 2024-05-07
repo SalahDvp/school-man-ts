@@ -1,4 +1,42 @@
 {
     "i18n-ally.localesPaths": ["./messages"], // E.g. "./messages"
-    "i18n-ally.keystyle": "nested"
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.extract.ignoredByFiles": {
+        "app\\[locale]\\(home)\\teachers\\components\\teachers-table.tsx": [
+            "Select row"
+        ],
+        "app\\[locale]\\(home)\\teachers\\components\\edit-teacher-form.tsx": [
+            "Active"
+        ],
+        "app\\[locale]\\(home)\\classes\\page.tsx": [
+            "Name"
+        ],
+        "app\\[locale]\\(home)\\settings\\level\\components\\sheet-form.jsx": [
+            "This is the fee for the level."
+        ]
+    },
+    "i18n-ally.extract.ignored": [
+        "Select all",
+        "Female",
+        "Arabic",
+        "French",
+        "English",
+        "Male",
+        "Expelled",
+        "Suspended",
+        "Suspended",
+        "John",
+        "Doe",
+        "123 Main St",
+        "City",
+        "City",
+        "State",
+        "Country",
+        "Emergency Contact",
+        "None",
+        "Math",
+        "${key}: ${teacher[key]} => ${currentValues[key]}\\n",
+        "Teachers",
+        "Active"
+    ]
 }

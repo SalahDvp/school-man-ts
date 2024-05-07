@@ -32,6 +32,7 @@ import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addTeacher } from "@/lib/hooks/teachers";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+import { useTranslations } from "next-intl";
 const fieldNames = [
   "firstName",
   "lastName",
@@ -53,47 +54,7 @@ const fieldNames = [
   "status",
 ];
 
-const status =[
-  {
-    value:"active",
-    label:"Active",
-  },
-  {
-    value:"suspended",
-    label:"Suspended",
-  },{
-    value:"expelled",
-    label:"Expelled",
-  }
-]
-const genders = [
-  {
-    value: "male",
-    label: "Male",
-  },
-  {
-    value: "female",
-    label: "Female",
-  },
-];
 
-
-const subjects = [
-  
-  
-  {
-    value: "arabic",
-    label: "Arabic",
-  },
-  {
-    value: "french",
-    label: "French",
-  },
-  {
-    value: "english",
-    label: "English",
-  },
-];
 
 type FormKeys =
   | "firstName"
@@ -125,7 +86,7 @@ export default function TeacherForm() {
   const { toast } = useToast();
   const {setTeachers} = useData()
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
-
+  const t=useTranslations()
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
   const [openSubject, setOpenSubject] = useState(false);
@@ -138,7 +99,47 @@ export default function TeacherForm() {
   });
   const { reset, formState, setValue, getValues } = form;
   const { isSubmitting } = formState;
-
+  const status =[
+    {
+      value:"active",
+      label:t("Active"),
+    },
+    {
+      value:"suspended",
+      label:t("Suspended"),
+    },{
+      value:"expelled",
+      label:t("Expelled"),
+    }
+  ]
+  const genders = [
+    {
+      value: "male",
+      label: t("Male"),
+    },
+    {
+      value: "female",
+      label: t("Female"),
+    },
+  ];
+  
+  
+  const subjects = [
+    
+    
+    {
+      value: "arabic",
+      label: t("Arabic"),
+    },
+    {
+      value: "french",
+      label: t("French"),
+    },
+    {
+      value: "english",
+      label: t("English"),
+    },
+  ];
   const renderInput = (fieldName:string, field:any) => {
     switch (fieldName) {
       case "dateOfBirth":
@@ -175,7 +176,7 @@ export default function TeacherForm() {
             {...field}
             open={openGender}
             setOpen={setOpenGender}
-            placeHolder="Gender"
+            placeHolder={t('gender')}
             options={genders}
             value={getValues("gender")}
             onSelected={(selectedValue) => {
@@ -189,7 +190,7 @@ export default function TeacherForm() {
             {...field}
             open={open}
             setOpen={setOpen}
-            placeHolder="Status"
+            placeHolder={t('status')}
             options={status}
             value={getValues("status")}
             onSelected={(selectedValue) => {
@@ -206,7 +207,7 @@ export default function TeacherForm() {
               {...field}
               open={openSubject}
               setOpen={setOpenSubject}
-              placeHolder="a subject"
+              placeHolder={t('a-subject')}
               options={subjects}
               value={getValues("teacherSubject")}
               onSelected={(selectedValue) => {
@@ -231,8 +232,8 @@ export default function TeacherForm() {
   label:`${data.firstName} ${data.lastName}`,
 documents:uploaded},...prev])
         toast({
-            title: "Teacher added!",
-            description: "Teacher added Successfully",
+            title: t('teacher-added'),
+            description: t('teacher-added-successfully'),
           });
   console.log(data);
           reset(); 
@@ -245,8 +246,7 @@ documents:uploaded},...prev])
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Create Teacher
-          </CardTitle>
+            {t('create-teacher')} </CardTitle>
           <CardDescription/>
         </div>
 
@@ -259,8 +259,7 @@ documents:uploaded},...prev])
           >
             <ResetIcon className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Reset details
-            </span>
+              {t('reset-details')} </span>
           </Button>
         </div>
       </CardHeader>
@@ -278,7 +277,7 @@ documents:uploaded},...prev])
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                       <FormMessage />
@@ -299,8 +298,7 @@ documents:uploaded},...prev])
             type="submit"
             onClick={form.handleSubmit(onSubmit)}
           >
-            Submit
-          </LoadingButton>
+            {t('submit')} </LoadingButton>
         </div>
       </CardFooter>
     </Card>

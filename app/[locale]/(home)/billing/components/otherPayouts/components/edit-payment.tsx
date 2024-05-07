@@ -26,6 +26,7 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { updatePayment } from "@/lib/hooks/billing/otherPayments"
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment"
 import { updateDocuments } from "@/context/admin/hooks/useUploadFiles"
+import { useTranslations } from "next-intl"
 type FormKeys =
   |"paymentTitle"
   |"paymentAmount"
@@ -52,45 +53,6 @@ type FormKeys =
     
   ];
 
-  const Typeofpayments = [
-    {
-      value: "electricbill",
-      label: "Electric Bill",
-    },
-    {
-      value: "waterBill",
-      label: "Water Bill",
-    },
-    {
-      value: "gazBill",
-      label: "Gaz Bill",
-    },
-    {
-      value: "Maintenance",
-      label: "Maintenance",
-    },
-    {
-      value: "delivery",
-      label: "Delivery",
-    },
-    {
-      value:"other"  ,
-      label: "Other (should be described in the notes)",
-    },
-  ];
-  
- 
-  const payoutstatus =[
-    
-    {
-      value:"paid"  ,
-      label: "Paid",
-    },
-    {
-      value:"notPaid"  ,
-      label: "Not Paid",
-    },
-  ]
   interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
@@ -109,7 +71,47 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
     const [openSubject, setOpenSubject] = useState();
     const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+const t=useTranslations()
 
+const Typeofpayments = [
+  {
+    value: "electricbill",
+    label: t('electric-bill'),
+  },
+  {
+    value: "waterBill",
+    label: t('water-bill'),
+  },
+  {
+    value: "gazBill",
+    label: t('gaz-bill'),
+  },
+  {
+    value: "Maintenance",
+    label: t('maintenance'),
+  },
+  {
+    value: "delivery",
+    label: t('delivery'),
+  },
+  {
+    value:"other"  ,
+    label: t('other-should-be-described-in-the-notes'),
+  },
+];
+
+
+const payoutstatus =[
+  
+  {
+    value:"paid"  ,
+    label: t('paid'),
+  },
+  {
+    value:"notPaid"  ,
+    label: t('not-paid'),
+  },
+]
     const form =useForm<PaymentFormValues>({
       resolver: zodResolver(PaymentRegistrationSchema),
            defaultValues:{  id:"222",
@@ -153,7 +155,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
               {...field}
               open={status}
               setOpen={setstatus}
-              placeHolder="status"
+              placeHolder={t("status")}
               options={payoutstatus}
               value={getValues("status")}
               onSelected={(selectedValue) => {
@@ -168,7 +170,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
               {...field}
               open={openTypeofpayment}
               setOpen={setOpenTypeofpayment}
-              placeHolder="typeofPayment"
+              placeHolder={t("typeofPayment")}
               options={Typeofpayments}
               value={getValues("typeofPayment")}
               onSelected={(selectedValue) => {
@@ -216,10 +218,10 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
           },
           totalExpenses: prevState.totalExpenses +  (payment.paymentAmount-updatedData.salaryAmount)
         }));  
-          toast({
-              title: "Changes Applied!",
-              description: "Changes Applied Successfully",
-            })
+        toast({
+          title: t('changes-applied-0'),
+          description: t('changes-applied-successfully'),
+        });
         
             setOpen(false)
 
@@ -231,9 +233,9 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
    <SheetContent className=" sm:max-w-[650px]">
       <ScrollArea className="h-screen pb-20 "> 
         <SheetHeader>
-          <SheetTitle>Edit payment</SheetTitle>
+          <SheetTitle>{t('edit-payment')}</SheetTitle>
           <SheetDescription>
-            {`Make changes to your payment here. Click save when you're done.`}
+            {t('make-changes-to-your-payment-here')}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -247,7 +249,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
              
              render={({ field }) => (
               <FormItem style={{marginBottom:15}} >
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl  >
                       {renderInput({ fieldName, field })}
                       </FormControl>
@@ -268,8 +270,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,payment }) => {
           <SheetClose asChild>
             
           <LoadingButton loading={isSubmitting} type="submit"    onClick={form.handleSubmit(onSubmit)}>
-            Save changes
-      </LoadingButton>
+            {t('save-changes')} </LoadingButton>
           </SheetClose>
         </SheetFooter>
         </ScrollArea>

@@ -51,6 +51,7 @@ import { File } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-teacher-salary"
+import { useTranslations } from "next-intl";
 
 export type teacherSalary = {
   
@@ -68,7 +69,7 @@ type TeacherSalaryFormValues = z.infer<typeof teacherPaymentRegistrationSchema> 
   export const DataTableDemo = () => {
     const [open,setOpen]=React.useState(false)
     const{teachersSalary,setTeachersSalary}= useData()
-    
+    const t =useTranslations()
     const [teacherSalary,setTeacherSalary]=React.useState<any>({
       id:"qweqwe",
       salaryTitle: "Monthly Salary",
@@ -116,21 +117,21 @@ type TeacherSalaryFormValues = z.infer<typeof teacherPaymentRegistrationSchema> 
     {
 id:"teacher",
 accessorFn: (row) => row.teacher.name,
-      header: "Teacher",
+header:() => <div>{t('teacher')}</div>, 
       cell: ({ row }) => (
         <div className="capitalize">
-           <div className="font-medium">{row.original.teacher.name}</div>
+           <div className="font-medium">{row.original.teacher.name}</div>S
         </div>
       ),
     },
     {
       accessorKey: "typeofTransaction",
-      header: "Transaction",
+      header:() => <div>{t('transaction')}</div>, 
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("typeofTransaction")}</div>,
     },
     {
       accessorKey: "salaryDate",
-      header: "Salary Date",
+      header:() => <div>{t('salary-date')}</div>, 
       cell: ({ row }) => (
        
 
@@ -140,14 +141,14 @@ accessorFn: (row) => row.teacher.name,
     },
     {
       accessorKey: "monthOfSalary",
-      header: "Month paid",
+      header:() => <div>{t('month-paid')}</div>, 
       cell: ({ row }) => (
         <div className="capitalize hidden sm:table-cell">{row.getValue("monthOfSalary")}</div>
       ),
     },
     {
       accessorKey: "status",
-      header: "status",
+      header:() => <div>{t('status')}</div>, 
       cell: ({ row }) => (
         <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
       ),
@@ -155,7 +156,7 @@ accessorFn: (row) => row.teacher.name,
 
     {
       accessorKey: "salaryAmount",
-      header: () => <div className="text-right">Amount</div>,
+      header: () => <div className="text-right">{t('amount')}</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("salaryAmount"))
   
@@ -179,17 +180,16 @@ accessorFn: (row) => row.teacher.name,
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(teacherSalary)}>
-                View Payment
-              </DropdownMenuItem>
+                {t('view-payment')} </DropdownMenuItem>
               {/* <DropdownMenuItem>remove sa</DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -241,7 +241,7 @@ accessorFn: (row) => row.teacher.name,
        
 
 <Input
-  placeholder="Filter Salaries..."
+  placeholder={t('filter-salaries')}
   value={(table.getColumn("teacher")?.getFilterValue() as string) ?? ""}
   onChange={(event) =>
     table.getColumn("teacher")?.setFilterValue(event.target.value)
@@ -252,7 +252,7 @@ accessorFn: (row) => row.teacher.name,
           <DropdownMenu>
   <DropdownMenuTrigger asChild>
     <Button variant="outline">
-      Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+      {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
     </Button>
   </DropdownMenuTrigger>
   <DropdownMenuContent align="end">
@@ -271,18 +271,16 @@ accessorFn: (row) => row.teacher.name,
 </DropdownMenu>
 
         <Button variant="outline" className="ml-2">
-       Export <File className="ml-2 h-4 w-4" />
+       {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
     </div>
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your salary roll</CardTitle>
+      <CardTitle>{t('your-salary-roll')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic teacger's salary Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+      {t('introducing-our-dynamic-teacgers-salary-dashboard-for-seamless-management-and-insightful-analysis')} </CardDescription>
     </CardHeader>
     <CardContent>     
     <div className="w-full">
@@ -330,8 +328,7 @@ accessorFn: (row) => row.teacher.name,
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -340,7 +337,7 @@ accessorFn: (row) => row.teacher.name,
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -349,16 +346,14 @@ accessorFn: (row) => row.teacher.name,
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
     </div>

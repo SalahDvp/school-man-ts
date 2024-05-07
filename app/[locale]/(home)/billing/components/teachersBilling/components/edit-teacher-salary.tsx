@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles"
+import { useTranslations } from "next-intl"
 const fieldNames = [
     "teacher",
     "salaryTitle",
@@ -55,30 +56,7 @@ interface openModelProps {
 
   
   
-  const Typeofpayments = [
-    {
-      value: "Salary",
-      label: "Salary",
-    },
-    {
-      value: "Other",
-      label: "other",
-    },
-    
-  ];
 
-  const MonthOfYear =['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const Salarystatus =[
-    
-    {
-      value:"paid"  ,
-      label: "Paid",
-    },
-    {
-      value:"notPaid"  ,
-      label: "Not Paid",
-    },
-  ]
   
  
 
@@ -95,7 +73,32 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
   const [teacherModal,setTeacherModal]=useState(false)
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+  const t=useTranslations()
+  
+  const Typeofpayments = [
+    {
+      value: "Salary",
+      label: t('salary'),
+    },
+    {
+      value: "Other",
+      label: t("other"),
+    },
+    
+  ];
+  const MonthOfYear =['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+  const Salarystatus =[
+  
+    {
+      value:"paid"  ,
+      label: t('paid'),
+    },
+    {
+      value:"notPaid",
+      label: t('not-paid'),
+    },
+  ]
     const form =useForm<TeacherSalaryFormValues>({
       resolver: zodResolver(teacherPaymentRegistrationSchema),
     });
@@ -160,7 +163,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
                     id={`monthOfSalary`}
                     aria-label={`Select month`}
                   >
-                    <SelectValue placeholder="Select Month" />
+                    <SelectValue placeholder={t('select-month')} />
                   </SelectTrigger>
                 </FormControl>
 
@@ -182,7 +185,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
                 {...field}
                 open={status}
                 setOpen={setstatus}
-                placeHolder="status"
+                placeHolder={t("status")}
                 options={Salarystatus}
                 value={getValues("status")}
                 onSelected={(selectedValue) => {
@@ -196,7 +199,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
               {...field}
                 open={teacherModal}
                 setOpen={setTeacherModal}
-              placeHolder="Teacher"
+              placeHolder={t('teacher')}
               options={teacherNames}
               value={getValues("teacher")?.name} 
               onSelected={(selectedValue) => {
@@ -214,7 +217,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
                 {...field}
                 open={openTypeofpayment}
                 setOpen={setOpenTypeofpayment}
-                placeHolder="Typeofpayment"
+                placeHolder={t('typeofpayment')}
                 options={Typeofpayments}
                 value={getValues("typeofTransaction")}
                 onSelected={(selectedValue) => {
@@ -264,10 +267,10 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
           },
           totalExpenses: prevState.totalExpenses +  (teacherSalary.salaryAmount-updatedData.salaryAmount)
         }));  
-          toast({
-              title: "Changes Applied!",
-              description: "Changes Applied Successfully",
-            })
+        toast({
+          title: t('changes-applied-1'),
+          description: t(`changes-applied-Successfully`),
+        });
         
             setOpen(false)
 
@@ -281,10 +284,9 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
    <SheetContent className=" sm:max-w-[650px]">
       <ScrollArea className="h-screen pb-20 "> 
         <SheetHeader>
-          <SheetTitle>Edit payment</SheetTitle>
+          <SheetTitle>{t('edit-payment')}</SheetTitle>
           <SheetDescription>
-            Make changes to your payment here. Click save when you're done.
-          </SheetDescription>
+            {t('make-changes-to-your-payment-here')} </SheetDescription>
         </SheetHeader>
         <Form {...form}>
             <form>
@@ -318,8 +320,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacherSalary }) => 
           <SheetClose asChild>
             
           <LoadingButton loading={isSubmitting} type="submit"    onClick={form.handleSubmit(onSubmit)}>
-            Save changes
-      </LoadingButton>
+            {t('save-changes')} </LoadingButton>
           </SheetClose>
         </SheetFooter>
         </ScrollArea>

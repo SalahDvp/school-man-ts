@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip , Sector, Legend, } from 'recharts';
 import { CardContent,Card,CardHeader,CardTitle } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 const expensesData = [
     { name: "Rent", value: 1500 },
     { name: "Groceries", value: 500 },
@@ -15,8 +16,8 @@ const expensesData = [
 
 const COLORS = ['#2563eb', '#35155D', '#512B81', '#4477CE','#8CABFF'];
 
-const renderActiveShape = (props:any) => {
-
+const renderActiveShape = (props:any,rate:string) => {
+  
     const RADIAN = Math.PI / 180;
     const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
     const sin = Math.sin(-RADIAN * midAngle);
@@ -57,7 +58,7 @@ const renderActiveShape = (props:any) => {
         <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} textAnchor={textAnchor} fill="#333">{`DZD ${value}`}</text>
 
         <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="#999">
-          {`(Rate ${(percent * 100).toFixed(2)}%)`}
+          {`(${rate} ${(percent * 100).toFixed(2)}%)`}
         </text>
       </g>
     );
@@ -91,7 +92,7 @@ const renderActiveShape = (props:any) => {
   };
 export function CircleExpenses() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
-
+const t=useTranslations()
   const handleSetActiveIndex = (_:any,index: number) => {
     setActiveIndex(index);
   };
@@ -99,7 +100,7 @@ export function CircleExpenses() {
 
     <Card className="relative">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 z-10 absolute w-full">
-      <CardTitle className="text-sm font-medium">Expenses</CardTitle>
+      <CardTitle className="text-sm font-medium">{t('expenses')}</CardTitle>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
@@ -126,7 +127,7 @@ export function CircleExpenses() {
 
         <Pie
           activeIndex={activeIndex}
-          activeShape={renderActiveShape}
+          activeShape={(a:any)=>renderActiveShape(a,t('rate'))}
           startAngle={180}
           endAngle={0}
           data={expensesData}

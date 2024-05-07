@@ -59,16 +59,19 @@ import { ClassForm } from "@/app/[locale]/(home)/classes/components/new-class"
 import EditClassForm from "@/app/[locale]/(home)/classes/components/edit-class"
 import { ClassFormValues } from "@/app/[locale]/(home)/classes/components/new-class"
 import { useData } from "@/context/admin/fetchDataContext"
+import { useTranslations } from "next-intl"
 
 
 function Classes() {
   const {levels,classes}=useData()
+  const t=useTranslations()
   const [open, setOpen] = React.useState(false);
   const [cls, setCls] = React.useState< ClassFormValues>(classes[0]);
     const columns: ColumnDef<any>[] = [
         {
           accessorKey: "name",
-          header: "Name",
+          header:() => <div>{t('Name')}</div>, 
+
           cell: ({ row }) => (
             <div className="capitalize w-[100px]">
                <div className="font-medium">{row.getValue("name")}</div>
@@ -78,26 +81,26 @@ function Classes() {
         },
         {
           accessorKey: "levelName",
-          header: "Level",
-          cell: ({ row }) => <div className="lowercase hidden sm:table-cell"> {row.getValue("levelName")}</div>,
+          header:() => <div>{t('level')}</div>, 
+          cell: ({ row }) => <div className="lowercase hidden sm:table-cell"> {t(row.getValue("levelName"))}</div>,
         },
         {
           accessorKey: "className",
-          header: "Class",
+          header:() => <div>{t('class')}</div>, 
           cell: ({ row }) => (
             <div className="capitalize hidden sm:table-cell">{row.getValue("className")}</div>
           ),
         },
         {
           accessorKey: "capacity",
-          header: "Capacity",
+          header:() => <div>{t('capacity')}</div>, 
           cell: ({ row }) => (
             <div className="capitalize hidden sm:table-cell">{row.getValue("capacity")}</div>
           ),
         },
         {
           accessorKey: "mainTeacher",
-          header: "Main Teacher",
+          header:() => <div>{t('main-teacher')}</div>, 
           cell: ({ row }) => (
             <div className="capitalize hidden sm:table-cell">{row.original.mainTeacher?.name}</div>
           ),
@@ -117,13 +120,13 @@ function Classes() {
                     variant="ghost"
                   >
                     <MoreHorizontal className="h-4 w-4" />
-                    <span className="sr-only">Toggle menu</span>
+                    <span className="sr-only">{t('toggle-menu')}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => openEditSheet(cls)}>Edit</DropdownMenuItem>
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
+                  <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => openEditSheet(cls)}>{t('edit')}</DropdownMenuItem>
+                  <DropdownMenuItem>{t('delete')}</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )
@@ -182,7 +185,7 @@ function Classes() {
           <Tabs defaultValue="all">
             <div className="flex items-center">
               <TabsList>
-                <TabsTrigger value="all" onClick={() => handleFilter("All")}>All</TabsTrigger>
+                <TabsTrigger value="all" onClick={() => handleFilter("All")}>{t('all')}</TabsTrigger>
                 {levels.map((level:any) => (
     <TabsTrigger key={level.level} value={level.level} onClick={() => handleFilter(level.level)}>
       {level.level}
@@ -193,7 +196,7 @@ function Classes() {
               <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -219,8 +222,7 @@ function Classes() {
                 <Button  variant="outline" className="gap-1">
                   <File className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Export
-                  </span>
+                    {t('export')} </span>
                 </Button>
                 <EditClassForm open={open} setOpen={setOpen} cls={cls} />
 
@@ -233,10 +235,9 @@ function Classes() {
           </Tabs>
           <Card x-chunk="dashboard-06-chunk-0">
                 <CardHeader>
-                  <CardTitle>Classes</CardTitle>
+                  <CardTitle>{t('classes')}</CardTitle>
                   <CardDescription>
-                    Manage your classes and view their details.
-                  </CardDescription>
+                    {t('manage-your-classes-and-view-their-details')} </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Table>
@@ -280,8 +281,7 @@ function Classes() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -292,7 +292,7 @@ function Classes() {
       <div className="flex items-center justify-end space-x-2 py-4 w-full">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -301,16 +301,14 @@ function Classes() {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
                 </CardFooter>

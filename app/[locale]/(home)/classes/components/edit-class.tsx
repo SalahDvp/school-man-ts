@@ -39,6 +39,7 @@ import { MultiSelect } from "./multiselect"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { useData } from "@/context/admin/fetchDataContext"
 import { updateClass, updateStudents, updateTeachers } from "@/lib/hooks/classes"
+import { useTranslations } from "next-intl"
 
   
 type ClassFormValues = z.infer<typeof classSchema> & { [key: string]: string | Date | number | any;};
@@ -48,7 +49,7 @@ interface SheetDemoProps {
     open: boolean; 
 }
 const EditClassForm: React.FC<SheetDemoProps> = ({ cls,setOpen,open }) => {
-
+  const t=useTranslations()
   const form = useForm<any>({
     resolver: zodResolver(classSchema),
     defaultValues: {
@@ -169,8 +170,8 @@ updatedTeachers.added.forEach((teacher) => {
       return updatedLevels;
     });
   toast({
-        title: "changes applied!",
-        description: `changes applied Successfully`,
+        title: t('changes-applied-0'),
+        description: t('changes-applied-successfully'),
       });
       
 
@@ -183,10 +184,9 @@ updatedTeachers.added.forEach((teacher) => {
     <ScrollArea className="h-screen  ">
 
       <SheetHeader>
-        <SheetTitle>Edit Class</SheetTitle>
+        <SheetTitle>{t('edit-class')}</SheetTitle>
         <SheetDescription>
-          Enter the details for the class, including information and subjects of study.
-        </SheetDescription>
+          {t('enter-the-details-for-the-class-including-information-and-subjects-of-study')} </SheetDescription>
       </SheetHeader>
     <Form {...form}>
       <form  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -196,7 +196,7 @@ updatedTeachers.added.forEach((teacher) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('Name')}</FormLabel>
                   <FormControl>
                     <Input  placeholder="username" {...field} />
                   </FormControl>
@@ -213,7 +213,7 @@ updatedTeachers.added.forEach((teacher) => {
               name="level"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>class level</FormLabel>
+                  <FormLabel>{t('class-level')}</FormLabel>
                   <FormControl>
                   <Select
                 defaultValue={JSON.stringify(levels.find((level:any)=>level.id===field.value.id))}
@@ -229,7 +229,7 @@ updatedTeachers.added.forEach((teacher) => {
                               id={`level`}
                               aria-label={`Select level`}
                             >
-                              <SelectValue placeholder="Select level"   />
+                              <SelectValue placeholder={t('select-level')}   />
                             </SelectTrigger>
                           </FormControl>
 
@@ -254,7 +254,7 @@ updatedTeachers.added.forEach((teacher) => {
               name="className"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Class </FormLabel>
+                  <FormLabel>{t('class')} </FormLabel>
                   <FormControl>
                   <Select
                       onValueChange={field.onChange}
@@ -265,7 +265,7 @@ updatedTeachers.added.forEach((teacher) => {
                               id={`className`}
                               aria-label={`Select class`}
                             >
-                              <SelectValue placeholder="Select Class" />
+                              <SelectValue placeholder={t('select-class')} />
                             </SelectTrigger>
                           </FormControl>
 
@@ -291,9 +291,9 @@ updatedTeachers.added.forEach((teacher) => {
               name="capacity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Capacity</FormLabel>
+                  <FormLabel>{t('capacity')}</FormLabel>
                   <FormControl>
-                  <Input {...field} placeholder="Enter capacity of class"  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                  <Input {...field} placeholder={t('enter-capacity-of-class')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
                   </FormControl>
                   <FormDescription>
                     
@@ -307,7 +307,7 @@ updatedTeachers.added.forEach((teacher) => {
     name="teachers"
     render={({ field }) => (
         <FormItem>
-            <FormLabel>Select Teachers</FormLabel>
+            <FormLabel>{t('select-teachers')}</FormLabel>
                 <MultiSelect
                     selected={field.value}
                  options={allTeachers}
@@ -323,7 +323,7 @@ updatedTeachers.added.forEach((teacher) => {
               name="mainTeacher"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Main Teacher</FormLabel>
+                  <FormLabel>{t('main-teacher')}</FormLabel>
                   <FormControl>
                   <Select
                   defaultValue={JSON.stringify(selectedTeachers.find((teacher)=>teacher?.id===field.value.id))}
@@ -342,7 +342,7 @@ updatedTeachers.added.forEach((teacher) => {
                               id={`mainTeacher`}
                               aria-label={`Select Main Teacher`}
                             >
-                              <SelectValue placeholder="Select Main Teacher" />
+                              <SelectValue placeholder={t('select-main-teacher')} />
                             </SelectTrigger>
                           </FormControl>
 
@@ -367,7 +367,7 @@ updatedTeachers.added.forEach((teacher) => {
     name="students"
     render={({ field }) => (
         <FormItem>
-            <FormLabel>add students</FormLabel>
+            <FormLabel>{t('add-students')}</FormLabel>
                 <MultiSelect
                     selected={field.value}
                  options={allStudents}
@@ -388,8 +388,7 @@ updatedTeachers.added.forEach((teacher) => {
                 type="submit"
     
               >
-                  Save changes
-              </LoadingButton>
+                  {t('save-changes')} </LoadingButton>
               </SheetClose>
               </SheetFooter>
       </form>

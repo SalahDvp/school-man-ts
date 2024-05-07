@@ -7,36 +7,54 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { useTranslations } from 'next-intl';
+import { useData } from '@/context/admin/fetchDataContext';
 
-
-const data = [
-  { name: 'Jan', income: 5000, expenses: 3500 },
-  { name: 'Feb', income: 5500, expenses: 3800 },
-  { name: 'Mar', income: 6000, expenses: 4000 },
-  { name: 'Apr', income: 6200, expenses: 4200 },
-  { name: 'May', income: 6500, expenses: 4300 },
-  { name: 'Jun', income: 6700, expenses: 4400 },
-  { name: 'Jul', income: 6900, expenses: 4600 },
-  { name: 'Aug', income: 7100, expenses: 4800 },
-  { name: 'Sep', income: 7300, expenses: 4900 },
-  { name: 'Oct', income: 7500, expenses: 5000 },
-  { name: 'Nov', income: 7700, expenses: 5200 },
-  { name: 'Dec', income: 8000, expenses: 5500 },
-]
 
 function CardsRevenue() {
+const t=useTranslations()
+const getMonthAbbreviation = (fullMonth:string) => {
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthIndex = monthNames.findIndex((month) => month.toLowerCase() === fullMonth.toLowerCase());
+  return monthIndex !== -1 ? monthNames[monthIndex].slice(0, 3) : '';
+};
+const data:any[]=Object.keys(useData().analytics.data).map((key:any) => ({
+  month:getMonthAbbreviation(useData().analytics.data[key].month),
+  income: useData().analytics.data[key].income || 0,
+  expenses: useData().analytics.data[key].expenses || 0,
+}));
+const getCurrentMonthData = () => {
+  const currentMonth = new Date().toLocaleString('default', { month: 'short' });
+  return data.find(item => item.month === currentMonth);
+};
 
+const getPreviousMonthData = () => {
+  const currentMonthIndex = new Date().getMonth();
+  const previousMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+  const previousMonthName = new Date(0, previousMonthIndex).toLocaleString('default', { month: 'short' });
+  return data.find(item => item.month === previousMonthName);
+};
 
+const calculateRate = () => {
+  const currentMonthData = getCurrentMonthData();
+  const previousMonthData = getPreviousMonthData();
+
+  if (!currentMonthData || !previousMonthData) {
+    return null; // Data not found for current or previous month
+  }
+
+  const rate = ((currentMonthData.income - previousMonthData.income) / previousMonthData.income) * 100;
+  return rate.toFixed(2); // Return rate with two decimal places
+};
   return (
 <Card>
 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-  <CardTitle className="text-sm font-normal">Total Revenue</CardTitle>
+  <CardTitle className="text-sm font-normal">{t('total-revenue')}</CardTitle>
 </CardHeader>
 <CardContent>
-<div className="text-2xl font-bold">$15,231.89</div>
+<div className="text-2xl font-bold">DZD { data.reduce((acc, curr) => acc + curr.income, 0)}</div>
 <p className="text-xs text-muted-foreground">
-      +180.1% from last month
-      </p>
+      {t('from-last-month',{rate:calculateRate()})} </p>
   <div className="mt-4 h-[80px]">
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
@@ -49,16 +67,14 @@ function CardsRevenue() {
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex flex-col">
                             <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Income
-                            </span>
+                              {t('income')} </span>
                             <span className="font-bold text-blue-500">
                               {payload[0].value}
                             </span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[0.70rem] uppercase text-muted-foreground">
-                              Expenses
-                            </span>
+                              {t('expenses')} </span>
                             <span className="font-bold text-muted-foreground">
                               {payload[1].value}
                             </span>
@@ -92,7 +108,7 @@ function CardsRevenue() {
         />
 
            <XAxis
-      dataKey="name"
+      dataKey="month"
       stroke="#888888"
       fontSize={12}
       tickLine={false}

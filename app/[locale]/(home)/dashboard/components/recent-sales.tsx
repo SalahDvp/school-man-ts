@@ -1,6 +1,9 @@
-
+"use client"
 import React from "react";
 import StudentPayment from "./studen-payment-table";
+import { useData } from "@/context/admin/fetchDataContext";
+import { useTranslations } from "next-intl";
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface User {
   id: number;
@@ -13,37 +16,17 @@ interface User {
 
 
 
-export async function RecentSales() {
-  const users: User[] = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      nextPaymentDate: "2024-05-10",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      nextPaymentDate: "2024-04-20",
-    },
-    {
-      id: 3,
-      name: "Michael Johnson",
-      email: "michael.johnson@example.com",
-      nextPaymentDate: "2025-05-01",
-    },
-  ];
-
-  
+export function RecentSales() {
+const {students}=useData()
+  const t=useTranslations()
   return (
-
+    <ScrollArea className="h-[350px]">
     <div className="space-y-4">
-      {users.map((user) => (
-        <StudentPayment key={user.id} user={user} />
+      {students.map((user:any) => (
+        <StudentPayment key={user.id} user={user} title={t("next-payment-date")}/>
       ))}
     </div>
- 
+ </ScrollArea>
   );
 }
 

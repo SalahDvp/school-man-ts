@@ -33,6 +33,7 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { addPaymentTransaction } from "@/lib/hooks/billing/student-billing";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
+import { useTranslations } from "next-intl";
 
 const fieldNames: string[] = [
   'student',
@@ -84,29 +85,7 @@ function parsePaymentPlan(paymentPlan: string, startDate: Date): Date | null {
   }
   return null; // Return null if the paymentPlan string does not match the expected format
 }
-const typeofTransaction = [
-  {
-    value: "CreditCard",
-    label: "Credit Card",
-  },
-  {
-  value: "Cash",
-  label: "Cash",
-    },
- 
-];
 
-const studentPaymentStatus =[
-  
-  {
-    value:"paid"  ,
-    label: "Paid",
-  },
-  {
-    value:"notPaid"  ,
-    label: "Not Paid",
-  },
-]
 interface FileUploadProgress {
   file: File;
   name: string;
@@ -125,8 +104,30 @@ export default function StudentPaymentForm() {
   });
   const { reset, formState, setValue, getValues,watch } = form;
   const { isSubmitting } = formState;
-
-
+const t=useTranslations()
+  const typeofTransaction = [
+    {
+      value: "CreditCard",
+      label: t('credit-card'),
+    },
+    {
+    value: "Cash",
+    label: t('cash'),
+      },
+   
+  ];
+  
+  const studentPaymentStatus =[
+    
+    {
+      value:"paid"  ,
+      label: t('paid'),
+    },
+    {
+      value:"notPaid"  ,
+      label: t('not-paid'),
+    },
+  ]
 const paymentPlans = React.useMemo(() => {
   const studentValue = form.getValues("level");
 
@@ -169,7 +170,7 @@ const onSelected=(selectedStudent:any)=>{
               {...field}
               open={studentModal}
               setOpen={setStudentModal}
-              placeHolder="Student"
+              placeHolder={t('student')}
               options={students}
               value={getValues("student")?.student}
               onSelected={(selectedValue) => {
@@ -192,7 +193,7 @@ const onSelected=(selectedStudent:any)=>{
             {...field}
             open={status}
             setOpen={setstatus}
-            placeHolder="status"
+            placeHolder={t("status")}
             options={studentPaymentStatus}
             value={getValues("status")}
             onSelected={(selectedValue) => {
@@ -206,7 +207,7 @@ const onSelected=(selectedStudent:any)=>{
             {...field}
             open={openTypeofpayment}
             setOpen={setOpenTypeofpayment}
-            placeHolder="typeofTransaction"
+            placeHolder={t("typeofTransaction")}
             options={typeofTransaction}
             value={getValues("typeofTransaction")}
             onSelected={(selectedValue) => {
@@ -231,7 +232,7 @@ const onSelected=(selectedStudent:any)=>{
             {...field}
             open={paymentPlanModal}
             setOpen={setPaymentPlanModal}
-            placeHolder="Payment plan"
+            placeHolder={t('payment-plan')}
             options={paymentPlans}
             value={getValues("paymentPlan")?.name}
             onSelected={(selectedValue) => {
@@ -285,10 +286,10 @@ const onSelected=(selectedStudent:any)=>{
       },
       totalIncome: prevState.totalIncome +  data.paymentAmount
     }));  
-          toast({
-              title: "invoicet added!",
-              description: "Student invoice added Successfully",
-            });
+    toast({
+      title: t('changes-applied-0'),
+      description: t('changes-applied-successfully'),
+    });
     console.log(data);
             reset(); 
   }
@@ -298,8 +299,7 @@ const onSelected=(selectedStudent:any)=>{
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Create Payment
-          </CardTitle>
+            {t('create-payment')} </CardTitle>
           <CardDescription></CardDescription>
         </div>
 
@@ -312,8 +312,7 @@ const onSelected=(selectedStudent:any)=>{
           >
             <ResetIcon className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Reset details
-            </span>
+              {t('reset-details')} </span>
           </Button>
         </div>
       </CardHeader>
@@ -331,7 +330,7 @@ const onSelected=(selectedStudent:any)=>{
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                       <FormMessage />
@@ -352,8 +351,7 @@ const onSelected=(selectedStudent:any)=>{
             type="submit"
             onClick={form.handleSubmit(onSubmit)}
           >
-            Submit
-          </LoadingButton>
+            {t('submit')} </LoadingButton>
         </div>
       </CardFooter>
     </Card>

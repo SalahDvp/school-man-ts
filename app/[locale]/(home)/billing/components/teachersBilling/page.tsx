@@ -1,6 +1,5 @@
 
 "use client"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -16,18 +15,18 @@ import PaymentForm from "./components/teacher-salary-form"
 import { useState } from "react"
 import SheetDemo from "./components/edit-teacher-salary"
 import { Overview } from "./components/area-chart"
+import { useTranslations } from "next-intl"
 
 
 
  function TeacherSalaryDashBoard() {
 
-  const [open,setOpen]=useState(false)
+const t=useTranslations()
 
   return (
   
 
     <div className="flex flex-row min-h-screen w-full flex-col ">
-      <SheetDemo open={open} setOpen={setOpen}/>
       <div className="flex flex-col sm:gap-4 sm:py-4 ">
    
         <div className="grid flex items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
@@ -38,7 +37,7 @@ import { Overview } from "./components/area-chart"
                 x-chunk="dashboard-05-chunk-0"
               >
       <CardHeader className="pb-2">
-      <CardDescription>Teacher Payments</CardDescription>
+      <CardDescription>{t('teacher-payments')}</CardDescription>
                   <Overview/>
            
            
@@ -46,13 +45,12 @@ import { Overview } from "./components/area-chart"
               </Card>
               <Card x-chunk="dashboard-05-chunk-1">
                 <CardHeader className="pb-2">
-                  <CardDescription>Paid</CardDescription>
+                  <CardDescription>{t('paid')}</CardDescription>
                   <CardTitle className="text-4xl">$5,329 </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    This Month
-                  </div>
+                    {t('this-month')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={80} aria-label="25% increase" />
@@ -60,13 +58,12 @@ import { Overview } from "./components/area-chart"
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
-                  <CardDescription>Not Paid</CardDescription>
+                  <CardDescription>{t('not-paid')}</CardDescription>
                   <CardTitle className="text-4xl">$15,329</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    This Year
-                  </div>
+                    {t('this-year')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={67} aria-label="12% increase" />
@@ -74,13 +71,12 @@ import { Overview } from "./components/area-chart"
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
-                  <CardDescription>Avreage Expences</CardDescription>
+                  <CardDescription>{t('avreage-expences')}</CardDescription>
                   <CardTitle className="text-4xl">$7,329</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    Per Month
-                  </div>
+                    {t('per-month')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={67} aria-label="12% increase" />
@@ -90,7 +86,7 @@ import { Overview } from "./components/area-chart"
       
         
          
-          <DataTableDemo setOpen={setOpen}/>
+          <DataTableDemo />
 
         
 

@@ -15,13 +15,11 @@ import StudentForm from "./components/studentForm"
 import { useState } from "react"
 import SheetDemo from "./components/editStudent"
 import { Overview } from "./components/area-chart"
-import { Breadcrumb,BreadcrumbList ,BreadcrumbLink,BreadcrumbItem,BreadcrumbSeparator,BreadcrumbPage} from "@/components/ui/breadcrumb"
-import Link from "next/link"
 import {useTranslations} from "next-intl"
 
 function Dashboard() {
   const [open,setOpen]=useState(false)
-  const {t}=useTranslations("students")
+  const t=useTranslations("students")
   
   return (
   
@@ -52,8 +50,7 @@ function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    +25% from last week
-                  </div>
+                    {t('25-from-last-week')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={25} aria-label="25% increase" />

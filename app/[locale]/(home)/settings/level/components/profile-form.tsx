@@ -22,6 +22,7 @@ import  {profileFormSchema}  from "@/validators/general-info";
 import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import OpenDaysTable from "../../components/open-days-table";
+import { useTranslations } from "next-intl";
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
@@ -66,7 +67,7 @@ const defaultValues:ProfileFormValues = {
 export function ProfileForm() {
  
 
-
+const t=useTranslations()
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -103,8 +104,8 @@ export function ProfileForm() {
     await addProfile(data)
     setProfile({...data,id:"GeneralInformation"})
     toast({
-      title: "changes applied!",
-      description: `changes applied Successfully`,
+      title: t('changes-applied-1'),
+      description: t(`changes-applied-Successfully`),
     });
     console.log(data);
 
@@ -133,13 +134,12 @@ export function ProfileForm() {
           name="schoolName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>School Name</FormLabel>
+              <FormLabel>{t('school-name')}</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your school name" {...field} />
+                <Input placeholder={t('enter-your-school-name')} {...field} />
               </FormControl>
               <FormDescription>
-                This is the name of your school or organization.
-              </FormDescription>
+                {t('this-is-the-name')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -151,13 +151,12 @@ export function ProfileForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('email')}</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your school name" {...field} />
+                <Input placeholder={t('enter-your-school-name')} {...field} />
               </FormControl>
               <FormDescription>
-                This is the email of your school or organization.
-              </FormDescription>
+                {t('this-is-the-email')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -169,18 +168,16 @@ export function ProfileForm() {
           name="bio"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Bio</FormLabel>
+              <FormLabel>{t('bio')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us a little bit about yourself"
+                  placeholder={t('tell-us-a-little-bit-about-yourself')}
                   className="resize-none"
                   {...field}
                 />
               </FormControl>
               <FormDescription>
-                You can <span>@mention</span> other users and organizations to
-                link to them.
-              </FormDescription>
+                {t('you-can')} <span>@mention</span> {t('other-users-and-organizations-to-link-to-them')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -192,14 +189,12 @@ export function ProfileForm() {
           name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              <FormLabel>{t('phonen-number')}</FormLabel>
               <FormControl>
                 <Input placeholder="+1 1234567890" {...field} onChange={event => field.onChange(+event.target.value)}/>
               </FormControl>
               <FormDescription>
-                The phone number should be in the format "+[country code]
-                [number]".
-              </FormDescription>
+                {t('the-phone-number-should-be-in-the-format-country-code-number')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -211,13 +206,12 @@ export function ProfileForm() {
           name="capacity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Capacity</FormLabel>
+              <FormLabel>{t('Capacity')}</FormLabel>
               <FormControl>
                 <Input type="number" placeholder="500" {...field} onChange={event => field.onChange(+event.target.value)}/>
               </FormControl>
               <FormDescription>
-                This is the maximum capacity for your school or organization.
-              </FormDescription>
+                {t('This-is-the-maximum-capacity-for-your-school-or-organization.')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -229,13 +223,12 @@ export function ProfileForm() {
           name="nationalRanking"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>National Ranking</FormLabel>
+              <FormLabel>{t('national-ranking')}</FormLabel>
               <FormControl>
                 <Input type="number" placeholder="10" {...field} onChange={event => field.onChange(+event.target.value)}/>
               </FormControl>
               <FormDescription>
-                This is the national ranking of your school or organization.
-              </FormDescription>
+                {t('This-is-the-national-ranking')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -247,7 +240,7 @@ export function ProfileForm() {
           name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Address</FormLabel>
+              <FormLabel>{t('address')}</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="123 Main St, City, Country"
@@ -256,8 +249,7 @@ export function ProfileForm() {
                 />
               </FormControl>
               <FormDescription>
-                This is the address of your school or organization.
-              </FormDescription>
+                {t('this-is-the-address-of-your-school-or-organization.')} </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -274,11 +266,9 @@ export function ProfileForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
-                  </FormLabel>
+                    {t('URLs')} </FormLabel>
                   <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add links to your website, blog, or social media profiles.
-                  </FormDescription>
+                    {t('add-links-to-your-website')} </FormDescription>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -294,8 +284,7 @@ export function ProfileForm() {
             className="mt-2"
             onClick={() => append({ value: "" })}
           >
-            Add URL
-          </Button>
+            {t('add-url')} </Button>
         </div>
         <div>
           {classNames.map((field, index) => (
@@ -306,11 +295,9 @@ export function ProfileForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    Classes
-                  </FormLabel>
+                   {t('classes')} </FormLabel>
                   <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Add class rooms names.
-                  </FormDescription>
+                    {t('add-class-room-name')} </FormDescription>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -326,13 +313,12 @@ export function ProfileForm() {
             className="mt-2"
             onClick={() => appendClass("")}
           >
-            Add Classroom
-          </Button>
+            {t('add-classroom')} </Button>
         </div>
           <OpenDaysTable openDays={openDays} form={form}/>
         <LoadingButton  
          loading={form.formState.isSubmitting}
-          type="submit">Update profile</LoadingButton>
+          type="submit">{t('update-profile-0')}</LoadingButton>
       </form>
     </Form>
   );

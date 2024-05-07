@@ -25,6 +25,7 @@ import { z } from "zod"
 import { updateTeacher } from "@/lib/hooks/teachers"
 import { useData } from "@/context/admin/fetchDataContext"
 import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles"
+import { useTranslations } from "next-intl"
 type FormKeys =
   | 'firstName'
   | 'lastName'
@@ -49,7 +50,7 @@ type FormKeys =
   | 'status';
 
 
-type TeacherFormValues = z.infer<typeof teacherRegistrationSchema> & { [key: string]: string | Date | number | any;}
+type TeacherFormValues = z.infer<typeof teacherRegistrationSchema> & { [key: string]: string | Date | number | any;} 
 interface openModelProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     open: boolean; // Specify the type of setOpen
@@ -78,44 +79,7 @@ interface openModelProps {
   ];
 
 
-  const status =[
-    {
-      value:"active",
-      label:"Active",
-    },
-    {
-      value:"suspended",
-      label:"Suspended",
-    },{
-      value:"expelled",
-      label:"Expelled",
-    }
-  ]
-  const genders = [
-    {
-      value: "male",
-      label: "Male",
-    },
-    {
-      value: "female",
-      label: "Female",
-    },
-  
-  ]
-  const subjects = [
-    {
-      value: "arabic",
-      label: "Arabic",
-    },
-    {
-      value: "french",
-      label: "French",
-    },
-    {
-      value: "english",
-      label: "English",
-    },
-  ];
+
   interface FileUploadProgress {
     file: File;
     name: string;
@@ -129,7 +93,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
     const [openStatus,setOpenSatus]=useState(false)
     const [openSubject, setOpenSubject] = useState(false);
     const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
-
+    const t=useTranslations()
     const form =useForm<TeacherFormValues>({
       resolver: zodResolver(teacherRegistrationSchema),
            defaultValues: {
@@ -160,7 +124,44 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
     });
     const {formState,setValue,getValues,reset } = form;
     const { isSubmitting } = formState;
-  
+    const status =[
+      {
+        value:"active",
+        label:t("Active"),
+      },
+      {
+        value:"suspended",
+        label:t("Suspended"),
+      },{
+        value:"expelled",
+        label:t("Expelled"),
+      }
+    ]
+    const genders = [
+      {
+        value: "male",
+        label: t("Male"),
+      },
+      {
+        value: "female",
+        label: t("Female"),
+      },
+    
+    ]
+    const subjects = [
+      {
+        value: "arabic",
+        label: t("Arabic"),
+      },
+      {
+        value: "french",
+        label: t("French"),
+      },
+      {
+        value: "english",
+        label: t("English"),
+      },
+    ];
 
     React.useEffect(() => {
       const downloadFiles = async () => {
@@ -283,8 +284,8 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
           return updatedTeachers;
         });
           toast({
-              title: "Changes Applied!",
-              description: "Changes Applied Successfully",
+              title: t('changes-applied'),
+              description: t('changes-applied-successfully'),
             })
         
             setOpen(false)
@@ -298,10 +299,9 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
    <SheetContent className=" sm:max-w-[650px]">
       <ScrollArea className="h-screen pb-20 "> 
         <SheetHeader>
-          <SheetTitle>Edit Teacher</SheetTitle>
+          <SheetTitle>{t('edit-teacher')}</SheetTitle>
           <SheetDescription>
-            Make changes to your teacher here. Click save when you're done.
-          </SheetDescription>
+            {t('make-changes-to-your-teacher-here-click-save-when-youre-done')} </SheetDescription>
         </SheetHeader>
         <Form {...form}>
             <form>
@@ -315,7 +315,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
              render={function ({ field }) {
                return (
                  <FormItem style={{ marginBottom: 15 }}>
-                   <FormLabel>{fieldName}</FormLabel>
+   <FormLabel>{t(fieldName)}</FormLabel>
                    <FormControl>
                      {renderInput(fieldName, field)}
                    </FormControl>
@@ -337,8 +337,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,teacher }) => {
           <SheetClose asChild>
             
           <LoadingButton loading={isSubmitting} type="submit"    onClick={form.handleSubmit(onSubmit)}>
-            Save changes
-      </LoadingButton>
+            {t('save-changes')} </LoadingButton>
           </SheetClose>
         </SheetFooter>
         </ScrollArea>

@@ -52,11 +52,12 @@ import { z } from "zod"
 import { PaymentRegistrationSchema } from "@/validators/paymentSchema"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-payment"
+import { useTranslations } from "next-intl";
 
 type Status = 'paid' | 'not paid' 
 type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>  & {id:string };
 export const DataTableDemo = () => {
-    
+    const t=useTranslations()
   const [open,setOpen]=React.useState(false)
     const {payouts,setPayouts}=useData()
     const getStatusColor = React.useCallback((status:Status) => {
@@ -80,7 +81,6 @@ export const DataTableDemo = () => {
        status:"paid",
        notesTobeAdded:"kitchen needded to be fixed"
     })
-    const formattedJoiningDate = format(payment.paymentDate, "yyyy-MM-dd");
    const columns: ColumnDef<any>[] = [
     {
       id: "select",
@@ -106,7 +106,7 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "paymentTitle",
-      header: "Payment",
+      header: () => <div>{t('payment')}</div>,
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.getValue("paymentTitle")}</div>
@@ -116,12 +116,12 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "typeofPayment",
-      header: "Method",
+      header: () => <div>{t('method')}</div>,
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("typeofPayment")}</div>,
     },
     {
       accessorKey: "paymentDate",
-      header: "Date",
+      header: () => <div>{t('payemnt-date')}</div>,
       cell: ({ row }) => (
        
 
@@ -130,14 +130,15 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "status",
-      header: "status",
+      header: () => <div>{t('status')}</div>,
+
       cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{t(row.getValue("status"))}</Badge>
       ),
     },
     {
       accessorKey: "paymentAmount",
-      header: () => <div className="text-right">Amount</div>,
+      header: () => <div className="text-right">{t('amount')}</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("paymentAmount"))
   
@@ -161,17 +162,16 @@ export const DataTableDemo = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>setOpen(true)}>
-                View Payment
-              </DropdownMenuItem>
+                {t('view-payment')} </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -221,7 +221,7 @@ export const DataTableDemo = () => {
        
 
     <Input
-          placeholder="Filter Payment..."
+          placeholder={t('filter-payment')}
           value={(table.getColumn("paymentTitle")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("paymentTitle")?.setFilterValue(event.target.value)
@@ -232,7 +232,7 @@ export const DataTableDemo = () => {
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -256,18 +256,16 @@ export const DataTableDemo = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <Button variant="outline" className="ml-2">
-       Export <File className="ml-2 h-4 w-4" />
+       {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
     </div>
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Expences</CardTitle>
+      <CardTitle>{t('your-expences')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic Expences Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+      {t('introducing-our-dynamic-expences-dashboard')} </CardDescription>
     </CardHeader>
     <CardContent>     
     <div className="w-full">
@@ -315,8 +313,7 @@ export const DataTableDemo = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -325,7 +322,7 @@ export const DataTableDemo = () => {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -334,16 +331,14 @@ export const DataTableDemo = () => {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
     </div>

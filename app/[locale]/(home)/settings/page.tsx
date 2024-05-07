@@ -1,14 +1,15 @@
 import { Separator } from "@/components/ui/separator"
 import { ProfileForm } from "./level/components/profile-form"
+import { useTranslations } from "next-intl"
 
 const SettingsProfilePage = () => {
+  const t=useTranslations()
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium">General Information</h3>
+        <h3 className="text-lg font-medium">{t('general-information')}</h3>
         <p className="text-sm text-muted-foreground">
-          This is how others will see your school.
-        </p>
+          {t('this_is_how_others_will_see_your_school')} </p>
       </div>
       <Separator />
       <ProfileForm />

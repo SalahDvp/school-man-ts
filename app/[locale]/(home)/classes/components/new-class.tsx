@@ -43,6 +43,7 @@ import { MultiSelect } from "./multiselect"
 import { LoadingButton } from "@/components/ui/loadingButton"
 import { useData } from "@/context/admin/fetchDataContext"
 import { addClass } from "@/lib/hooks/classes"
+import { useTranslations } from "next-intl"
 
 
 
@@ -60,7 +61,7 @@ export function ClassForm() {
   
 },
   })
-
+const t=useTranslations()
 const {toast}=useToast()
 const { reset, formState,watch} = form;
 const {isSubmitting}=formState
@@ -112,8 +113,8 @@ async function onSubmit(values:ClassFormValues) {
               });
             });
     toast({
-        title: "changes applied!",
-        description: `changes applied Successfully`,
+        title: t('changes-applied-1'),
+        description: t(`changes-applied-successfully`),
       });
         reset()
 
@@ -123,20 +124,15 @@ async function onSubmit(values:ClassFormValues) {
     <SheetTrigger asChild>
       <Button className="gap-1">
         
-      <PlusCircle className="h-3.5 w-3.5" />
-      
-                    Add Class
-             
-      </Button>
+      <PlusCircle className="h-3.5 w-3.5" /> {t('add-class')}</Button>
     </SheetTrigger>
     <SheetContent className="sm:max-w-[850px]">
     <ScrollArea className="h-screen  ">
 
       <SheetHeader>
-        <SheetTitle>Add New Class</SheetTitle>
+        <SheetTitle>{t('add-new-class')}</SheetTitle>
         <SheetDescription>
-          Enter the details for the new class, including information and subjects of study.
-        </SheetDescription>
+          {t('enter-the-details-for-the-new-class-including-information-and-subjects-of-study')} </SheetDescription>
       </SheetHeader>
     <Form {...form}>
       <form  onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -146,7 +142,7 @@ async function onSubmit(values:ClassFormValues) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>{t('Name')}</FormLabel>
                   <FormControl>
                     <Input  placeholder="username" {...field} />
                   </FormControl>
@@ -162,7 +158,7 @@ async function onSubmit(values:ClassFormValues) {
               name="level"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>class level</FormLabel>
+                  <FormLabel>{t('class-level')}</FormLabel>
                   <FormControl>
                   <Select
       
@@ -180,7 +176,7 @@ async function onSubmit(values:ClassFormValues) {
                               id={`level`}
                               aria-label={`Select level`}
                             >
-                              <SelectValue placeholder="Select level" />
+                              <SelectValue placeholder={t('select-level')} />
                             </SelectTrigger>
                           </FormControl>
 
@@ -205,7 +201,7 @@ async function onSubmit(values:ClassFormValues) {
               name="className"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Class </FormLabel>
+                  <FormLabel>{t('class')} </FormLabel>
                   <FormControl>
                   <Select
                       onValueChange={field.onChange}
@@ -216,7 +212,7 @@ async function onSubmit(values:ClassFormValues) {
                               id={`className`}
                               aria-label={`Select class`}
                             >
-                              <SelectValue placeholder="Select Class" />
+                              <SelectValue placeholder={t('select-class')} />
                             </SelectTrigger>
                           </FormControl>
 
@@ -242,9 +238,9 @@ async function onSubmit(values:ClassFormValues) {
               name="capacity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Capacity</FormLabel>
+                  <FormLabel>{t('capacity')}</FormLabel>
                   <FormControl>
-                  <Input {...field} placeholder="Enter capacity of class"  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                  <Input {...field} placeholder={t('enter-capacity-of-class')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
                   </FormControl>
                   <FormDescription>
                     
@@ -258,7 +254,7 @@ async function onSubmit(values:ClassFormValues) {
     name="teachers"
     render={({ field }) => (
         <FormItem>
-            <FormLabel>Select Teachers</FormLabel>
+            <FormLabel>{t('select-teachers')}</FormLabel>
                 <MultiSelect
                     selected={field.value}
                  options={allTeachers}
@@ -274,7 +270,7 @@ async function onSubmit(values:ClassFormValues) {
               name="mainTeacher"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Main Teacher</FormLabel>
+                  <FormLabel>{t('main-teacher')}</FormLabel>
                   <FormControl>
                   <Select
       
@@ -292,7 +288,7 @@ async function onSubmit(values:ClassFormValues) {
                               id={`mainTeacher`}
                               aria-label={`Select Main Teacher`}
                             >
-                              <SelectValue placeholder="Select Main Teacher" />
+                              <SelectValue placeholder={t('select-main-teacher')} />
                             </SelectTrigger>
                           </FormControl>
 
@@ -317,7 +313,7 @@ async function onSubmit(values:ClassFormValues) {
     name="students"
     render={({ field }) => (
         <FormItem>
-            <FormLabel>add students</FormLabel>
+            <FormLabel>{t('add-students')}</FormLabel>
                 <MultiSelect
                     selected={field.value}
                  options={allStudents}
@@ -338,8 +334,7 @@ async function onSubmit(values:ClassFormValues) {
                 type="submit"
     
               >
-                  Save changes
-              </LoadingButton>
+                  {t('save-changes')} </LoadingButton>
               </SheetClose>
               </SheetFooter>
       </form>

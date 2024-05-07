@@ -43,6 +43,7 @@ import EditFormSheetDemo from "./edit-level";
 import { useData } from "@/context/admin/fetchDataContext";
 import { deleteLevel } from "@/lib/hooks/levels";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslations } from "next-intl";
 type Status = "open" | "closed";
 export type Level = {
   id: string;
@@ -58,7 +59,7 @@ export type Level = {
 export const DataTableDemo = () => {
   const {levels,setLevels}=useData()
 
-  
+  const t=useTranslations()
   const [open, setOpen] = React.useState(false);
   const [level, setLevel] = React.useState<Level>({id: "1",
   level: "Kindergarten",
@@ -84,7 +85,7 @@ export const DataTableDemo = () => {
   const columns: ColumnDef<Level>[] = [
     {
       accessorKey: "level",
-      header: "Level",
+      header:() => <div>{t('level')}</div>, 
       cell: ({ row }) => (
         <div className="capitalize">
           <div className="font-medium">{row.getValue("level")}</div>
@@ -93,7 +94,8 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "start",
-      header: "Start",
+      header:() => <div>{t('start')}</div>, 
+
       cell: ({ row }) => (
         <div className="lowercase hidden sm:table-cell">
 {((row.getValue("start") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -102,7 +104,8 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "end",
-      header: "End",
+      header:() => <div>{t('end-0')}</div>, 
+
       cell: ({ row }) => (
         <div className="capitalize hidden sm:table-cell">
 {((row.getValue("end") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -111,7 +114,8 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "fee",
-      header: "Fee",
+      header:() => <div>{t('fee')}</div>, 
+
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("fee"));
 
@@ -126,7 +130,8 @@ export const DataTableDemo = () => {
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header:() => <div>{t('status')}</div>, 
+
       cell: ({ row }) => (
         <Badge
         variant="secondary"
@@ -149,18 +154,16 @@ export const DataTableDemo = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
               <DropdownMenuItem onClick={()=>deleteLevelDoc(level1.id,level1)}>
-                Delete level
-              </DropdownMenuItem>
+                {t('delete-level')} </DropdownMenuItem>
               <DropdownMenuItem onClick={() => openEditSheet(level1)}>
-                View level details
-              </DropdownMenuItem>
+                {t('view-level-details')} </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -186,8 +189,8 @@ const deleteLevelDoc=async(levelId:string,data:Level)=>{
   await deleteLevel(levelId)
   setLevels((prev:any) => prev.filter((level:Level) => level.id !== data.id));
   toast({
-    title: "level deleted!",
-    description: `level deleted Successfully`,
+    title: t('level-deleted'),
+    description: t(`level-deleted-Successfully`),
   });
 }
 
@@ -195,10 +198,9 @@ const deleteLevelDoc=async(levelId:string,data:Level)=>{
     <>
         <div className="flex flex-row items-center justify-between space-y-6 w-full">
         <div>
-      <h3 className="text-lg font-medium">Levels</h3>
+      <h3 className="text-lg font-medium">{t('levels')}</h3>
       <p className="text-sm text-muted-foreground">
-      Add, edit, or remove levels
-      </p>
+      {t('add-edit-or-remove-levels')} </p>
     </div>
  
    
@@ -209,7 +211,7 @@ const deleteLevelDoc=async(levelId:string,data:Level)=>{
       <Separator/>
       <Card x-chunk="dashboard-05-chunk-3">
         <CardHeader className="px-7">
-          <CardTitle>Your Levels</CardTitle>
+          <CardTitle>{t('your-levels')}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -254,8 +256,7 @@ const deleteLevelDoc=async(levelId:string,data:Level)=>{
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No results.
-                  </TableCell>
+                    {t('no-results')} </TableCell>
                 </TableRow>
               )}
             </TableBody>

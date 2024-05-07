@@ -15,25 +15,27 @@ import CardIncome from "@/app/[locale]/(home)/billing/components/analytics/CardE
 import Payouts from "./components/otherPayouts/page";
 import TeacherSalaryDashBoard from "./components/teachersBilling/page";
 import Studentpayment from "./components/studentPayment/page";
+import { useTranslations } from "next-intl";
 
 export default function DashboardPage() {
+  const t=useTranslations()
   return (
     <>
       <div className=" flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            <h2 className="text-3xl font-bold tracking-tight">{t('dashboard')}</h2>
             <div className="flex items-center space-x-2">
               <CalendarDateRangePicker />
-              <Button>Download</Button>
+              <Button>{t('download')}</Button>
             </div>
           </div>
           <Tabs defaultValue="teachers" className="space-y-4">
             <TabsList>
-            <TabsTrigger value="teachers">Teachers</TabsTrigger>
-              <TabsTrigger value="payouts">Payouts</TabsTrigger>
-              <TabsTrigger value="students">Students</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="teachers">{t("teachers")}</TabsTrigger>
+              <TabsTrigger value="payouts">{t('payouts')}</TabsTrigger>
+              <TabsTrigger value="students">{t('students')}</TabsTrigger>
+              <TabsTrigger value="analytics">{t('analytics')}</TabsTrigger>
             </TabsList>
             <TabsContent value="analytics" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

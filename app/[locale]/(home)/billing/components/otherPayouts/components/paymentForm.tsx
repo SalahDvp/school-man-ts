@@ -33,6 +33,7 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { addPayment } from "@/lib/hooks/billing/otherPayments";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
+import { useTranslations } from "next-intl";
 
 const fieldNames = [
   "paymentTitle",
@@ -77,44 +78,46 @@ export default function PaymentForm() {
   });
   const { reset, formState, setValue, getValues } = form;
   const { isSubmitting } = formState;
-
+  
+  const t=useTranslations()
 
   const Typeofpayments = [
     {
-      value: "RentExpenses",
-      label: "Rent Expenses",
+      value: "electricbill",
+      label: t('electric-bill'),
     },
     {
-      value: "billsExpenses",
-      label: "Bills (need to be explaind in the notes)",
+      value: "waterBill",
+      label: t('water-bill'),
     },
     {
-      value: "groceriesExpensesl",
-      label: "Groceries Expensesl",
+      value: "gazBill",
+      label: t('gaz-bill'),
     },
     {
-      value: "maintenanceExpenses",
-      label: "Maintenance",
+      value: "Maintenance",
+      label: t('maintenance'),
     },
     {
       value: "delivery",
-      label: "Delivery",
+      label: t('delivery'),
     },
     {
-      value:"otherExpenses"  ,
-      label: "Other (should be described in the notes)",
+      value:"other"  ,
+      label: t('other-should-be-described-in-the-notes'),
     },
   ];
+  
   
   const payoutstatus =[
     
     {
       value:"paid"  ,
-      label: "Paid",
+      label: t('paid'),
     },
     {
       value:"notPaid"  ,
-      label: "Not Paid",
+      label: t('not-paid'),
     },
   ]
   const renderInput = (fieldName:string, field:any) => {
@@ -139,7 +142,7 @@ export default function PaymentForm() {
             {...field}
             open={status}
             setOpen={setstatus}
-            placeHolder="status"
+            placeHolder={t("status")}
             options={payoutstatus}
             value={getValues("status")}
             onSelected={(selectedValue) => {
@@ -153,7 +156,7 @@ export default function PaymentForm() {
             {...field}
             open={openTypeofpayment}
             setOpen={setOpenTypeofpayment}
-            placeHolder="typeofPayment"
+            placeHolder={t("typeofPayment")}
             options={Typeofpayments}
             value={getValues("typeofPayment")}
             onSelected={(selectedValue) => {
@@ -187,10 +190,10 @@ export default function PaymentForm() {
         },
         totalExpenses: prevState.totalExpenses +  data.paymentAmount
       }));  
-          toast({
-              title: "payout added!",
-              description: "payout added Successfully",
-            });
+      toast({
+        title: t('changes-applied-0'),
+        description: t('changes-applied-successfully'),
+      });
     console.log(data);
             reset(); 
           
@@ -201,8 +204,7 @@ export default function PaymentForm() {
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Create Payment
-          </CardTitle>
+            {t('create-payment')} </CardTitle>
           <CardDescription></CardDescription>
         </div>
 
@@ -215,8 +217,7 @@ export default function PaymentForm() {
           >
             <ResetIcon className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Reset details
-            </span>
+              {t('reset-details')} </span>
           </Button>
         </div>
       </CardHeader>
@@ -234,7 +235,7 @@ export default function PaymentForm() {
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                       <FormMessage />
@@ -255,8 +256,7 @@ export default function PaymentForm() {
             type="submit"
             onClick={form.handleSubmit(onSubmit)}
           >
-            Submit
-          </LoadingButton>
+            {t('submit')} </LoadingButton>
         </div>
       </CardFooter>
     </Card>

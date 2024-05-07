@@ -49,6 +49,7 @@ import {
 import { File } from "lucide-react"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
+import { useTranslations } from "next-intl"
 
   export const StudentPaymentTable= () => {
     const {students}=useData()
@@ -85,6 +86,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
       amountLeftToPay: 500,
       class: { name: 'Class Name', id: 'class123' },
     })
+    const t=useTranslations()
     const openEditSheet = (student:any) => {
       setStudent(student)
       setOpen(true); // Open the sheet after setting the level
@@ -115,7 +117,8 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
     },
     {
       accessorKey: "student",
-      header: "Name",
+      header:() => <div>{t('Name')}</div>, 
+
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.getValue("student")}</div>
@@ -125,12 +128,14 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
     },
     {
       accessorKey: "level",
-      header: "Level",
+      header:() => <div>{t('level')}</div>, 
+
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
     },
     {
       accessorKey: "nextPaymentDate",
-      header: "Next payment Date",
+      header:() => <div>{t('next-payment-date-0')}</div>, 
+
       cell: ({ row }) => (
         <div className="lowercase hidden sm:table-cell">
 {((row.getValue("nextPaymentDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -139,14 +144,14 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
     },
     {
         accessorKey: "parentPhone",
-        header: "parent phone number",
+        header:() => <div>{t('parent-phone-0')}</div>, 
         cell: ({ row }) => (
           <div className="capitalize hidden sm:table-cell">{row.getValue("parentPhone")}</div>
         ),
       },
     {
       accessorKey: "amountLeftToPay",
-      header: () => <div className="text-right">Amount left</div>,
+      header: () => <div className="text-right">{t('amount-left')}</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("amountLeftToPay"))
   
@@ -161,7 +166,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
     },
     {
         accessorKey: "totalAmount",
-        header: () => <div className="text-right">total Amount</div>,
+        header: () => <div className="text-right">{t('total-amount-0')}</div>,
         cell: ({ row }) => {
           const amount = parseFloat(row.getValue("totalAmount"))
     
@@ -185,17 +190,16 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(student)}>
-                View Student
-              </DropdownMenuItem>
+                {t('view-student')} </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -244,11 +248,9 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Student payments</CardTitle>
+      <CardTitle>{t('your-student-payments')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic Expences Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+      {t('introducing-our-dynamic-expences-dashboard')} </CardDescription>
     </CardHeader>
     <CardContent>     
     <div className="w-full">
@@ -256,7 +258,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
        
 
        <Input
-             placeholder="Filter by student..."
+             placeholder={t('filter-by-student')}
              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
              onChange={(event) =>
                table.getColumn("name")?.setFilterValue(event.target.value)
@@ -267,7 +269,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
        <DropdownMenu>
              <DropdownMenuTrigger asChild>
                <Button variant="outline" className="ml-auto">
-                 Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                 {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
                </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end">
@@ -291,7 +293,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
              </DropdownMenuContent>
            </DropdownMenu>
            <Button variant="outline" className="ml-2">
-          Export <File className="ml-2 h-4 w-4" />
+          {t('export')} <File className="ml-2 h-4 w-4" />
          </Button>
        </div>
        </div>
@@ -338,8 +340,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -348,7 +349,7 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -357,16 +358,14 @@ import SheetDemo from "@/app/[locale]/(home)/students/components/editStudent"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
     </div>

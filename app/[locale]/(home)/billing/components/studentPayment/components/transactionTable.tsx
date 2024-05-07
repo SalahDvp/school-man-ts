@@ -51,6 +51,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { useData } from "@/context/admin/fetchDataContext"
 import EditStudentPaymentForm from "./editStudentPaymentForm"
+import { useTranslations } from "next-intl"
 
 
 type Status = 'paid' | 'not paid' | 'rejected';
@@ -87,6 +88,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
       "status": "paid",
       "description": "eeee"
   })
+  const t=useTranslations()
   const [open,setOpen]=React.useState(false)
   const openEditSheet = (student:any) => {
     setInvoice(student)
@@ -131,12 +133,13 @@ type Status = 'paid' | 'not paid' | 'rejected';
   
     {
       accessorKey: "id",
-      header: "Trasaction ID",
+      header:() => <div>{t('transaction-id')}</div>, 
+
       cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("id")}</div>,
     },
     {
       accessorKey: "student",
-      header: "Student",
+      header:() => <div>{t('student')}</div>, 
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.original.student.student}</div>
@@ -145,7 +148,8 @@ type Status = 'paid' | 'not paid' | 'rejected';
     },
     {
       accessorKey: "paymentAmount",
-      header: "Amount",
+      header:() => <div>{t('amount')}</div>, 
+
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("paymentAmount"))
   
@@ -160,7 +164,8 @@ type Status = 'paid' | 'not paid' | 'rejected';
     },
     {
       accessorKey: "paymentDate",
-      header: "Transaction Date",
+      header:() => <div>{t('transaction-date')}</div>, 
+
       cell: ({ row }) => (
        
 
@@ -169,14 +174,16 @@ type Status = 'paid' | 'not paid' | 'rejected';
     },
     {
       accessorKey: "status",
-      header: "Payment Status",
+      header:() => <div>{t('payment-status')}</div>, 
+
       cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{t(row.getValue("status"))}</Badge>
       ),
     },
     {
       accessorKey: "fromWho",
-      header: "from",
+      header:() => <div>{t('from')}</div>, 
+
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.getValue("fromWho")}</div>
@@ -193,17 +200,16 @@ type Status = 'paid' | 'not paid' | 'rejected';
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
               
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(invoice)}>
-                View Transaction Details
-              </DropdownMenuItem>
+                {t('view-transaction-details')} </DropdownMenuItem>
              
             </DropdownMenuContent>
           </DropdownMenu>
@@ -254,11 +260,9 @@ type Status = 'paid' | 'not paid' | 'rejected';
 
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Transactions</CardTitle>
+      <CardTitle>{t('transactions')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic student Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+     { t('introducing-our-dynamic-student-dashboard-for-seamless-management-and-insightful-analysis')} </CardDescription>
     </CardHeader>
     <CardContent>     
     <div className="w-full">
@@ -266,7 +270,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
        
     
        <Input
-             placeholder="Filter student..."
+             placeholder={t('filter-student')}
              value={(table.getColumn("student")?.getFilterValue() as string) ?? ""}
              onChange={(event) =>
                table.getColumn("student")?.setFilterValue(event.target.value)
@@ -277,7 +281,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
        <DropdownMenu>
              <DropdownMenuTrigger asChild>
                <Button variant="outline" className="ml-auto">
-                 Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                 {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
                </Button>
              </DropdownMenuTrigger>
              <DropdownMenuContent align="end">
@@ -301,7 +305,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
              </DropdownMenuContent>
            </DropdownMenu>
            <Button variant="outline" className="ml-2">
-          Export <File className="ml-2 h-4 w-4" />
+          {t('export')} <File className="ml-2 h-4 w-4" />
          </Button>
        </div>
     
@@ -351,8 +355,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -361,7 +364,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -370,16 +373,14 @@ type Status = 'paid' | 'not paid' | 'rejected';
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
       </div>

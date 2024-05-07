@@ -14,10 +14,11 @@ import { Progress } from "@/components/ui/progress"
 import { DataTableDemo } from "./components/table"
 import PaymentForm from "./components/paymentForm"
 import { Overview } from "./components/area-chart"
-
+import { useTranslations } from "next-intl"
 
 
  function Payouts() {
+  const t=useTranslations()
   return (
   
 
@@ -33,7 +34,7 @@ import { Overview } from "./components/area-chart"
                 x-chunk="dashboard-05-chunk-0"
               >
       <CardHeader className="pb-2">
-      <CardDescription>Payments</CardDescription>
+      <CardDescription>{t('payments')}</CardDescription>
                   <Overview/>
            
            
@@ -46,8 +47,7 @@ import { Overview } from "./components/area-chart"
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    This Month
-                  </div>
+                    {t('this-month')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={80} aria-label="25% increase" />
@@ -55,13 +55,12 @@ import { Overview } from "./components/area-chart"
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
-                  <CardDescription>Not Paid</CardDescription>
+                  <CardDescription>{t('not-paid')}</CardDescription>
                   <CardTitle className="text-4xl">$15,329</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    This Year
-                  </div>
+                    {t('this-year')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={67} aria-label="12% increase" />
@@ -69,13 +68,12 @@ import { Overview } from "./components/area-chart"
               </Card>
               <Card x-chunk="dashboard-05-chunk-2">
                 <CardHeader className="pb-2">
-                  <CardDescription>Avreage Expences</CardDescription>
+                  <CardDescription>{t('avreage-expences')}</CardDescription>
                   <CardTitle className="text-4xl">$7,329</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-xs text-muted-foreground">
-                    Per Month
-                  </div>
+                    {t('per-month')} </div>
                 </CardContent>
                 <CardFooter>
                   <Progress value={67} aria-label="12% increase" />

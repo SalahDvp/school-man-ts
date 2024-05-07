@@ -50,6 +50,7 @@ import { teacherRegistrationSchema } from "@/validators/teacherSchema"
 import { z } from "zod"
 import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-teacher-form"
+import { useTranslations } from "next-intl"
 
 
 type Status = 'active' | 'suspended' | 'expelled';
@@ -80,7 +81,7 @@ export type teacher = {
     const [open,setOpen]=React.useState(false)
     const {teachers}=useData()
     
-
+    const t=useTranslations()
     const [teacher,setTeacher]=React.useState<TeacherFormValues>({  
       
       id: '1',
@@ -141,7 +142,7 @@ export type teacher = {
     },
     {
       accessorKey: "teacher",
-      header: "Teacher",
+      header:() => <div>{t('teacher')}</div>, 
       cell: ({ row }) => (
         <div className="capitalize">
            <div className="font-medium">{row.getValue("teacher")}</div>
@@ -153,19 +154,19 @@ export type teacher = {
     },
     {
       accessorKey: "teacherSubject",
-      header: "Subject",
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("teacherSubject")}</div>,
+      header:() => <div>{t('subject')}</div>, 
+      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{t(row.getValue("teacherSubject"))}</div>,
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header:() => <div>{t('status')}</div>, 
       cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell"  style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
+        <Badge   className="capitalize hidden sm:table-cell"  style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{t(row.getValue("status"))}</Badge>
       ),
     },
     {
       accessorKey: "joiningDate",
-      header: "Joining Date",
+      header:() => <div>{t('joining-date')}</div>, 
       cell: ({ row }) => (
         <div className="lowercase hidden sm:table-cell">
 {((row.getValue("joiningDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
@@ -174,7 +175,7 @@ export type teacher = {
     },
     {
       accessorKey: "salary",
-      header: () => <div className="text-right">Salary</div>,
+      header: () => <div className="text-right">{t('salary')}</div>,
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("salary"))
   
@@ -198,18 +199,17 @@ export type teacher = {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t('open-menu')}</span>
                 <DotsHorizontalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
              
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(teacher)}>
-                View Teacher
-              </DropdownMenuItem>
-              <DropdownMenuItem>View payment details</DropdownMenuItem>
+                {t('view-teacher')} </DropdownMenuItem>
+              <DropdownMenuItem>{t('view-payment-details')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -262,7 +262,7 @@ export type teacher = {
        
 
     <Input
-          placeholder="Filter teacher..."
+          placeholder={t('filter-teacher')}
           value={(table.getColumn("teacher")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("teacher")?.setFilterValue(event.target.value)
@@ -273,7 +273,7 @@ export type teacher = {
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              {t('columns')} <ChevronDownIcon className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -290,25 +290,23 @@ export type teacher = {
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {t(column.id)}
                   </DropdownMenuCheckboxItem>
                 )
               })}
           </DropdownMenuContent>
         </DropdownMenu>
         <Button variant="outline" className="ml-2">
-       Export <File className="ml-2 h-4 w-4" />
+       {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
     </div>
   
     <Card x-chunk="dashboard-05-chunk-3">
     <CardHeader className="px-7">
-      <CardTitle>Your Teachers</CardTitle>
+      <CardTitle>{t('your-teachers')}</CardTitle>
       <CardDescription>
-      Introducing Our Dynamic teacher Dashboard for Seamless
-                    Management and Insightful Analysis.
-      </CardDescription>
+      {t('introducing-our-dynamic-name-dashboard-for-seamless-management-and-insightful-analysis',{name:'teachers'})} </CardDescription>
     </CardHeader>
     <CardContent>     
     <div className="w-full">
@@ -356,8 +354,7 @@ export type teacher = {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+                  {t('no-results')} </TableCell>
               </TableRow>
             )}
           </TableBody>
@@ -366,7 +363,7 @@ export type teacher = {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} {t('row-s-selected')}
         </div>
         <div className="space-x-2">
           <Button
@@ -375,16 +372,14 @@ export type teacher = {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
-          </Button>
+            {t('previous')} </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
-          </Button>
+            {t('next')} </Button>
         </div>
       </div>
     </div>

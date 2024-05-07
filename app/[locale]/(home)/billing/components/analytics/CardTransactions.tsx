@@ -5,77 +5,38 @@ import {
     AvatarFallback,
     AvatarImage,
   } from "@/components/ui/avatar"
+import { useTranslations } from 'next-intl';
+import { useData } from '@/context/admin/fetchDataContext';
+import { ScrollArea } from '@/components/ui/scroll-area';
 function CardTransactions(){
+  const t=useTranslations()
+  const {payouts}=useData()
     return (
 <Card className="col-span-3">
 <CardHeader>
-  <CardTitle>Recent Transactions</CardTitle>
+  <CardTitle>{t('recent-transactions')}</CardTitle>
   <CardDescription>
-    You made 265 transactions this week.
-  </CardDescription>
+    {t('you-made-265-transactions-this-week',{numb:payouts.length})} </CardDescription>
 </CardHeader>
 <CardContent>
+<ScrollArea className="h-[320px]">
+
 <div className="space-y-8">
-        <div className="flex items-center">
+{payouts.map((payout:any,index:number) => (
+        <div key={index} className="flex items-center">
           <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/01.png" alt="Avatar" />
-            <AvatarFallback>OM</AvatarFallback>
+            <AvatarImage src={payout.avatarSrc} alt="Avatar" />
+            <AvatarFallback>{payout.fromWho.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Olivia Martin</p>
-            <p className="text-sm text-muted-foreground">
-              olivia.martin@email.com
-            </p>
+            <p className="text-sm font-medium leading-none">{payout.paymentTitle}</p>
+            <p className="text-sm text-muted-foreground">{payout.fromWho}</p>
           </div>
-          <div className="ml-auto font-medium text-red-500">-$1,999.00</div>
+          <div className="ml-auto font-medium text-red-500">-{payout.paymentAmount} DZD</div>
         </div>
-        <div className="flex items-center">
-          <Avatar className="flex h-9 w-9 items-center justify-center space-y-0 border">
-            <AvatarImage src="/avatars/02.png" alt="Avatar" />
-            <AvatarFallback>JL</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Jackson Lee</p>
-            <p className="text-sm text-muted-foreground">jackson.lee@email.com</p>
-          </div>
-          <div className="ml-auto font-medium text-green-500">+$39.00</div>
-        </div>
-        <div className="flex items-center">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/03.png" alt="Avatar" />
-            <AvatarFallback>IN</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Isabella Nguyen</p>
-            <p className="text-sm text-muted-foreground">
-              isabella.nguyen@email.com
-            </p>
-          </div>
-          <div className="ml-auto font-medium text-red-500">-$299.00</div>
-        </div>
-        <div className="flex items-center">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/04.png" alt="Avatar" />
-            <AvatarFallback>WK</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">William Kim</p>
-            <p className="text-sm text-muted-foreground">will@email.com</p>
-          </div>
-          <div className="ml-auto font-medium text-green-500">+$99.00</div>
-        </div>
-        <div className="flex items-center">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src="/avatars/05.png" alt="Avatar" />
-            <AvatarFallback>SD</AvatarFallback>
-          </Avatar>
-          <div className="ml-4 space-y-1">
-            <p className="text-sm font-medium leading-none">Sofia Davis</p>
-            <p className="text-sm text-muted-foreground">sofia.davis@email.com</p>
-          </div>
-          <div className="ml-auto font-medium text-red-500">-$39.00</div>
-        </div>
+      ))}
       </div>
+</ScrollArea>
 </CardContent>
 </Card>
     )

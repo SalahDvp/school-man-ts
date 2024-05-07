@@ -32,6 +32,7 @@ import { z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addTeacherSalary, getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
+import { useTranslations } from "next-intl";
 const fieldNames = [
   "teacher",
     "salaryTitle",
@@ -48,81 +49,7 @@ type TeacherSalaryFormValues=z.infer<typeof teacherPaymentRegistrationSchema>;
 
 
 
-  
-  const Typeofpayments = [
-    {
-      value: "Salary",
-      label: "Salary",
-    },
-    {
-      value: "Other",
-      label: "other",
-    },
-    
-  ];
 
-  const MonthOfYear = [
-    {
-      value: "January",
-      label: "January",
-    },
-    {
-      value: "February",
-      label: "February",
-    },
-    {
-      value: "March",
-      label: "March",
-    },
-    {
-      value: "April",
-      label: "April",
-    },
-    {
-      value: "May",
-      label: "May",
-    },
-    {
-      value: "June",
-      label: "June",
-    },
-    {
-      value: "July",
-      label: "July",
-    },
-    {
-      value: "August",
-      label: "August",
-    },
-    {
-      value: "September",
-      label: "September",
-    },
-    {
-      value: "October",
-      label: "October",
-    },
-    {
-      value: "November",
-      label: "November",
-    },
-    {
-      value: "December",
-      label: "December",
-    },
-  ];
-    
-  const Salarystatus =[
-    
-    {
-      value:"paid"  ,
-      label: "Paid",
-    },
-    {
-      value:"notPaid"  ,
-      label: "Not Paid",
-    },
-  ]
   interface FileUploadProgress {
     file: File;
     name: string;
@@ -134,7 +61,81 @@ export default function PaymentForm() {
   const {teachers,setAnalytics}= useData()
 
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+  const t=useTranslations()
+  const Typeofpayments = [
+    {
+      value: "Salary",
+      label: t('salary'),
+    },
+    {
+      value: "Other",
+      label: t("other"),
+    },
+    
+  ];
 
+  const MonthOfYear = [
+    {
+      value: "January",
+      label: t('january'),
+    },
+    {
+      value: "February",
+      label: t('february'),
+    },
+    {
+      value: "March",
+      label: t('march'),
+    },
+    {
+      value: "April",
+      label: t('april'),
+    },
+    {
+      value: "May",
+      label: t('may'),
+    },
+    {
+      value: "June",
+      label: "June",
+    },
+    {
+      value: "July",
+      label: t('july'),
+    },
+    {
+      value: "August",
+      label: t('august'),
+    },
+    {
+      value: "September",
+      label: t('september'),
+    },
+    {
+      value: "October",
+      label: t('october'),
+    },
+    {
+      value: "November",
+      label: t('november'),
+    },
+    {
+      value: "December",
+      label: t('december'),
+    },
+  ];
+    
+  const Salarystatus =[
+    
+    {
+      value:"paid"  ,
+      label: t('paid'),
+    },
+    {
+      value:"notPaid"  ,
+      label: t('not-paid'),
+    },
+  ]
   const [status, setstatus] = useState(false);
 const [monthModal,setMonthModal]=useState(false)
 const [teacherModal,setTeacherModal]=useState(false)
@@ -185,7 +186,7 @@ const [teacherModal,setTeacherModal]=useState(false)
         {...field}
         open={monthModal}
         setOpen={setMonthModal}
-        placeHolder="Month"
+        placeHolder={t('month')}
         options={MonthOfYear}
         value={getValues("monthOfSalary")}
         onSelected={(selectedValue) => {
@@ -200,7 +201,7 @@ const [teacherModal,setTeacherModal]=useState(false)
             {...field}
             open={status}
             setOpen={setstatus}
-            placeHolder="status"
+            placeHolder={t("status")}
             options={Salarystatus}
             value={getValues("status")}
             onSelected={(selectedValue) => {
@@ -214,7 +215,7 @@ const [teacherModal,setTeacherModal]=useState(false)
               {...field}
                 open={teacherModal}
                 setOpen={setTeacherModal}
-              placeHolder="Teacher"
+              placeHolder={t('teacher')}
               options={teachers}
               value={getValues("teacher")?.name}
               onSelected={(selectedValue) => {
@@ -236,7 +237,7 @@ const [teacherModal,setTeacherModal]=useState(false)
             {...field}
             open={openTypeofpayment}
             setOpen={setOpenTypeofpayment}
-            placeHolder="Typeofpayment"
+            placeHolder={t('typeofpayment')}
             options={Typeofpayments}
             value={getValues("typeofTransaction")}
             onSelected={(selectedValue) => {
@@ -269,8 +270,8 @@ const [teacherModal,setTeacherModal]=useState(false)
         totalExpenses: prevState.totalExpenses +  data.salaryAmount
       }));  
 toast({
-              title: "Teacher Salary added!",
-              description: "Teacher Salary added Successfully",
+              title: t('teacher-salary-added'),
+              description: t('teacher-salary-added-successfully'),
             });
     console.log(data);
             reset(); 
@@ -282,8 +283,7 @@ toast({
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
-            Create Teacher Bill
-          </CardTitle>
+            {t('create-teacher-bill')} </CardTitle>
           <CardDescription></CardDescription>
         </div>
 
@@ -296,8 +296,7 @@ toast({
           >
             <ResetIcon className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-              Reset details
-            </span>
+              {t('reset-details')} </span>
           </Button>
         </div>
       </CardHeader>
@@ -315,7 +314,7 @@ toast({
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                       <FormMessage />
@@ -336,8 +335,7 @@ toast({
             type="submit"
             onClick={form.handleSubmit(onSubmit)}
           >
-            Submit
-          </LoadingButton>
+            {t('submit')} </LoadingButton>
         </div>
       </CardFooter>
     </Card>

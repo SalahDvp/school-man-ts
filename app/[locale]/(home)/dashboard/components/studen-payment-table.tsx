@@ -9,20 +9,20 @@ import {
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
 interface User {
   id: number;
-  name: string;
-  email: string;
-  nextPaymentDate: string;
+  student: string;
+  parentPhone: string;
+  nextPaymentDate: Date;
 }
 
 interface UserCardProps {
   user: User;
+  title:string;
 }
-const calculateDaysUntilNextPayment = (nextPaymentDate: string): number => {
-    const today = new Date();
-    const paymentDate = parseISO(nextPaymentDate);
-    return differenceInCalendarDays(paymentDate, today);
-  };
-  const StudentPayment: React.FC<UserCardProps> = ({ user }) => {
+const calculateDaysUntilNextPayment = (nextPaymentDate: Date): number => {
+  const today = new Date();
+  return differenceInCalendarDays(nextPaymentDate, today);
+};
+  const StudentPayment: React.FC<UserCardProps> = ({ user,title }) => {
     const daysUntilNextPayment = calculateDaysUntilNextPayment(user.nextPaymentDate);
 
     return (
@@ -33,15 +33,15 @@ const calculateDaysUntilNextPayment = (nextPaymentDate: string): number => {
       >
         <Avatar className="h-9 w-9">
           <AvatarImage src="/avatars/01.png" alt="Avatar" />
-          <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{user.student.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="ml-4 space-y-1">
-          <p className="text-sm font-medium leading-none dark:text-gray-100">{user.name}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+          <p className="text-sm font-medium leading-none dark:text-gray-100">{user.student}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{user.parentPhone}</p>
         </div>
         <div className="ml-auto text-right">
           <p className="text-sm font-medium text-blue-600 dark:text-blue-300">
-            next_payment_date: {format(parseISO(user.nextPaymentDate), "yyyy-MM-dd")}
+            {title}: {format(user.nextPaymentDate, "yyyy-MM-dd")}
           </p>
           <p
             className={`text-sm ${

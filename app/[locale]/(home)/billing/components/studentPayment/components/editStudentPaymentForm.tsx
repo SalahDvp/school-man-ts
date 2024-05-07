@@ -42,6 +42,7 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles";
 import { updateStudentInvoice } from "@/lib/hooks/billing/student-billing";
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
+import { useTranslations } from "next-intl";
 function addMonthsToDate(date: Date, monthsToAdd: number): Date {
   const newDate = new Date(date.getTime()); // Create a copy of the original date
   newDate.setMonth(newDate.getMonth() + monthsToAdd); // Add months to the date
@@ -88,29 +89,7 @@ type FormKeys =
 
 type StudentPaymentFormValues = z.infer<typeof studentPaymentSchema> & { [key: string]: string | Date | number | any;};
 
-const typeofTransaction = [
-  {
-    value: "CreditCard",
-    label: "Credit Card",
-  },
-  {
-  value: "Cash",
-  label: "Cash",
-    },
- 
-];
 
-const studentPaymentStatus =[
-  
-  {
-    value:"paid"  ,
-    label: "Paid",
-  },
-  {
-    value:"notPaid"  ,
-    label: "Not Paid",
-  },
-]
 
 
 interface openModelProps {
@@ -128,13 +107,35 @@ interface FileUploadProgress {
 const EditStudentPaymentForm: React.FC<openModelProps> = ({ setOpen,open,invoice }) => {
   const { toast } = useToast();
   const {students,levels,setInvoices,setStudents,setAnalytics}=useData()
-
+const t=useTranslations()
   const [status, setstatus] = useState(false);
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const [studentModal,setStudentModal]=React.useState(false)
   const [paymentPlanModal,setPaymentPlanModal]=React.useState(false)
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
-
+  const typeofTransaction = [
+    {
+      value: "CreditCard",
+      label: t('credit-card'),
+    },
+    {
+    value: "Cash",
+    label: t('cash'),
+      },
+   
+  ];
+  
+  const studentPaymentStatus =[
+    
+    {
+      value:"paid"  ,
+      label: t('paid'),
+    },
+    {
+      value:"notPaid"  ,
+      label: t('not-paid'),
+    },
+  ]
   const form = useForm<StudentPaymentFormValues>({
     resolver: zodResolver(studentPaymentSchema),
     defaultValues:{
@@ -229,7 +230,7 @@ const renderInput = (fieldName:string, field:any) => {
             {...field}
             open={studentModal}
             setOpen={setStudentModal}
-            placeHolder="Student"
+            placeHolder={t('student')}
             options={students}
             value={getValues("student")?.student}
             onSelected={(selectedValue) => {
@@ -252,7 +253,7 @@ const renderInput = (fieldName:string, field:any) => {
           {...field}
           open={status}
           setOpen={setstatus}
-          placeHolder="status"
+          placeHolder={t("status")}
           options={studentPaymentStatus}
           value={getValues("status")}
           onSelected={(selectedValue) => {
@@ -266,7 +267,7 @@ const renderInput = (fieldName:string, field:any) => {
           {...field}
           open={openTypeofpayment}
           setOpen={setOpenTypeofpayment}
-          placeHolder="typeofTransaction"
+          placeHolder={t("typeofTransaction")}
           options={typeofTransaction}
           value={getValues("typeofTransaction")}
           onSelected={(selectedValue) => {
@@ -291,7 +292,7 @@ const renderInput = (fieldName:string, field:any) => {
           {...field}
           open={paymentPlanModal}
           setOpen={setPaymentPlanModal}
-          placeHolder="Payment plan"
+          placeHolder={t('payment-plan')}
           options={paymentPlans}
           value={getValues("paymentPlan")?.name}
           onSelected={(selectedValue) => {
@@ -347,10 +348,10 @@ const month=getMonthInfo(updatedData.paymentDate)
     },
     totalIncome: prevState.totalIncome +   (invoice.paymentAmount-updatedData.paymentAmount)
   }));  
-    toast({
-        title: "Changes Applied!",
-        description: "Changes Applied Successfully",
-      })
+  toast({
+    title: t('changes-applied-0'),
+    description: t('changes-applied-successfully'),
+  });
   
       setOpen(false)
 
@@ -363,10 +364,9 @@ const month=getMonthInfo(updatedData.paymentDate)
 <SheetContent className=" sm:max-w-[650px]">
    <ScrollArea className="h-screen pb-20 "> 
      <SheetHeader>
-       <SheetTitle>Edit payment</SheetTitle>
+       <SheetTitle>{t('edit-payment')}</SheetTitle>
        <SheetDescription>
-         Make changes to your payment here. Click save when you're done.
-       </SheetDescription>
+         {t('make-changes-to-your-payment-here')} </SheetDescription>
      </SheetHeader>
           <Form {...form}>
             <form>
@@ -377,7 +377,7 @@ const month=getMonthInfo(updatedData.paymentDate)
                   name={fieldName as FormKeys}
                   render={({ field }) => (
                     <FormItem style={{ marginBottom: 15 }}>
-                      <FormLabel>{fieldName}</FormLabel>
+                      <FormLabel>{t(fieldName)}</FormLabel>
                       <FormControl>{renderInput(fieldName, field)}</FormControl>
 
                       <FormMessage />
@@ -395,8 +395,7 @@ const month=getMonthInfo(updatedData.paymentDate)
        <SheetClose asChild>
          
        <LoadingButton loading={isSubmitting} type="submit"    onClick={form.handleSubmit(onSubmit)}>
-         Save changes
-   </LoadingButton>
+         {t('save-changes')} </LoadingButton>
        </SheetClose>
      </SheetFooter>
      </ScrollArea>

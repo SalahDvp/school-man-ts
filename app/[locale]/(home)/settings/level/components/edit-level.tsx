@@ -48,20 +48,8 @@ import { PlusCircle } from "lucide-react";
 import { updateLevel } from "@/lib/hooks/levels";
 import React from "react";
 import { useData } from "@/context/admin/fetchDataContext";
-const objectOptions = [
-  { value: 'math', label: 'Math' },
-  { value: 'english', label: 'English' },
-  { value: 'arabic', label: 'Arabic' },
-  { value: 'physics', label: 'Physics' },
-  { value: 'science', label: 'Science' },
-  { value: 'history', label: 'History' },
-  { value: 'geography', label: 'Geography' },
-  { value: 'art', label: 'Art' },
-  { value: 'music', label: 'Music' },
-  { value: 'physical_education', label: 'Physical Education' },
-  { value: 'ict', label: 'ICT (Information and Communication Technology)' },
+import { useTranslations } from "next-intl";
 
-];
 
 type LevelFormValues = z.infer<typeof levelSchema> & {value:string;label:string};
 interface SheetDemoProps {
@@ -74,6 +62,21 @@ interface SheetDemoProps {
 
 
 const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => {
+  const t=useTranslations()
+  const objectOptions = [
+    { value: 'math', label: 'Math' },
+    { value: 'english', label: 'English' },
+    { value: 'arabic', label: 'Arabic' },
+    { value: 'physics', label: t('physics') },
+    { value: 'science', label: t('science') },
+    { value: 'history', label: t('history') },
+    { value: 'geography', label: t('geography')},
+    { value: 'art', label: t('art') },
+    { value: 'music', label: t('music') },
+    { value: 'physical_education', label: t('physical-education') },
+    { value: 'ict', label: t('ict-information-and-communication-technology') },
+  
+  ];
   const {setLevels}=useData()
   const form = useForm<LevelFormValues>({
     resolver: zodResolver(levelSchema),
@@ -122,8 +125,8 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       return updatedLevels;
     });
     toast({
-      title: "changes applied!",
-      description: `changes applied Successfully`,
+      title: t('changes-applied-1'),
+      description: t(`changes-applied-Successfully`),
     });
     console.log(data);
     
@@ -143,10 +146,9 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     <ScrollArea className="h-screen  ">
 
       <SheetHeader>
-        <SheetTitle>Edit New Level</SheetTitle>
+        <SheetTitle>{t('edit-new-level')}</SheetTitle>
         <SheetDescription>
-          Enter the new details for the level, including price and subjects of study.
-        </SheetDescription>
+          {t('enter-the-new-details-for-the-level-including-price-and-subjects-of-study')} </SheetDescription>
       </SheetHeader>
 
 
@@ -158,11 +160,11 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       name="level"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Level</FormLabel>
+          <FormLabel>{t('level')}</FormLabel>
           <FormControl>
-            <Input {...field} placeholder="Enter level name" />
+            <Input {...field} placeholder={t('enter-level-name')} />
           </FormControl>
-          <FormDescription>This is the name of the level.</FormDescription>
+          <FormDescription>{t('this-is-the-name-of-the-level')}</FormDescription>
 
           <FormMessage />
         </FormItem>
@@ -174,7 +176,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       name="start"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>start date</FormLabel>
+          <FormLabel>{t('start-date-0')}</FormLabel>
           <FormControl>
             
           <CalendarDatePicker
@@ -190,7 +192,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       }}
     />
           </FormControl>
-          <FormDescription>This is the start date of the level.</FormDescription>
+          <FormDescription>{t('this-is-the-start-date-of-the-level')}</FormDescription>
 
           <FormMessage />
         </FormItem>
@@ -201,7 +203,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       name="end"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>end date</FormLabel>
+          <FormLabel>{t('end-date')}</FormLabel>
           <FormControl>
             
           <CalendarDatePicker
@@ -217,7 +219,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       }}
     />
           </FormControl>
-          <FormDescription>This is the end date of the level.</FormDescription>
+          <FormDescription>{t('this-is-the-end-date-of-the-level')}</FormDescription>
 
           <FormMessage />
         </FormItem>
@@ -229,7 +231,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       name="registrationDeadline"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Deadline</FormLabel>
+          <FormLabel>{t('deadline')}</FormLabel>
           <FormControl>
             
           <CalendarDatePicker
@@ -245,7 +247,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       }}
     />
           </FormControl>
-          <FormDescription>This is the registration Deadline date of the level.</FormDescription>
+          <FormDescription>{t('this-is-the-registration-deadline-date-of-the-level')}</FormDescription>
 
           <FormMessage />
         </FormItem>
@@ -256,11 +258,11 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       name="fee"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Price</FormLabel>
+          <FormLabel>{t('price')}</FormLabel>
           <FormControl>
-            <Input {...field} placeholder="Enter price"  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+            <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
           </FormControl>
-          <FormDescription>This is the fee for the level.</FormDescription>
+          <FormDescription>{t('this-is-the-fee-for-the-level')}</FormDescription>
 
           <FormMessage />
         </FormItem>
@@ -272,14 +274,14 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
             name="prices"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Payment methods</FormLabel>
-                <FormDescription>add how parents are going to pay</FormDescription>
+                <FormLabel>{t('payment-methods')}</FormLabel>
+                <FormDescription>{t('add-how-parents-are-going-to-pay')}</FormDescription>
                 <Table>
   <TableHeader>
     <TableRow>
-      <TableHead>Name</TableHead>
-      <TableHead>Period</TableHead>
-      <TableHead>Price</TableHead>
+      <TableHead>{t('Name')}</TableHead>
+      <TableHead>{t('period')}</TableHead>
+      <TableHead>{t('price')}</TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
@@ -291,7 +293,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
                     <TableCell className="font-semibold">
                     <FormControl>
               <Input
-                placeholder="Enter method name"
+                placeholder={t('enter-method-name')}
                 defaultValue={option.name}
                 {...register(`prices.${index}.name`)}
               />
@@ -307,7 +309,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
                               id={`period-${index}`}
                               aria-label={`Select period`}
                             >
-                              <SelectValue placeholder="Select period" />
+                              <SelectValue placeholder={t('select-period')} />
                             </SelectTrigger>
             <SelectContent>
                             {periodOptions.map((time) => (
@@ -322,7 +324,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
             <TableCell>
             <FormControl>
               <Input
-               placeholder="Enter price"
+               placeholder={t('enter-price')}
                type="number"
                value={option.price}
                onChange={(e) => handleChangePrice(index, parseInt(e.target.value))}
@@ -339,8 +341,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
 </Table>
 <Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '2 Semesters', period:'1 month',price:900 })}>
                       <PlusCircle className="h-3.5 w-3.5" />
-                      Add Level
-                    </Button>
+                      {t('add-level')} </Button>
                 <FormMessage />
               </FormItem>
             )}
@@ -351,8 +352,8 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
       name="subjects"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Subjects of Study</FormLabel>
-          <FormDescription>Select the subjects for this level.</FormDescription>
+          <FormLabel>{t('subjects-of-study')}</FormLabel>
+          <FormDescription>{t('select-the-subjects-for-this-level')}</FormDescription>
           <div className="grid grid-cols-2 gap-4">
           {objectOptions.map((option) => (
             <div key={option.value} className="flex flex-row items-start space-x-3">
@@ -390,8 +391,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
                 type="submit"
             
               >
-                Save changes
-              </LoadingButton>
+                {t('save-changes')} </LoadingButton>
             </SheetClose>
           </SheetFooter>
   </form>

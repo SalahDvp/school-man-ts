@@ -15,6 +15,7 @@ import { useDropzone } from "react-dropzone";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {useTranslations} from "next-intl"
 interface FileUploadProgress {
   file: File;
   source: any;
@@ -58,8 +59,7 @@ const OtherColor = {
 };
 
 const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUpload }) => {
-
-
+    const t=useTranslations("students")
 
   const getFileIconAndColor = (file: File) => {
     if (file.type.includes(FileTypes.Image)) {
@@ -141,11 +141,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({filesToUpload, setFilesToUploa
             </div>
 
             <p className="mt-2 text-sm text-gray-600">
-              <span className="font-semibold">Drag files</span>
+              <span className="font-semibold">{t('drag-files')}</span>
             </p>
             <p className="text-xs text-gray-500">
-              Click to upload files &#40;files should be under 10 MB &#41;
-            </p>
+              {t('click-to-upload-files-and-40-files-should-be-under-10-mb-and-41')}  &#41;</p>
           </div>
         </label>
 

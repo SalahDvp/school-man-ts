@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import {unstable_setRequestLocale} from 'next-intl/server';
+import {NextIntlClientProvider, useMessages} from 'next-intl';
+import MyCustomNextIntlClientProvider from '@/components/MyCustomNextIntlClientProvider'
 const APP_NAME = "PWA App";
 const APP_DEFAULT_TITLE = "My Awesome PWA App";
 const APP_TITLE_TEMPLATE = "%s - PWA App";
@@ -54,11 +56,14 @@ interface RootLayoutProps {
   children: React.ReactNode;
   params: {locale: string};
 }
-const RootLayout: React.FC<RootLayoutProps> = async ({ children,  params: {locale} }) => {
-  unstable_setRequestLocale(locale);
+const RootLayout: React.FC<RootLayoutProps> = ({ children,  params: {locale} }) => {
+  const messages=useMessages()
   return (
     <html lang={locale}>
       <body className={cn("min-h-screen bg-background font-sans antialiased",fontSans.variable)}>  
+    
+      <NextIntlClientProvider locale={locale} messages={messages}>
+
 
            <ThemeProvider
         attribute="class"
@@ -68,7 +73,8 @@ const RootLayout: React.FC<RootLayoutProps> = async ({ children,  params: {local
           {children}
           <Toaster />
           </ThemeProvider>
-       </body>
+</NextIntlClientProvider>   
+    </body>
           
     </html>
   );
