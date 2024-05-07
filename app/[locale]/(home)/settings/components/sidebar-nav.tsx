@@ -2,7 +2,6 @@
 
 import { Link } from "@/navigation"
 import { usePathname } from "@/navigation"
-import { pathnames } from "@/app/[locale]/components/config"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
