@@ -1,5 +1,6 @@
 
 
+"use client"
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer,Tooltip,XAxis } from "recharts"
 import {
   Card,

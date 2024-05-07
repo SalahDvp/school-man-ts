@@ -1,8 +1,10 @@
 
+"use client"
 import { useState } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip , Sector, Legend, } from 'recharts';
 import { CardContent,Card,CardHeader,CardTitle } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
+import { unstable_setRequestLocale } from 'next-intl/server';
 const expensesData = [
     { name: "Rent", value: 1500 },
     { name: "Groceries", value: 500 },
@@ -91,6 +93,7 @@ const renderActiveShape = (props:any,rate:string) => {
     );
   };
 export function CircleExpenses() {
+
     const [activeIndex, setActiveIndex] = useState<number>(0);
 const t=useTranslations()
   const handleSetActiveIndex = (_:any,index: number) => {

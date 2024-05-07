@@ -1,5 +1,5 @@
 
-
+"use client"
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer } from "recharts"
 import {
   Card,
@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
 import { useData } from "@/context/admin/fetchDataContext"
-
+import {unstable_setRequestLocale} from 'next-intl/server';
 
 const data = [
   {
@@ -47,7 +47,6 @@ const data = [
 ]
 
 function CardIncome() {
-
 const t=useTranslations()
 const getMonthAbbreviation = (fullMonth:string) => {
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];

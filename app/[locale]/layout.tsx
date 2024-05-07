@@ -4,10 +4,8 @@ import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
-import {unstable_setRequestLocale} from 'next-intl/server';
 import {NextIntlClientProvider, useMessages} from 'next-intl';
-import MyCustomNextIntlClientProvider from '@/components/MyCustomNextIntlClientProvider'
-import useTextDirection from "./components/useTextDirection";
+
 const APP_NAME = "PWA App";
 const APP_DEFAULT_TITLE = "My Awesome PWA App";
 const APP_TITLE_TEMPLATE = "%s - PWA App";
@@ -58,7 +56,6 @@ interface RootLayoutProps {
   params: {locale: string};
 }
 const RootLayout: React.FC<RootLayoutProps> = ({ children,  params: {locale} }) => {
-  const textDirection=useTextDirection(locale)
   const messages=useMessages()
   return (
     <html lang={locale}>

@@ -1,4 +1,6 @@
 
+
+"use client"
 import { Line, LineChart, ResponsiveContainer, Tooltip,XAxis,YAxis } from "recharts"
 
 
@@ -18,6 +20,7 @@ type MonthName = 'January' | 'February' | 'March' | 'April' | 'May' | 'June' | '
 
 
 export function CardsMetric() {
+  
 const {analytics}=useData()
 const t=useTranslations()
 const data = analytics?.data

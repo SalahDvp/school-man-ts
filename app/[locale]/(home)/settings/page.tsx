@@ -1,3 +1,4 @@
+"use client"
 import { Separator } from "@/components/ui/separator"
 import { ProfileForm } from "./level/components/profile-form"
 import { useTranslations } from "next-intl"
