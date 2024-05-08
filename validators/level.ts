@@ -24,7 +24,7 @@ const levelSchema: ZodSchema<{
   })).min(1, { message: 'At least one subject is required' }),
   prices: z.array(z.object({
       name: z.string(),
-      period: z.enum(["1 month", "2 months", "4 months", "1 year"]),
+      period: z.string(),
       price: z.number(),
   })).min(1, { message: 'At least one method is required' }),
 });

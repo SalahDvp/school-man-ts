@@ -55,7 +55,7 @@ import { useTranslations } from "next-intl";
 export function SheetDemo() {
   const {setLevels}=useData()
   const form = useForm({
-    resolver: zodResolver(levelSchema),
+    //resolver: zodResolver(levelSchema),
     defaultValues: {
       id: "1",
 
@@ -101,21 +101,23 @@ const objectOptions = [
       description: t(`changes-applied-Successfully`),
     });
     console.log(data);
-    reset()
-
+reset()
+reset({ prices: [] });
  
   }
+  
   const handleChangePrice = (index, newPrice) => {
     const newPrices = [...getValues('prices')]; // Get the current prices array
     newPrices[index].price = newPrice; // Update the price at the specified index
     setValue('prices', newPrices); // Set the updated prices array in the form
   };
-  const periodOptions = [
-    '1 month',
-    '2 months',
-    '4 months',
-    '1 year',
-  ];
+  const handleChangePeriod = (index, newPrice) => {
+    console.log("wqeqeqwe");
+    const newPrices = [...getValues('prices')]; // Get the current prices array
+    newPrices[index].period = newPrice; // Update the price at the specified index
+    setValue('prices', newPrices); // Set the updated prices array in the form
+  };
+  const periodOptions = Array.from({ length: 12 }, (_, index) => `${index + 1} month`);
   return (
     <Sheet>
     <SheetTrigger asChild>
@@ -273,19 +275,18 @@ const objectOptions = [
         
                     <TableRow key={index}>
                     <TableCell className="font-semibold">
-                    <FormControl>
+                 
               <Input
                 placeholder={t('enter-method-name')}
                 defaultValue={option.name}
                 {...register(`prices.${index}.name`)}
               />
-          </FormControl>
+ 
             </TableCell>
             <TableCell>
-            <FormControl>
+
               <Select
-   
-                defaultValue={option.period}
+              onValueChange={(e) =>handleChangePeriod(index,e)}
               >
                                  <SelectTrigger
                               id={`period-${index}`}
@@ -294,17 +295,19 @@ const objectOptions = [
                               <SelectValue placeholder={t('select-period')} />
                             </SelectTrigger>
             <SelectContent>
+ 
                             {periodOptions.map((time) => (
-                              <SelectItem key={time} value={time}>
+                              <SelectItem key={time} value={time}   >
                                 {time}
                               </SelectItem>
                             ))}
+           
                           </SelectContent>
               </Select>
-              </FormControl>
+    
             </TableCell>
             <TableCell>
-            <FormControl>
+      
               <Input
                placeholder={t('enter-price')}
                type="number"
@@ -312,7 +315,7 @@ const objectOptions = [
                onChange={(e) => handleChangePrice(index, parseInt(e.target.value))}
 
               />
-              </FormControl>
+  
             </TableCell>
       </TableRow>
     
@@ -321,7 +324,7 @@ const objectOptions = [
          
          </TableBody>
 </Table>
-<Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '2 Semesters', period:'1 month',price:900 })}>
+<Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '', period:'',price:0})}>
                       <PlusCircle className="h-3.5 w-3.5" />
                       {t('add-level')} </Button>
                 <FormMessage />
