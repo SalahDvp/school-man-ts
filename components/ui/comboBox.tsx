@@ -53,9 +53,9 @@ interface Option {
           <CommandEmpty>{`No ${placeHolder} found.`}</CommandEmpty>
           <CommandGroup>
             <CommandList>
-            {options.map((framework) => (
+            {options.map((framework,index) => (
               <CommandItem
-                key={framework.value}
+                key={index}
                 value={framework.value}
                 onSelect={(currentValue) => {
                   onSelected(currentValue === value ? "" : currentValue)

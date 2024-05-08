@@ -16,9 +16,9 @@ export const addClass = async (cls: ClassFormValue) => {
             batch.update(studentRef, {
                 amountLeftToPay: cls.level.fee,
                 totalAmount: cls.level.fee,
-                startDate: cls.level.start,
-                nextPaymentDate: cls.level.start,
-                lastPaymentDate: cls.level.start,
+                startDate: new Date(cls.level.start),
+                nextPaymentDate: new Date(cls.level.start),
+                lastPaymentDate: new Date(cls.level.start),
                 level:cls.level.level,
                 class:{name:cls.name,id:classRef.id}
             });
@@ -67,9 +67,9 @@ interface ElementWithId {
         batch.update(studentRef, {
           amountLeftToPay: cls.level.fee,
           totalAmount: cls.level.fee,
-          startDate: cls.level.start,
-          nextPaymentDate: cls.level.start,
-          lastPaymentDate: cls.level.start,
+          startDate: new Date(cls.level.start),
+          nextPaymentDate: new Date(cls.level.start),
+          lastPaymentDate: new Date(cls.level.start),
           level: cls.level.level,
           class: { name: cls.name, id: cls.id }
         });

@@ -202,7 +202,7 @@ const t=useTranslations()
       }
     }
     return [];
-  }, [form,levels]);
+  }, [form,levels,watchlevel]);
   const onSelected=(selectedStudent:any)=>{
     form.setValue("class",selectedStudent.class.name)
     form.setValue("parent",selectedStudent.parent)

@@ -132,7 +132,6 @@ const t=useTranslations()
   const watchlevel=watch('level')
 const paymentPlans = React.useMemo(() => {
   const studentValue = form.getValues("level");
-
   
   if (studentValue) {
     const selectedLevel = levels.find((level:any) => level.level === studentValue);
@@ -143,7 +142,7 @@ const paymentPlans = React.useMemo(() => {
     }
   }
   return [];
-}, [form,levels]);
+}, [form,levels,watchlevel]);
 const onSelected=(selectedStudent:any)=>{
   form.setValue("class",selectedStudent.class.name)
   form.setValue("parent",{name:selectedStudent.parentFullName,id:selectedStudent.parentId})

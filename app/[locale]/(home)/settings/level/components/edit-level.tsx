@@ -79,7 +79,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
   ];
   const {setLevels}=useData()
   const form = useForm<LevelFormValues>({
-    resolver: zodResolver(levelSchema),
+    //resolver: zodResolver(levelSchema),
     defaultValues:{ id: "1",
         level: "Kindergarten",
         start: new Date("2024-09-01"),
@@ -93,12 +93,8 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
   const {toast}=useToast()
   const { reset, handleSubmit, control, formState,getValues,setValue,register} = form;
   const {isSubmitting}=formState
-  const periodOptions = [
-    '1 month',
-    '2 months',
-    '4 months',
-    '1 year',
-  ];
+  const periodOptions = Array.from({ length: 12 }, (_, index) => `${index + 1} month`);
+
 
 //reset useform default values on each new level
   React.useEffect(() => {
@@ -106,6 +102,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     console.log("reset",level);
     
  }, [level,reset])
+
   const { fields:subjects, append:appendSubject,remove:removeSubject} = useFieldArray({
     control: form.control,
     name: "subjects",
@@ -139,7 +136,12 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     newPrices[index].price = newPrice; // Update the price at the specified index
     setValue('prices', newPrices); // Set the updated prices array in the form
   };
-
+  const handleChangePeriod = (index:number, newPrice:string) => {
+    console.log("wqeqeqwe");
+    const newPrices = [...getValues('prices')]; // Get the current prices array
+    newPrices[index].period = newPrice; // Update the price at the specified index
+    setValue('prices', newPrices); // Set the updated prices array in the form
+  };
   return (
     <Sheet open={open} onOpenChange={setOpen}>
   <SheetContent className="sm:max-w-[650px]">
@@ -279,7 +281,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
                 <Table>
   <TableHeader>
     <TableRow>
-      <TableHead>{t('Name')}</TableHead>
+      <TableHead>{t('name')}</TableHead>
       <TableHead>{t('period')}</TableHead>
       <TableHead>{t('price')}</TableHead>
     </TableRow>
@@ -291,19 +293,19 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         
                     <TableRow key={index}>
                     <TableCell className="font-semibold">
-                    <FormControl>
+                 
               <Input
                 placeholder={t('enter-method-name')}
                 defaultValue={option.name}
                 {...register(`prices.${index}.name`)}
               />
-          </FormControl>
+ 
             </TableCell>
             <TableCell>
-            <FormControl>
+
               <Select
-   
-                defaultValue={option.period}
+              defaultValue={option.period}
+              onValueChange={(e) =>handleChangePeriod(index,e)}
               >
                                  <SelectTrigger
                               id={`period-${index}`}
@@ -312,17 +314,19 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
                               <SelectValue placeholder={t('select-period')} />
                             </SelectTrigger>
             <SelectContent>
+ 
                             {periodOptions.map((time) => (
-                              <SelectItem key={time} value={time}>
+                              <SelectItem key={time} value={time}   >
                                 {time}
                               </SelectItem>
                             ))}
+           
                           </SelectContent>
               </Select>
-              </FormControl>
+    
             </TableCell>
             <TableCell>
-            <FormControl>
+      
               <Input
                placeholder={t('enter-price')}
                type="number"
@@ -330,7 +334,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
                onChange={(e) => handleChangePrice(index, parseInt(e.target.value))}
 
               />
-              </FormControl>
+  
             </TableCell>
       </TableRow>
     
@@ -339,7 +343,7 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
          
          </TableBody>
 </Table>
-<Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '2 Semesters', period:'1 month',price:900 })}>
+<Button type='button' size="sm" variant="ghost" className="gap-1 w-full"  onClick={() => appendPrice({name: '', period:'',price:0})}>
                       <PlusCircle className="h-3.5 w-3.5" />
                       {t('add-level')} </Button>
                 <FormMessage />
