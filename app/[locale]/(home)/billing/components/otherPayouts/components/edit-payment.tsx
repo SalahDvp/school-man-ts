@@ -74,6 +74,10 @@ const t=useTranslations()
 
 const Typeofpayments = [
   {
+    value: "rent",
+    label: t('rent'),
+  },
+  {
     value: "electricbill",
     label: t('electric-bill'),
   },
@@ -86,7 +90,7 @@ const Typeofpayments = [
     label: t('gaz-bill'),
   },
   {
-    value: "Maintenance",
+    value: "maintenance",
     label: t('maintenance'),
   },
   {

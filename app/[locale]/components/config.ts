@@ -5,54 +5,60 @@ export const host = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : `http://localhost:${port}`;
 
-export const defaultLocale = 'en' as const;
-export const locales = ['en', 'ar'] as const;
+export const defaultLocale = 'fr' as const;
+export const locales = ['en', 'ar','fr'] as const;
 
 export const pathnames = {
   '/': '/',
-  '/pathnames': {
-    en: '/pathnames',
-    ar: '/pathnames'
-  },
   "/dashboard": {
     "en": "/dashboard",
-    "ar": "/dashboard"
+    "ar": "/dashboard",
+    "fr":"/dashboard"
   },
   "/students": {
     "en": "/students",
-    "ar": "/students"
+    "ar": "/students",
+    "fr":"/students"
   },
   "/teachers": {
     "en":"/teachers",
-    "ar": "/teachers"
+    "ar": "/teachers",
+    "fr":"/teachers"
   },
   "/parents": {
     "en": "/parents",
-    "ar":  "/parents"
+    "ar":  "/parents",
+    "fr":"/parents"
   },
   "/classes": {
     "en":   "/classes",
-    "ar":  "/classes"
+    "ar":  "/classes",
+    "fr":"/classes"
   },
   "/billing": {
     "en":   "/billing",
-    "ar":   "/billing"
+    "ar":   "/billing",
+    "fr":"/billing"
   },
   "/settings": {
     "en":  "/settings",
-    "ar":   "/settings"
+    "ar":   "/settings",
+    "fr":"/settings"
   },
   "/profile": {
     "en":   "/settings",
-    "ar":   "/settings"
+    "ar":   "/settings",
+    "fr":"/settings"
   },
   "/settings/level": {
     "en": "/settings/level",
-    "ar": "/settings/level"
+    "ar": "/settings/level",
+    "fr":"/settings/level"
   },
   "/Auth": {
     "en":  "/Auth",
-    "ar":   "/Auth"
+    "ar":   "/Auth",
+    "fr":"/Auth"
   }
 } satisfies Pathnames<typeof locales>;
 

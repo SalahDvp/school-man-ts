@@ -20,7 +20,7 @@ export const addPayment = async (transaction:PaymentFormValues) => {
         console.log("Payout Salary added successfully:",paymentTransRef.id );  
         await updateDoc(doc(db, "Billing", "payouts"), {
             
-            [key]: increment(transaction.paymentAmount),
+            [`${key}Expenses`]: increment(transaction.paymentAmount),
             
         });
         await updateDoc(doc(db, "Billing","analytics"), {

@@ -83,6 +83,10 @@ export default function PaymentForm() {
 
   const Typeofpayments = [
     {
+      value: "rent",
+      label: t('rent'),
+    },
+    {
       value: "electricbill",
       label: t('electric-bill'),
     },
@@ -95,7 +99,7 @@ export default function PaymentForm() {
       label: t('gaz-bill'),
     },
     {
-      value: "Maintenance",
+      value: "maintenance",
       label: t('maintenance'),
     },
     {

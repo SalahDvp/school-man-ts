@@ -4,19 +4,13 @@ import { useState } from 'react';
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip , Sector, Legend, } from 'recharts';
 import { CardContent,Card,CardHeader,CardTitle } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
-
-const expensesData = [
-    { name: "Rent", value: 1500 },
-    { name: "Groceries", value: 500 },
-    { name: "Utilities", value: 300 },
-    { name: "Transportation", value: 400 },
-    { name: "Entertainment", value: 200 },
-  ];
+import { useData } from '@/context/admin/fetchDataContext';
 
 
 
 
-const COLORS = ['#2563eb', '#35155D', '#512B81', '#4477CE','#8CABFF'];
+
+const COLORS = ['#2563eb', '#35155D', '#512B81', '#4477CE', '#8CABFF', '#FF5733', '#33FF57', '#5733FF'];
 
 const renderActiveShape = (props:any,rate:string) => {
   
@@ -65,37 +59,17 @@ const renderActiveShape = (props:any,rate:string) => {
       </g>
     );
   };
-  const CustomLegend: React.FC<any> = ({ payload }) => {
-    console.log(payload);
-    
-    return (
-   
-            <ul
-              style={{
-                listStyle: 'none',
-                paddingLeft: 0,
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-      
-                borderRadius: 8,
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-              }}
-            >
-        {payload.map((entry:any, index:any) => (
-          <li key={`legend-item-${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
-            <div style={{ width: 20, height: 20, backgroundColor: entry.color, marginRight: 8 }}></div>
-            <span>{entry.value}</span>
-            <span style={{ marginLeft: 'auto' }}>{entry.payload?.value}</span>
-          </li>
-        ))}
-      </ul>
-    );
-  };
 export function CircleExpenses() {
 
     const [activeIndex, setActiveIndex] = useState<number>(0);
 const t=useTranslations()
+const {analytics}=useData()
+const {data,totalIncome,totalExpenses,...rest}=analytics
+const expensesData= Object.entries(rest).map(([name, value]) => ({
+  name,
+  value,
+}));
+
   const handleSetActiveIndex = (_:any,index: number) => {
     setActiveIndex(index);
   };
