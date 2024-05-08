@@ -104,7 +104,7 @@ async function onSubmit(values:ClassFormValues) {
   const { value, label, ...updatedData } = values;
  const levelData=levels.find((level:any)=>level.id===values.level.id)
 
-  await updateClass(updatedData,values.id)
+  await updateClass(updatedData,cls.id)
   const updatedStudents= await updateStudents(cls.students,values.students,{...cls,level:levelData})
   const updatedTeachers= await updateTeachers(cls.teachers,values.teachers,cls)
 updatedStudents.added.map((student)=>{
