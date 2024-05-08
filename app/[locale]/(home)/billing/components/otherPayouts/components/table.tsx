@@ -1,4 +1,4 @@
-"use client"
+
 import { format } from "date-fns"; 
 import * as React from "react"
 import {
@@ -58,6 +58,7 @@ import { exportTableToExcel } from "@/components/excelExport";
 type Status = 'paid' | 'not paid' 
 type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>  & {id:string };
 export const DataTableDemo = () => {
+  
     const t=useTranslations()
   const [open,setOpen]=React.useState(false)
     const {payouts,setPayouts}=useData()

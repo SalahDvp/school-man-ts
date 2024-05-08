@@ -17,7 +17,6 @@ import { useData } from "@/context/admin/fetchDataContext";
 
  function Payouts() {
   const t=useTranslations()
-
   const { analytics}= useData()
   const total_expences = analytics.totalExpenses
   const total_payouts = analytics.RentExpenses+analytics.billsExpenses+analytics.groceriesExpenses+analytics.maintenanceExpenses+analytics.other
