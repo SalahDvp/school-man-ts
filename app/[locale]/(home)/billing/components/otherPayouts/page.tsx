@@ -19,9 +19,8 @@ import { useData } from "@/context/admin/fetchDataContext";
   const t=useTranslations()
   const { analytics}= useData()
   const total_expences = analytics.totalExpenses
-  const total_payouts = analytics.RentExpenses+analytics.billsExpenses+analytics.groceriesExpenses+analytics.maintenanceExpenses+analytics.other
-+analytics.otherExpenses+analytics.rentExpenses
-const pecentage = ((total_payouts/total_expences)*100).toFixed(2)
+  const total_payouts =(total_expences-analytics.teachersExpenses)
+const pecentage = (((total_expences-analytics.teachersExpenses)/total_expences)*100).toFixed(2)
   return (
   
 

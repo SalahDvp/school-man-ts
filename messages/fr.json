@@ -15,7 +15,7 @@
     "label": "Anglais",
     "locale": "fr"
   },
-  "Male": "Mâle",
+  "Male": "Garcon",
   "Name": "Nom",
   "NotFoundPage": {
     "title": "pas trouvé"
@@ -68,9 +68,9 @@
   "changes-applied-Successfully": "modifications appliquées avec succès",
   "changes-applied-successfully": "Modifications appliquées avec succès",
   "city": "Ville",
-  "class": "Classe",
+  "class": "Classes",
   "class-level": "niveau de classe",
-  "classes": "Des classes",
+  "classes": "Classes",
   "classes-table": "tableau des cours",
   "click-to-upload-files-and-40-files-should-be-under-10-mb-and-41-and-41": "cliquez pour télécharger des fichiers et 40 fichiers doivent faire moins de 10 Mo et 41",
   "columns": "Colonnes",
@@ -85,7 +85,7 @@
   "credit-card": "Carte de crédit",
   "cur": "",
   "dark": "Sombre",
-  "dashboard": "Tableau de bord",
+  "dashboard": "accueil",
   "date": "Date",
   "date-of-birth": "Date de naissance",
   "dateOfBirth": "Date de naissance",
@@ -136,7 +136,7 @@
   "feb": "Fév",
   "february": "Février",
   "fee": "Frais",
-  "female": "Femelle",
+  "female": "Fille",
   "files-to-upload": "Fichiers à télécharger",
   "filter-by-student": "Filtrer par étudiant...",
   "filter-parent": "Filtrer les parents...",
