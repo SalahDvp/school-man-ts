@@ -424,5 +424,8 @@
   "teacher-expenses-over-total-expenses": "نفقات المعلم على إجمالي النفقات",
   "the-teacher-expenses-percentage": "نسبة نفقات المعلم",
   "total-payouts": "إجمالي الدفعات",
-  "total-expences": "إجمالي النفقات"
+  "total-expences": "إجمالي النفقات",
+  "NotFoundPage": {
+    "title": "غير معثور عليه"
+  }
 }

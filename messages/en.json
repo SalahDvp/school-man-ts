@@ -427,5 +427,8 @@
   "the-teacher-expenses-percentage": "The Teacher expenses percentage",
   "total-teacher-expences": "Total Teacher Expences",
   "total-payouts": "Total Payouts",
-  "total-expences": "Total Expences"
+  "total-expences": "Total Expences",
+  "NotFoundPage": {
+    "title": "not found"
+  }
 }
