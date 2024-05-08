@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDateRangePicker } from "@/app/[locale]/(home)/dashboard/components/date-range-picker";
 import CardsRevenue from "@/app/[locale]/(home)/billing/components/analytics/CardRevenue";
 
-
+import * as XLSX from 'xlsx';
 import StudentsPerYear from "@/app/[locale]/(home)/billing/components/analytics/CardStudentsPerYear";
 
 import { CardsMetric } from "@/app/[locale]/(home)/billing/components/analytics/CardMetric";
@@ -16,9 +16,14 @@ import Payouts from "./components/otherPayouts/page";
 import TeacherSalaryDashBoard from "./components/teachersBilling/page";
 import Studentpayment from "./components/studentPayment/page";
 import { useTranslations } from "next-intl";
+import { useData } from "@/context/admin/fetchDataContext";
+
+
+
 
 export default function DashboardPage() {
   const t=useTranslations()
+
   return (
     <>
       <div className=" flex-col md:flex">
@@ -27,7 +32,7 @@ export default function DashboardPage() {
             <h2 className="text-3xl font-bold tracking-tight">{t('dashboard')}</h2>
             <div className="flex items-center space-x-2">
               <CalendarDateRangePicker />
-              <Button>{t('download')}</Button>
+              {/* <Button>{t('download')}</Button> */}
             </div>
           </div>
           <Tabs defaultValue="teachers" className="space-y-4">

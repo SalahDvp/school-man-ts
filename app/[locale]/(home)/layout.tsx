@@ -2,7 +2,7 @@
 
 import { useUser } from "@/lib/auth";
 import Header from "../components/Header";
-import { redirect } from "next/navigation";
+import { redirect } from "@/navigation";
 import { FetchDataProvider } from "@/context/admin/fetchDataContext";
 export default function RootLayout({
   children,
@@ -13,7 +13,7 @@ export default function RootLayout({
 
   
   if (user === false) return <>Auth loading...</>;
-  if (!user) return redirect("/");
+  if (!user) return redirect("/Auth");
   return (
     
     <FetchDataProvider>

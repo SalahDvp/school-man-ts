@@ -49,6 +49,10 @@ export const pathnames = {
   "/settings/level": {
     "en": "/settings/level",
     "ar": "/settings/level"
+  },
+  "/Auth": {
+    "en":  "/Auth",
+    "ar":   "/Auth"
   }
 } satisfies Pathnames<typeof locales>;
 

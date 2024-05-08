@@ -7,21 +7,20 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useTranslations } from "next-intl";
-import { number } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 
 
 
 function StudentsPerYear() {
 const t=useTranslations()
-const {levels}=useData()
+const {levels,students}=useData()
   return (
 <Card>
 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
   <CardTitle className="text-sm font-normal">{t('total-students')}</CardTitle>
 </CardHeader>
 <CardContent>
-  <div className="text-2xl font-bold">{t('number-students',{number:400})}</div>
+  <div className="text-2xl font-bold">{t('number-students',{number:students.length})}</div>
 
   <div className="mt-4 h-[80px]">
     <ResponsiveContainer width="100%" height="100%">
