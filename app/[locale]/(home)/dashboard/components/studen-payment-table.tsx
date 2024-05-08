@@ -1,12 +1,11 @@
 
-"use client"
 import React from "react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar";
-import { format, parseISO, differenceInCalendarDays } from "date-fns";
+import { format,differenceInCalendarDays } from "date-fns";
 interface User {
   id: number;
   student: string;

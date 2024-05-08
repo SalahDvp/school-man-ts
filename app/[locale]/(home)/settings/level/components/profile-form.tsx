@@ -1,4 +1,4 @@
-"use client"
+
 import React from "react";
 import {addProfile} from "@/lib/hooks/profile"
 import { useData } from "@/context/admin/fetchDataContext";

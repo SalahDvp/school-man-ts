@@ -1,5 +1,4 @@
 
-"use client"
 import { CardContent,Card,CardHeader,CardTitle,CardDescription} from '@/components/ui/card';
 import {
     Avatar,

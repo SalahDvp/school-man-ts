@@ -1,4 +1,4 @@
-"use client"
+
 import { teacherPaymentRegistrationSchema } from "@/validators/teacherSalarySchema";
 import * as React from "react"
 import {

@@ -7,8 +7,6 @@ import { StudentPaymentTable } from "./components/studentPaymentTable"
 
 
 import {TransactionDataTableDemo} from './components/transactionTable'
-import EditStudentPaymentForm from './components/editStudentPaymentForm'
-
  function Studentpayment() {
 
   return (

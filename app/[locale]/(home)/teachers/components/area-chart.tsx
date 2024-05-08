@@ -1,4 +1,4 @@
-"use client"
+
 import { Bar, BarChart, Line, LineChart, ResponsiveContainer ,Tooltip} from "recharts"
 
 

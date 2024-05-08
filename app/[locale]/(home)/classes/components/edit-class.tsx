@@ -1,4 +1,4 @@
-"use client"
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useForm } from "react-hook-form"
@@ -28,7 +28,7 @@ import {
     SheetFooter,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
+
   } from "@/components/ui/sheet";
 
   import { ScrollArea } from "@/components/ui/scroll-area";
