@@ -2,7 +2,12 @@
 import { Separator } from "@/components/ui/separator"
 import { SidebarNav } from "./components/sidebar-nav"
 import { useTranslations } from "next-intl"
-
+import { unstable_setRequestLocale } from "next-intl/server";
+const locales = ['en', 'ar'];
+ 
+export function generateStaticParams() {
+  return locales.map((locale) => ({locale}));
+}
 const sidebarNavItems = [
   {
     title: "Profile",
@@ -35,10 +40,12 @@ const sidebarNavItems = [
 ]
 
 interface SettingsLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode,
+  params: {locale: string};
 }
 
-export default function SettingsLayout({ children }: SettingsLayoutProps) {
+export default function SettingsLayout({ children , params: {locale}}: SettingsLayoutProps) {
+  unstable_setRequestLocale(locale);
   const t=useTranslations()
   return (
 
