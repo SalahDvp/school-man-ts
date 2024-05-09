@@ -14,6 +14,8 @@ import { useData } from '@/context/admin/fetchDataContext';
 function CardsRevenue() {
 const t=useTranslations()
 const {analytics}=useData()
+console.log("anannanananna",analytics.data);
+
 const getMonthAbbreviation = (fullMonth: string) => {
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',

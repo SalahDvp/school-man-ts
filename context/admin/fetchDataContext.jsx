@@ -40,6 +40,7 @@ export const  FetchDataProvider = ({ children }) => {
     };
     getAnalytics()
   },[])
+  console.log("analustucsss", analytics);
   useEffect(() => {
     const getPayouts = async () => {
       try {
