@@ -15,7 +15,6 @@ export const ParentRegistrationSchema: ZodSchema<{
   numberOfChildren: number;
   secondParentName: string;
   secondParentPhone: string;
-  salary: number;
   paymentStatus: "Active" | "Alert" | "Warning";
   totalPayment:number;
 }> = z.object({
@@ -35,7 +34,6 @@ export const ParentRegistrationSchema: ZodSchema<{
     }),
   numberOfChildren: z.number().min(0, "Enter a valid value for children"),
   gender: z.enum(['male', 'female', 'other']),
-  salary: z.number().min(0, "Enter a valid value for total payment to be made"),
   paymentStatus: z.enum(["Active", "Alert", "Warning"]),
   address: z
     .string()

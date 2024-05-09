@@ -207,6 +207,23 @@ import { exportTableToExcel } from "@/components/excelExport"
       },
     },
   ]
+  const handleExport = () => {
+    const exceldata=students.map((student:any)=>({[`${t('Name')}`]:student.student,
+    [`${t('level')}`]:student.level,
+   
+    [`${t('next-payment-date-0')}`]:student.nextPaymentDate,
+    [`${t('parent-phone-0')}`]:student.parentPhone,
+    [`${t('amount-left')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(student.amountLeftToPay),
+    [`${t('total-amount-0')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(student.totalAmount),
+    }))
+    exportTableToExcel(t('students-payments-table'),exceldata);
+  };
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -241,9 +258,6 @@ import { exportTableToExcel } from "@/components/excelExport"
   })
  
 
-  const handleExport = () => {
-    exportTableToExcel(t('students-payments-table'), 'students-payments-table');
-  };
   
   return (
     <>

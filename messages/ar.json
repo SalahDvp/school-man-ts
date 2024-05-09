@@ -433,5 +433,14 @@
   "total-payouts": "إجمالي الدفعات",
   "total-teacher-expences": "إجمالي نفقات المعلم",
   "total-teachers": "إجمالي المعلمين",
-  "view-parent": "عرض الوالدين"
+  "view-parent": "عرض الوالدين",
+  "print-paiment-bill": "طباعة فاتورة الدفع",
+  "invoice": "فاتورة",
+  "billed-to": "تمت إرسال الفاتورة إلى:",
+  "amount-due": "المبلغ المستحق:",
+  "Status": "حالة",
+  "products-and-services": "منتجات",
+  "total-amount-2": "المبلغ الإجمالي:",
+  "total-tax": "مجموع الضريبة:",
+  "terms-and-notes": "شروط"
 }

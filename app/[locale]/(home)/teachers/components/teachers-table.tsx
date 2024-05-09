@@ -217,6 +217,19 @@ export type teacher = {
       },
     },
   ]
+  const handleExport = () => {
+    const exceldata=teachers.map((teacher:any)=>({[`${t('teacher')}`]:teacher.teacher,
+    [`${t('transaction')}`]:teacher.typeofTransaction,
+    [`${t('subject')}`]:t(teacher.teacherSubject),
+    [`${t('status')}`]: t(teacher.status),
+    [`${t('joining-date-0')}`]:teacher.joiningDate,
+    [`${t('salary')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(teacher.salary),
+    }))
+    exportTableToExcel(t('teachers-table'),exceldata);
+  };
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -255,9 +268,6 @@ export type teacher = {
   })
  
 
-  const handleExport = () => {
-    exportTableToExcel(t('teachers-table'), 'teachers-table');
-  };
   
   return (
     <>

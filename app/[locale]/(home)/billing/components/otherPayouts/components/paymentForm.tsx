@@ -34,7 +34,9 @@ import { addPayment } from "@/lib/hooks/billing/otherPayments";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 import { useTranslations } from "next-intl";
-
+import { Checkbox } from "@/components/ui/checkbox"
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 const fieldNames = [
   "paymentTitle",
   "paymentAmount",
@@ -69,7 +71,7 @@ export default function PaymentForm() {
   const {payouts,setPayouts,setAnalytics}=useData()
   const [openTypeofpayment, setOpenTypeofpayment] = useState(false);
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
-
+  const[printBill,setPrintBill]=useState(false)
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(PaymentRegistrationSchema),
     defaultValues: {
@@ -80,7 +82,243 @@ export default function PaymentForm() {
   const { isSubmitting } = formState;
   
   const t=useTranslations()
+  function downloadInvoice(paymentData:any,id:string){
 
+    const doc = new jsPDF();
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'school Erp',
+            styles: {
+              halign: 'left',
+              fontSize: 20,
+              textColor: '#ffffff'
+            }
+          },
+          {
+            content: t('invoice'),
+            styles: {
+              halign: 'right',
+              fontSize: 20,
+              textColor: '#ffffff'
+            }
+          }
+        ],
+      ],
+      theme: 'plain',
+      styles: {
+        fillColor: '#3366ff'
+      }
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: t('reference-id',{id:id})
+            +`\n${t('date')}: ${paymentData.paymentDate}`
+            +t('ninvoice-number-id', {id:id}),
+            styles: {
+              halign: 'right'
+            }
+          }
+        ],
+      ],
+      theme: 'plain'
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: t('billed-to')
+            +`\n${paymentData.toWho}`
+            +'\nBilling Address line 1'
+            +'\nBilling Address line 2'
+            +'\nZip code - City'
+            +'\nCountry',
+            styles: {
+              halign: 'left'
+            }
+          },
+          {
+            content: 'Shipping address:'
+            +`\n${paymentData.toWho}`
+            +'\nShipping Address line 1'
+            +'\nShipping Address line 2'
+            +'\nZip code - City'
+            +'\nCountry',
+            styles: {
+              halign: 'left'
+            }
+          },
+          {
+            content: 'From:'
+            +'\nSchool erp'
+            +'\nShipping Address line 1'
+            +'\nShipping Address line 2'
+            +'\nZip code - City'
+            +'\nCountry',
+            styles: {
+              halign: 'right'
+            }
+          }
+        ],
+      ],
+      theme: 'plain'
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: t('amount-due'),
+            styles: {
+              halign:'right',
+              fontSize: 14
+            }
+          }
+        ],
+        [
+          {
+            content: `DZD${paymentData.paymentAmount}`,
+            styles: {
+              halign:'right',
+              fontSize: 20,
+              textColor: '#3366ff'
+            }
+          }
+        ],
+        [
+          {
+            content: `${t("Status")}: ${paymentData.status}`,
+            styles: {
+              halign:'right'
+            }
+          }
+        ]
+      ],
+      theme: 'plain'
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: t('products-and-services'),
+            styles: {
+              halign:'left',
+              fontSize: 14
+            }
+          }
+        ]
+      ],
+      theme: 'plain'
+    });
+    const valuesArray:any[] = Object.values(paymentData);
+    autoTable(doc, {
+      head: [['id', 'Title', 'Amount', 'type', 'paymentDate', 'from', 'to', 'status', 'notes']],
+      body: [
+        valuesArray
+      ],
+      theme: 'striped',
+      headStyles:{
+        fillColor: '#343a40'
+      }
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'Subtotal:',
+            styles:{
+              halign:'right'
+            }
+          },
+          {
+            content: '$3600',
+            styles:{
+              halign:'right'
+            }
+          },
+        ],
+        [
+          {
+            content: t('total-tax'),
+            styles:{
+              halign:'right'
+            }
+          },
+          {
+            content: 'DZD0',
+            styles:{
+              halign:'right'
+            }
+          },
+        ],
+        [
+          {
+            content: t('total-amount-2'),
+            styles:{
+              halign:'right'
+            }
+          },
+          {
+            content: `DZD${paymentData.paymentAmount}`,
+            styles:{
+              halign:'right'
+            }
+          },
+        ],
+      ],
+      theme: 'plain'
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: t('terms-and-notes'),
+            styles: {
+              halign: 'left',
+              fontSize: 14
+            }
+          }
+        ],
+        [
+          {
+            content: 'orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia'
+            +'molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum'
+            +'numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium',
+            styles: {
+              halign: 'left'
+            }
+          }
+        ],
+      ],
+      theme: "plain"
+    });
+  
+    autoTable(doc, {
+      body: [
+        [
+          {
+            content: 'This is a centered footer',
+            styles: {
+              halign: 'center'
+            }
+          }
+        ]
+      ],
+      theme: "plain"
+    });
+  
+    return doc.save("invoice");
+  
+  }
   const Typeofpayments = [
     {
       value: "rent",
@@ -193,16 +431,20 @@ export default function PaymentForm() {
           }
         },
         totalExpenses: prevState.totalExpenses +  data.paymentAmount
-      }));  
+      })); 
+      if(printBill){
+        downloadInvoice(data,payoutId)
+      } 
       toast({
         title: t('changes-applied-0'),
         description: t('changes-applied-successfully'),
       });
-    console.log(data);
+
             reset(); 
           
           }
 
+             
   return (
     <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
       <CardHeader className="flex flex-row items-start bg-muted/50">
@@ -217,7 +459,7 @@ export default function PaymentForm() {
             size="sm"
             variant="outline"
             className="h-8 gap-1"
-            onClick={() => reset()}
+            onClick={()=>reset()}
           >
             <ResetIcon className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
@@ -249,7 +491,15 @@ export default function PaymentForm() {
               ))}
             </form>
           </Form>
-
+          <div className="flex items-center space-x-2 mb-3">
+      <Checkbox id="terms" checked={printBill} onClick={()=>setPrintBill(!printBill)}/>
+      <label
+        htmlFor="terms"
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+       {t('print-paiment-bill')} 
+       </label>
+    </div>
           <ImageUpload filesToUpload={filesToUpload} setFilesToUpload={setFilesToUpload}/>
         </CardContent>
       </ScrollArea>

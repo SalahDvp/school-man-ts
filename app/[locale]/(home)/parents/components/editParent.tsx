@@ -50,7 +50,6 @@ interface openModelProps {
     "parentPhone",
     "secondParentName",
     "secondParentPhone",
-    "salary",
     "totalPayment"
   ];
 
@@ -74,7 +73,6 @@ interface openModelProps {
     | 'parentPhone'
     | 'secondParentName'
     | 'secondParentPhone'
-    |'salary'
     |"numberOfChildren"
     | "totalPayment"
 const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
@@ -193,7 +191,7 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen,open,parent }) => {
       
     async function onSubmit(data: ParentFormValues) {
             const changes = getChanges(data);
-            const {value, label,parent, ...updatedData} = data;
+            const {value, label, ...updatedData} = data;
           await updateParent(updatedData,data.id)
           const documents= await updateDocuments(parent.documents && parent.documents> 0?parent.documents:[],filesToUpload,'Parents',parent.id)
           console.log("new odcuments",documents);

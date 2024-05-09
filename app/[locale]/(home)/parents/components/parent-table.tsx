@@ -99,7 +99,6 @@ export type parent = {
       numberOfChildren: 2,
       secondParentName: "Jane Doe",
       secondParentPhone: "+1987654321",
-      salary: 50000,
       paymentStatus: "Active",
       totalPayment: 10000})
     const getStatusColor = React.useCallback((status:Status) => {
@@ -162,7 +161,7 @@ export type parent = {
       header: () => <div >{t('payment-status-0')}</div>,
 
       cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("paymentStatus"))}}>{row.getValue("paymentStatus")}</Badge>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("paymentStatus"))}}>{t(row.getValue("paymentStatus"))}</Badge>
       ),
     },
     {
@@ -214,6 +213,18 @@ export type parent = {
       },
     },
   ]
+  const handleExport = () => {
+    const exceldata=parents.map((parent:any)=>({[`${t('Name')}`]:parent.parent,
+    [`${t('number-of-children-0')}`]:parent.numberOfChildren,
+    [`${t('payment-status-0')}`]:t(parent.paymentStatus),
+    [`${t('phone-number')}`]:parent.parentPhone,
+    [`${t('total-payment-0')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(parent.totalPayment),
+    }))
+    exportTableToExcel(t('parents-table'), exceldata);
+  };
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -250,10 +261,9 @@ export type parent = {
       },
     },
   })
+
  
-  const handleExport = () => {
-    exportTableToExcel(t('parents-table'), 'parents-table');
-  };
+
 
   
   return (

@@ -48,7 +48,7 @@ const fieldNames = [
   "parentPhone",
   "secondParentName",
   "secondParentPhone",
-  "salary"
+
 ];
 const genders = [
   {
@@ -75,7 +75,6 @@ type FormKeys =
   | 'parentPhone'
   | 'secondParentName'
   | 'secondParentPhone'
-  |'salary'
   |"numberOfChildren"
 
   type ParentFormValues = z.infer<typeof ParentRegistrationSchema>;

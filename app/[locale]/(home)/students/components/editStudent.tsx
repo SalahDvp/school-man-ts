@@ -261,11 +261,11 @@ useEffect(() => {
   };
   async function onSubmit(data: StudentFormValues) {
     const changes = getChanges(data);
-    const { value, label, student, ...updatedData } = data;
-    await updateStudent(updatedData,data.id)
+    const { value, label, ...updatedData } = data;
+    await updateStudent(updatedData,student.id)
     console.log(data);
     
-    const documents= await updateDocuments(student.documents && student.documents> 0?student.documents:[],filesToUpload,'Students',data.id)
+    const documents= await updateDocuments(student.documents && student.documents> 0?student.documents:[],filesToUpload,'Students',student.id)
 setStudents((prev:StudentFormValues[]) => {
   const updatedLevels = prev.map((student:StudentFormValues) =>
     student.id === data.id ? { ...data, id: data.id, student: `${data.firstName} ${data.lastName}`, documents: documents }: student

@@ -242,6 +242,22 @@ export type StudentSummary = {
       },
     },
   ]
+  const handleExport = () => {
+    const exceldata=students.map((student:any)=>({[`${t('Name')}`]:student.student,
+    [`${t('level')}`]:student.level,
+    [`${t('status')}`]:t(student.status),
+    [`${t('joining-date-0')}`]:student.joiningDate,
+    [`${t('amount-left')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(student.amountLeftToPay),
+    [`${t('total-amount-0')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(student.totalAmount),
+    }))
+    exportTableToExcel(t('students-table'),exceldata);
+  };
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -276,9 +292,7 @@ export type StudentSummary = {
   })
  
 
-  const handleExport = () => {
-    exportTableToExcel(t('students-table'), 'students-table');
-  };
+
   return (
     <>
 

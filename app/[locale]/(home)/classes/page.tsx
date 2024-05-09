@@ -134,6 +134,15 @@ function Classes() {
           },
         },
       ]
+      const handleExport = () => {
+        const exceldata=classes.map((cls:any)=>({[`${t('Name')}`]:cls.name,
+        [`${t('level')}`]:cls.levelName,
+        [`${t('class')}`]:cls.className,
+        [`${t('capacity')}`]:cls.capacity,
+        [`${t('main-teacher')}`]: cls.mainTeacher.name,
+        }))
+        exportTableToExcel(t('classes-table'), exceldata);
+      };
       const openEditSheet = (cls:ClassFormValues) => {
         setOpen(true);
         setCls(cls);
@@ -178,9 +187,7 @@ function Classes() {
           table.getColumn("levelName")?.setFilterValue(classType);
         } 
       };
-      const handleExport = () => {
-        exportTableToExcel(t('classes-table'), 'classes-table');
-      };
+
   return (
 
       <div className="flex flex-col sm:gap-4 sm:py-4 ">

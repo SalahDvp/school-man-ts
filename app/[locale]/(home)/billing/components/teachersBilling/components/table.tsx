@@ -151,7 +151,7 @@ header:() => <div>{t('teacher')}</div>,
       accessorKey: "status",
       header:() => <div>{t('status')}</div>, 
       cell: ({ row }) => (
-        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{row.getValue("status")}</Badge>
+        <Badge   className="capitalize hidden sm:table-cell" style={{backgroundColor:getStatusColor(row.getValue("status"))}}>{t(row.getValue("status"))}</Badge>
       ),
     },
 
@@ -198,6 +198,20 @@ header:() => <div>{t('teacher')}</div>,
       },
     },
   ]
+  const handleExport = () => {
+    const exceldata=teachersSalary.map((teacher:any)=>({[`${t('teacher')}`]:teacher.teacher.name,
+    [`${t('transaction')}`]:teacher.typeofTransaction,
+   
+    [`${t('salary-date')}`]:teacher.salaryDate,
+    [`${t('month-paid')}`]:teacher.monthOfSalary,
+    [`${t('status')}`]: t(teacher.status),
+    [`${t('amount')}`]: new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "DZD",
+    }).format(teacher.salaryAmount),
+    }))
+    exportTableToExcel(t('teachers-salary-table'),exceldata);
+  };
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -235,9 +249,7 @@ header:() => <div>{t('teacher')}</div>,
       },
     },
   })
-  const handleExport = () => {
-    exportTableToExcel(t('teachers-salary-table'), 'teachers-salary-table');
-  };
+
   return (
     <>
 <div className="flex items-center justify-between">

@@ -433,5 +433,14 @@
   "your-student-payments": "Vos paiements étudiants",
   "your-students": "Vos étudiants",
   "your-students-text": "Présentation de notre tableau de bord dynamique pour les étudiants pour une gestion transparente et une analyse approfondie.",
-  "your-teachers": "Vos professeurs"
+  "your-teachers": "Vos professeurs",
+  "print-paiment-bill": "Imprimer la facture de paiement",
+  "invoice": "Facture",
+  "billed-to": "Facturé à:",
+  "amount-due": "Montant dû:",
+  "Status": "Statut",
+  "products-and-services": "Des produits",
+  "total-amount-2": "Montant total:",
+  "total-tax": "Taxe total:",
+  "terms-and-notes": "Termes"
 }

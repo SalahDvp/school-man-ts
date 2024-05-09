@@ -431,5 +431,16 @@
   "NotFoundPage": {
     "title": "not found"
   },
-  "rent": "Rent"
+  "rent": "Rent",
+  "print-paiment-bill": "Print paiment bill",
+  "invoice": "Invoice",
+  "reference-id": "Reference: #{0}",
+  "ninvoice-number-id": "\\nInvoice number: {0}",
+  "billed-to": "Billed to:",
+  "amount-due": "Amount due:",
+  "Status": "Status",
+  "products-and-services": "Products & Services",
+  "total-amount-2": "Total amount:",
+  "total-tax": "Total tax:",
+  "terms-and-notes": "Terms & notes"
 }

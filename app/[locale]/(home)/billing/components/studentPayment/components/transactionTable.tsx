@@ -53,7 +53,7 @@ import { useData } from "@/context/admin/fetchDataContext"
 import EditStudentPaymentForm from "./editStudentPaymentForm"
 import { useTranslations } from "next-intl"
 import { exportTableToExcel } from "@/components/excelExport"
-
+import { format } from 'date-fns';
 
 type Status = 'paid' | 'not paid' | 'rejected';
 
@@ -107,7 +107,18 @@ type Status = 'paid' | 'not paid' | 'rejected';
           return '#FFFFFF'; // Default to white for unknown status
       }
     }, []);
-    
+    const handleExport = () => {
+      const exceldata=invoices.map((invoice:any)=>({[`${t('transaction-id')}`]:invoice.id,
+      [`${t('student')}`]:invoice.student.student,
+      [`${t('amount')}`]: new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "DZD",
+      }).format(invoice.paymentAmount),
+      [`${t('payemnt-date')}`]:invoice.paymentDate,
+      [`${t('status')}`]:t(invoice.status),
+      [`${t('from')}`]:invoice.fromWho}))
+      exportTableToExcel(t('students-payments-transactions-table'),exceldata);
+    };
    const columns: ColumnDef<any>[] = [
     {
       id: "select",
@@ -170,7 +181,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
       cell: ({ row }) => (
        
 
-        <div className="capitalize hidden sm:table-cell"> {((row.getValue("paymentDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+        <div className="capitalize hidden sm:table-cell"> {format(row.getValue("paymentDate"), 'dd/MM/yyyy')}</div>
       ),
     },
     {
@@ -252,9 +263,7 @@ type Status = 'paid' | 'not paid' | 'rejected';
   })
  
 
-  const handleExport = () => {
-    exportTableToExcel(t('students-payments-transactions-table'), 'students-payments-transactions-table');
-  };
+
   
   return (
     <>

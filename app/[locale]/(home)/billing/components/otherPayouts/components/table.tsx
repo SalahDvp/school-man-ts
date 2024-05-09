@@ -54,7 +54,6 @@ import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-payment"
 import { useTranslations } from "next-intl";
 import { exportTableToExcel } from "@/components/excelExport";
-
 type Status = 'paid' | 'not paid' 
 type PaymentFormValues = z.infer<typeof PaymentRegistrationSchema>  & {id:string };
 export const DataTableDemo = () => {
@@ -83,6 +82,17 @@ export const DataTableDemo = () => {
        status:"paid",
        notesTobeAdded:"kitchen needded to be fixed"
     })
+    const handleExport = () => {
+      const exceldata=payouts.map((payout:any)=>({[`${t('payment')}`]:payout.paymentTitle,
+      [`${t('method')}`]:payout.typeofPayment,
+      [`${t('payemnt-date')}`]:payout.paymentDate,
+      [`${t('status')}`]:payout.status,
+      [`${t('amount')}`]: new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "DZD",
+      }).format(payout.paymentAmount)}))
+      exportTableToExcel(t('other-payments-transactions-table'),exceldata);
+    };
    const columns: ColumnDef<any>[] = [
     {
       id: "select",
@@ -217,9 +227,77 @@ export const DataTableDemo = () => {
       },
     },
   })
-  const handleExport = () => {
-    exportTableToExcel(t('other-payments-transactions-table'), 'other-payments-transactions-table');
-  };
+  // const generatePDF = (transaction:any) => {
+  //   const doc = new jsPDF();
+  //   doc.setFontSize(12);
+  //   const logoImg = new Image();
+  //   logoImg.src = '/icon-192x192.png'; 
+  // doc.addImage(logoImg, 'PNG', 80, 20, 25, 25); 
+  
+  
+  //   // Company Name
+  //   const companyName = 'School erp';
+  //   doc.text(companyName, 75,50); // Position below the logo
+  
+  //   // Page numbering
+  //   const pageCount = doc.internal.pages.length;
+  //   for (let i = 1; i <= pageCount; i++) {
+  //       doc.setPage(i);
+  //       doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.getWidth() - 50, 10);
+  //   }
+  
+  //   // Client Information
+  
+  //   doc.text(`Name and Surname: ${"transaction.name"}`, 10, 70); // Adjust position and content as needed
+  //   doc.text(`date: ${new Date(transaction.date.toDate()).toLocaleDateString()}`, 10, 80); // Adjust position and content as needed
+  
+  //   // Company Information
+  //   const companyInfoX = doc.internal.pageSize.getWidth() - 120;
+  //   doc.text(`Company Name: ${companyName}`, companyInfoX+100, 70,{ align: 'right' }); // Adjust position and content as needed
+  //   doc.text('Company Address:Algeria', companyInfoX+100, 80,{ align: 'right' }); // Adjust position and content as needed
+  
+  
+  //   const itemizedListHeader = ['Description', 'Date', 'Type', 'Total Price'];
+  //   const itemizedListData = [
+  //       ["Match", new Date(transaction.date.toDate()).toLocaleDateString(), transaction.payment, `$${transaction.price}`]
+  //   ];
+    
+  //   doc.autoTable({
+  //       startY: 100,
+  //       head: [itemizedListHeader],
+  //       body: itemizedListData,
+  //       theme: 'grid', // Add borders and grid theme
+  //       margin: { top: 10 },
+  //   });
+  //   // Subtotal, Tax, Total
+  //   const subtotalText = `Subtotal: $${transaction.price}`;
+  //   const taxText = `Tax (18%): $${transaction.price*0.18}`;
+  //   const totalText = `Total: $${transaction.price+(transaction.price*0.18)}`;
+  // // Calculate the x-coordinate for right alignment
+  // const textWidth = doc.getStringUnitWidth(subtotalText) * doc.internal.getFontSize(); // Assuming font size of 12
+  // const rightAlignX = doc.internal.pageSize.getWidth() +25 - textWidth;
+  // // Subtotal, Tax, Total
+  // doc.text(subtotalText, rightAlignX, doc.autoTable.previous.finalY + 10, { align: 'left' }); // Align text to the right
+  // doc.text(taxText, rightAlignX, doc.autoTable.previous.finalY + 20, { align: 'left' }); // Align text to the right
+  // doc.text(totalText, rightAlignX, doc.autoTable.previous.finalY + 30, { align: 'left' }); // Align text to the right
+  
+  // // Payment Information
+  // doc.text(`Payment Method: ${transaction.payment}`, rightAlignX+35, doc.autoTable.previous.finalY + 50, { align: 'right' }); // Align text to the right
+  // doc.text(`Payment Date: ${new Date(transaction.date.toDate()).toLocaleDateString()}`, rightAlignX+35, doc.autoTable.previous.finalY + 60, { align: 'right' }); // Align text to the right
+    
+  // // Footer
+  // const footerTextHeight = 10; // Assuming font size of 10
+  // const footerTextY = doc.internal.pageSize.getHeight() - 20 - footerTextHeight; // Adjust spacing as needed
+  
+  // // Add footer text centered horizontally
+  // const textWidth1 = doc.getStringUnitWidth('Thank you for your business!') * doc.internal.getFontSize();
+  // const textWidth2 = doc.getStringUnitWidth('Contact us at support@example.com for any inquiries.') * doc.internal.getFontSize();
+  // const footerTextX1 = (doc.internal.pageSize.getWidth() - textWidth1);
+  // const footerTextX2 = (doc.internal.pageSize.getWidth() - textWidth2) ;
+  // doc.text('Thank you for your business!', footerTextX1+15, footerTextY);
+  // doc.text('Contact us at support@example.com for any inquiries.', footerTextX1, footerTextY + 10);
+  // doc.save('invoice_receipt.pdf');
+  // };
   return (
     <>
 <div className="flex items-center justify-between">
