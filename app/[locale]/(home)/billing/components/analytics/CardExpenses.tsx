@@ -17,11 +17,11 @@ const getMonthAbbreviation = (fullMonth:string) => {
   return monthIndex !== -1 ? monthNames[monthIndex].slice(0, 3) : '';
 };
 const { analytics } = useData();
-const data:any[]=Object.keys(analytics.data).map((key:any) => ({
+const data:any[]=analytics.data?Object.keys(analytics.data).map((key:any) => ({
   month:getMonthAbbreviation(analytics.data[key].month),
   income:analytics.data[key].income || 0,
   expenses:analytics.data[key].expenses || 0,
-}));
+})):[];
 const getCurrentMonthData = () => {
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });
   return data.find(item => item.month === currentMonth);

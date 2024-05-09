@@ -23,7 +23,7 @@ const getMonthAbbreviation = (fullMonth: string) => {
   return monthIndex !== -1 ? monthNames[monthIndex].slice(0, 3) : '';
 };
 
-const data: any[] = Object.keys(analytics.data)
+const data: any[] =analytics.data?Object.keys(analytics.data)
   .map((key: any) => ({
     month: getMonthAbbreviation(analytics.data[key].month),
     income: analytics.data[key].income || 0,
@@ -37,7 +37,7 @@ const data: any[] = Object.keys(analytics.data)
     const aIndex = monthNames.findIndex(month => month.toLowerCase().startsWith(a.month.toLowerCase()));
     const bIndex = monthNames.findIndex(month => month.toLowerCase().startsWith(b.month.toLowerCase()));
     return aIndex - bIndex;
-  });
+  }):[];
 
 const getCurrentMonthData = () => {
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });
