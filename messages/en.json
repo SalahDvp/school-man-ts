@@ -354,7 +354,7 @@
   "typeofPayment": "Type of payment",
   "date": "Date",
   "payemnt-date": "payemnt Date",
-  "method": "Method",
+  "method": "Bill type",
   "payment": "Payment",
   "filter-payment": "Filter Payment...",
   "your-expences": "Your Expences",
@@ -442,5 +442,13 @@
   "products-and-services": "Products & Services",
   "total-amount-2": "Total amount:",
   "total-tax": "Total tax:",
-  "terms-and-notes": "Terms & notes"
+  "terms-and-notes": "Terms & notes",
+  "Amount": "Amount",
+  "shipping-address": "Shipping address:",
+  "Subtotal:": "Subtotal:",
+  "total-tax-0": "Total tax",
+  "total-amount-3": "Total amount",
+  "From:": "From:",
+  "payslip": "Payslip",
+  "print-bill": "Print bill"
 }

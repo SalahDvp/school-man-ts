@@ -85,7 +85,7 @@
   "credit-card": "Carte de crédit",
   "cur": "",
   "dark": "Sombre",
-  "dashboard": "accueil",
+  "dashboard": "Accueil",
   "date": "Date",
   "date-of-birth": "Date de naissance",
   "dateOfBirth": "Date de naissance",
@@ -200,7 +200,7 @@
   "may": "Peut",
   "medical-conditions": "Les conditions médicales",
   "medicalConditions": "Les conditions médicales",
-  "method": "Méthode",
+  "method": "Type de facture",
   "month": "Mois",
   "month-of-salary": "Mois De Salaire",
   "month-paid": "Mois payé",
@@ -442,5 +442,13 @@
   "products-and-services": "Des produits",
   "total-amount-2": "Montant total:",
   "total-tax": "Taxe total:",
-  "terms-and-notes": "Termes"
+  "terms-and-notes": "Termes",
+  "Amount": "Montant",
+  "shipping-address": "Adresse de livraison:",
+  "Subtotal:": "Total:",
+  "total-tax-0": "Taxe total",
+  "total-amount-3": "Montant total",
+  "From:": "Depuis:",
+  "payslip": "Fiche de paie",
+  "print-bill": "Imprimer la facture"
 }

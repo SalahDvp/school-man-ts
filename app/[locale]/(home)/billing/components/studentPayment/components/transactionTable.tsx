@@ -54,6 +54,7 @@ import EditStudentPaymentForm from "./editStudentPaymentForm"
 import { useTranslations } from "next-intl"
 import { exportTableToExcel } from "@/components/excelExport"
 import { format } from 'date-fns';
+import { downloadInvoice } from "./generateInvoice"
 
 type Status = 'paid' | 'not paid' | 'rejected';
 
@@ -222,7 +223,19 @@ type Status = 'paid' | 'not paid' | 'rejected';
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(invoice)}>
                 {t('view-transaction-details')} </DropdownMenuItem>
-             
+                <DropdownMenuItem onClick={()=>   downloadInvoice({
+      student: invoice.student.student,
+      level: invoice.level,
+      parent: invoice.parent.name,
+      paymentAmount: invoice.paymentAmount,
+     paymentDate: format(invoice.paymentDate, 'dd/MM/yyyy'),
+      status: t(invoice.status),
+      fromWho: invoice.fromWho
+    },invoice.id,[t('student'), t('level'), t('parent'), t('amount'), t('paymentDate'), t('status'), t('fromWho')],
+  {
+    amount:t("Amount"), from:t('From:'), shippingAddress:t('shipping-address'), billedTo:t('billed-to'), subtotal:t('Subtotal:'), totalTax:t('total-tax-0'), totalAmount:t('total-amount-3'),invoice:t('invoice')
+  })}>
+                {t('print-bill')} </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )

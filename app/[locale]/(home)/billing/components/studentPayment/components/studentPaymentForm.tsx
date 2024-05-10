@@ -36,8 +36,8 @@ import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadF
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 import { useTranslations } from "next-intl";
 import { Checkbox } from "@/components/ui/checkbox"
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { downloadInvoice, generateBill } from "./generateInvoice";
+import { format } from "date-fns";
 const fieldNames: string[] = [
   'student',
   'parent',
@@ -278,243 +278,7 @@ const onSelected=(selectedStudent:any)=>{
         return <Input {...field} />;
     }
   };
-  function downloadInvoice(paymentData:any,id:string){
 
-    const doc = new jsPDF();
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: 'school Erp',
-            styles: {
-              halign: 'left',
-              fontSize: 20,
-              textColor: '#ffffff'
-            }
-          },
-          {
-            content: t('invoice'),
-            styles: {
-              halign: 'right',
-              fontSize: 20,
-              textColor: '#ffffff'
-            }
-          }
-        ],
-      ],
-      theme: 'plain',
-      styles: {
-        fillColor: '#3366ff'
-      }
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: t('reference-id',{id:id})
-            +`\n${t('date')}: ${paymentData.paymentDate}`
-            +t('ninvoice-number-id', {id:id}),
-            styles: {
-              halign: 'right'
-            }
-          }
-        ],
-      ],
-      theme: 'plain'
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: t('billed-to')
-            +`\n${paymentData.toWho}`
-            +'\nBilling Address line 1'
-            +'\nBilling Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
-            styles: {
-              halign: 'left'
-            }
-          },
-          {
-            content: 'Shipping address:'
-            +`\n${paymentData.toWho}`
-            +'\nShipping Address line 1'
-            +'\nShipping Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
-            styles: {
-              halign: 'left'
-            }
-          },
-          {
-            content: 'From:'
-            +'\nSchool erp'
-            +'\nShipping Address line 1'
-            +'\nShipping Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
-            styles: {
-              halign: 'right'
-            }
-          }
-        ],
-      ],
-      theme: 'plain'
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: t('amount-due'),
-            styles: {
-              halign:'right',
-              fontSize: 14
-            }
-          }
-        ],
-        [
-          {
-            content: `DZD${paymentData.paymentAmount}`,
-            styles: {
-              halign:'right',
-              fontSize: 20,
-              textColor: '#3366ff'
-            }
-          }
-        ],
-        [
-          {
-            content: `${t("Status")}: ${paymentData.status}`,
-            styles: {
-              halign:'right'
-            }
-          }
-        ]
-      ],
-      theme: 'plain'
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: t('products-and-services'),
-            styles: {
-              halign:'left',
-              fontSize: 14
-            }
-          }
-        ]
-      ],
-      theme: 'plain'
-    });
-    const valuesArray:any[] = Object.values(paymentData);
-    autoTable(doc, {
-      head: [['id', 'Title', 'Amount', 'type', 'paymentDate', 'from', 'to', 'status', 'notes']],
-      body: [
-        valuesArray
-      ],
-      theme: 'striped',
-      headStyles:{
-        fillColor: '#343a40'
-      }
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: 'Subtotal:',
-            styles:{
-              halign:'right'
-            }
-          },
-          {
-            content: '$3600',
-            styles:{
-              halign:'right'
-            }
-          },
-        ],
-        [
-          {
-            content: t('total-tax'),
-            styles:{
-              halign:'right'
-            }
-          },
-          {
-            content: 'DZD0',
-            styles:{
-              halign:'right'
-            }
-          },
-        ],
-        [
-          {
-            content: t('total-amount-2'),
-            styles:{
-              halign:'right'
-            }
-          },
-          {
-            content: `DZD${paymentData.paymentAmount}`,
-            styles:{
-              halign:'right'
-            }
-          },
-        ],
-      ],
-      theme: 'plain'
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: t('terms-and-notes'),
-            styles: {
-              halign: 'left',
-              fontSize: 14
-            }
-          }
-        ],
-        [
-          {
-            content: 'orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia'
-            +'molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum'
-            +'numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium',
-            styles: {
-              halign: 'left'
-            }
-          }
-        ],
-      ],
-      theme: "plain"
-    });
-  
-    autoTable(doc, {
-      body: [
-        [
-          {
-            content: 'This is a centered footer',
-            styles: {
-              halign: 'center'
-            }
-          }
-        ]
-      ],
-      theme: "plain"
-    });
-  
-    return doc.save("invoice");
-  
-  }
   async function onSubmit(data:StudentPaymentFormValues) {
     const month= getMonthInfo(data.paymentDate)
     const transactionId=await addPaymentTransaction({...data,documents:[]})
@@ -542,13 +306,24 @@ const onSelected=(selectedStudent:any)=>{
       totalIncome: prevState.totalIncome +  data.paymentAmount
     }));  
     if(printBill){
-      downloadInvoice(data,transactionId)
+      downloadInvoice({
+      student: data.student.student,
+      level: data.level,
+      parent: data.parent.name,
+      paymentAmount: data.paymentAmount,
+     paymentDate: format(data.paymentDate, 'dd/MM/yyyy'),
+      status: t(data.status),
+      fromWho: data.fromWho
+    },transactionId,[t('student'), t('level'), t('parent'), t('amount'), t('paymentDate'), t('status'), t('fromWho')],
+  {
+    amount:t("Amount"), from:t('From:'), shippingAddress:t('shipping-address'), billedTo:t('billed-to'), subtotal:t('Subtotal:'), totalTax:t('total-tax-0'), totalAmount:t('total-amount-3'),invoice:t('invoice')
+  })
     } 
     toast({
       title: t('changes-applied-0'),
       description: t('changes-applied-successfully'),
     });
-    console.log(data);
+   console.log(data);
             reset(); 
   }
 

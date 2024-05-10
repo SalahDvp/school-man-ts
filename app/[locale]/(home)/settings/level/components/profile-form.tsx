@@ -27,41 +27,6 @@ import { useTranslations } from "next-intl";
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 
-const defaultValues:ProfileFormValues = {
-  bio:  "I own a computer.",
-  urls:  [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" },
-  ],
-  schoolName:  "Sample School",
-  email:  "salah@email.com",
-  phoneNumber:  "+1 1234567890",
-  capacity: 500,
-  nationalRanking:  10,
-  address:  "123 Main St, City, Country",
-  openDays:  [
-    { day: "Monday", start: "09:00", end: "17:00", state: "open" },
-    { day: "Tuesday", start: "09:00", end: "17:00", state: "open" },
-    { day: "Wednesday", start: "09:00", end: "17:00", state: "open" },
-    { day: "Thursday", start: "09:00", end: "17:00", state: "open" },
-    { day: "Friday", start: "09:00", end: "17:00", state: "open" },
-    { day: "Saturday", start: "10:00", end: "14:00", state: "open" },
-    { day: "Sunday", start: "07:00", end: "18:00", state: "open" }
-  ],
-  classNames : [
-    "Class A",
-    "Class B",
-    "Class C",
-    "Class D",
-    "Class E",
-    "Class F",
-    "Class G",
-    "Class H",
-    "Class I",
-    "Class J"
-  ]
-};
-
 
 
 export function ProfileForm() {
@@ -70,7 +35,31 @@ export function ProfileForm() {
 const t=useTranslations()
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: {
+      bio:  "I own a computer.",
+      urls:  [
+        { value: "https://shadcn.com" },
+        { value: "http://twitter.com/shadcn" },
+      ],
+      schoolName:  "Sample School",
+      email:  "salah@email.com",
+      phoneNumber:  "+1 1234567890",
+      capacity: 500,
+      nationalRanking:  10,
+      address:  "123 Main St, City, Country",
+      openDays:  [
+        { day: "Monday", start: "09:00", end: "17:00", state: "open" },
+        { day: "Tuesday", start: "09:00", end: "17:00", state: "open" },
+        { day: "Wednesday", start: "09:00", end: "17:00", state: "open" },
+        { day: "Thursday", start: "09:00", end: "17:00", state: "open" },
+        { day: "Friday", start: "09:00", end: "17:00", state: "open" },
+        { day: "Saturday", start: "10:00", end: "14:00", state: "open" },
+        { day: "Sunday", start: "07:00", end: "18:00", state: "open" }
+      ],
+      classNames : [
+        "Class A",
+      ]
+    }
 
   });
 
@@ -318,7 +307,7 @@ const t=useTranslations()
           <OpenDaysTable openDays={openDays} form={form}/>
         <LoadingButton  
          loading={form.formState.isSubmitting}
-          type="submit">{t('update-profile-0')}</LoadingButton>
+>{t('update-profile-0')}</LoadingButton>
       </form>
     </Form>
   );

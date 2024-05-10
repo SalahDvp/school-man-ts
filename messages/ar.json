@@ -352,7 +352,7 @@
   "notesTobeAdded": "ملاحظات يجب إضافتها",
   "toWho": "لمن",
   "payemnt-date": "تاريخ السداد",
-  "method": "طريقة",
+  "method": "نوع الفاتورة",
   "payment": "قسط",
   "filter-payment": "تصفية الدفع...",
   "your-expences": "النفقات الخاصة بك",
@@ -442,5 +442,13 @@
   "products-and-services": "منتجات",
   "total-amount-2": "المبلغ الإجمالي:",
   "total-tax": "مجموع الضريبة:",
-  "terms-and-notes": "شروط"
+  "terms-and-notes": "شروط",
+  "Amount": "كمية",
+  "shipping-address": "عنوان الشحن:",
+  "Subtotal:": "المجموع الفرعي:",
+  "total-tax-0": "مجموع الضريبة",
+  "total-amount-3": "المبلغ الإجمالي",
+  "From:": "من:",
+  "payslip": "قسيمة الدفع",
+  "print-bill": "طباعة الفاتورة"
 }

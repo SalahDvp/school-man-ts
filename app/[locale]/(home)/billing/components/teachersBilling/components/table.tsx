@@ -53,6 +53,8 @@ import { useData } from "@/context/admin/fetchDataContext"
 import SheetDemo from "./edit-teacher-salary"
 import { useTranslations } from "next-intl";
 import { exportTableToExcel } from "@/components/excelExport";
+import { downloadInvoice } from "./generateInvoice";
+import { format } from "date-fns";
 
 export type teacherSalary = {
   
@@ -191,7 +193,19 @@ header:() => <div>{t('teacher')}</div>,
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={()=>openEditSheet(teacherSalary)}>
                 {t('view-payment')} </DropdownMenuItem>
-              {/* <DropdownMenuItem>remove sa</DropdownMenuItem> */}
+                <DropdownMenuItem onClick={()=>  downloadInvoice({
+          toWho: teacherSalary.teacher.name,
+          typeofPayment: teacherSalary.typeofTransaction,
+          paymentAmount: teacherSalary.salaryAmount,
+          salaryMonth:teacherSalary.monthOfSalary,
+         paymentDate: format(teacherSalary.salaryDate, 'dd/MM/yyyy'),
+          status: t(teacherSalary.status),
+        
+        },teacherSalary.id,[t('teacher'), t('method'), t('amount'), t("monthOfSalary"),t('paymentDate'), t('status')],
+      {
+        amount:t("Amount"), from:t('From:'), shippingAddress:t('shipping-address'), billedTo:t('billed-to'), subtotal:t('Subtotal:'), totalTax:t('total-tax-0'), totalAmount:t('total-amount-3'),invoice:t('payslip')
+      })}>
+                {t('print-bill')} </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )

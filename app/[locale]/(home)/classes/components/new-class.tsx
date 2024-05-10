@@ -56,7 +56,7 @@ export function ClassForm() {
   const form = useForm<ClassFormValues>({
     resolver: zodResolver(classSchema),
     defaultValues: {
-        teachers: [],
+        teachers: [{}],
         students: [],
   
 },
