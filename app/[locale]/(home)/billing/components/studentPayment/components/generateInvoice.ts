@@ -248,7 +248,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       body: [
         [
           {
-            content: 'school Erp',
+            content: 'Newton school',
             styles: {
               halign: 'left',
               fontSize: 20,
@@ -267,9 +267,6 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         ],
       ],
       theme: 'plain',
-      styles: {
-        fillColor: '#3366ff'
-      }
     });
   
     autoTable(doc, {
@@ -293,10 +290,10 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
           {   
             content: words.billedTo
             +`\n${paymentData.parent}`
-            +'\nBilling Address line 1'
-            +'\nBilling Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
+            +'\n'
+            +'\n'
+            +'\n'
+            +'\n',
             styles: {
               halign: 'left'
             }
@@ -305,21 +302,21 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
     
             content: words.shippingAddress
             +`\n${paymentData.parent}`
-            +'\nShipping Address line 1'
-            +'\nShipping Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
+            +'\n'
+            +'\n'
+            +'\n'
+            +'\n',
             styles: {
               halign: 'left'
             }
           },
           {        
             content:words.from
-            +'\nSchool erp'
-            +'\nShipping Address line 1'
-            +'\nShipping Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
+            +'\nNewton school'
+            +'\n'
+            +'\n'
+            +'\n'
+            +'\n',
             styles: {
               halign: 'right'
             }
@@ -389,7 +386,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         body: [
           [
             {
-              content: 'school Erp',
+              content: 'Newton school',
               styles: {
                 halign: 'left',
                 fontSize: 20,
@@ -434,10 +431,10 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             {   
               content: words.billedTo
               +`\n${paymentData.parent}`
-              +'\nBilling Address line 1'
-              +'\nBilling Address line 2'
-              +'\nZip code - City'
-              +'\nCountry',
+              +'\n'
+              +'\n'
+              +'\n'
+              +'\n',
               styles: {
                 halign: 'left'
               }
@@ -446,10 +443,10 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       
               content: words.shippingAddress
               +`\n${paymentData.parent}`
-              +'\nShipping Address line 1'
-              +'\nShipping Address line 2'
-              +'\nZip code - City'
-              +'\nCountry',
+              +'\n'
+              +'\n'
+              +'\n'
+              +'\n',
               styles: {
                 halign: 'left'
               }
@@ -457,10 +454,10 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             {        
               content:words.from
               +'\nSchool erp'
-              +'\nShipping Address line 1'
-              +'\nShipping Address line 2'
-              +'\nZip code - City'
-              +'\nCountry',
+              +'\n'
+              +'\n'
+              +'\n'
+              +'\n',
               styles: {
                 halign: 'right'
               }
