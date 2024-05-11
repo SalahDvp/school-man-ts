@@ -365,7 +365,7 @@ const onSelected=(selectedStudent:any)=>{
       );
       const month = getMonthInfo(data.paymentDate);
     
-      let months;
+      let months: Record<string, MonthData>;
     
       const transactionId = await addPaymentTransaction(
         { ...data, documents: [] },
