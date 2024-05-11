@@ -142,7 +142,7 @@ interface DataTableDemoProps {
               <Badge
                 style={{ backgroundColor: isPaid === 'Paid' ? "#4CAF50" : "#F44336" }}
               >
-       {isPaid === 'Paid' && isPaid}
+       {isPaid === t('paid') && isPaid}
             
               </Badge>
             );

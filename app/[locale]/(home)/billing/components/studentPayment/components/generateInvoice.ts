@@ -453,7 +453,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             },
             {        
               content:words.from
-              +'\nSchool erp'
+              +'\nNewton school'
               +'\n'
               +'\n'
               +'\n'
