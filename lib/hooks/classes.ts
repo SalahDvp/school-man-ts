@@ -14,12 +14,6 @@ export const addClass = async (cls: ClassFormValue) => {
         cls.students.forEach((student) => {
             const studentRef =doc(db,'Students',student.id)
             batch.update(studentRef, {
-                amountLeftToPay: cls.level.fee,
-                totalAmount: cls.level.fee,
-                startDate: new Date(cls.level.start),
-                nextPaymentDate: new Date(cls.level.start),
-                lastPaymentDate: new Date(cls.level.start),
-                level:cls.level.level,
                 class:{name:cls.name,id:classRef.id}
             });
          
@@ -65,12 +59,6 @@ interface ElementWithId {
         added.push(item);
         const studentRef = doc(db, 'Students', item.id);
         batch.update(studentRef, {
-          amountLeftToPay: cls.level.fee,
-          totalAmount: cls.level.fee,
-          startDate: new Date(cls.level.start),
-          nextPaymentDate: new Date(cls.level.start),
-          lastPaymentDate: new Date(cls.level.start),
-          level: cls.level.level,
           class: { name: cls.name, id: cls.id }
         });
       }
@@ -84,12 +72,6 @@ interface ElementWithId {
         deleted.push(item);
         const studentRef = doc(db, 'Students', item.id);
         batch.update(studentRef, {
-          amountLeftToPay: 0,
-          totalAmount: 0,
-          startDate: new Date(),
-          nextPaymentDate: new Date(),
-          lastPaymentDate: new Date(),
-          level: null,
           class: null,
         });
       }

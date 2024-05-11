@@ -111,12 +111,6 @@ updatedStudents.added.map((student)=>{
   setStudents((prev:any[]) => {
     const updatedLevels = prev.map((std:any) =>
       std.id === student.id ? { ...std,
-        amountLeftToPay: levelData.fee,
-        totalAmount: levelData.fee,
-        startDate: levelData.start,
-        nextPaymentDate: levelData.start,
-        lastPaymentDate: levelData.start,
-        level:levelData.level,
         class:{name:values.name,id:values.id}}: std
     );
     return updatedLevels;
@@ -126,12 +120,6 @@ updatedStudents.deleted.map((student)=>{
   setStudents((prev:any[]) => {
     const updatedLevels = prev.map((std:any) =>
       std.id === student.id ? { ...std,
-        amountLeftToPay: 0,
-        totalAmount: 0,
-        startDate:new Date(),
-        nextPaymentDate: new Date(),
-        lastPaymentDate: new Date(),
-        level:null,
         class:null}: std
     );
     return updatedLevels;

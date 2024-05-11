@@ -45,6 +45,11 @@ export const pathnames = {
     "ar":   "/settings",
     "fr":"/settings"
   },
+  "/students2": {
+    "en":  "/students2",
+    "ar":   "/students2",
+    "fr":"/students2"
+  },
   "/profile": {
     "en":   "/settings",
     "ar":   "/settings",

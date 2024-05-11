@@ -87,12 +87,6 @@ async function onSubmit(values:ClassFormValues) {
     setStudents((prev:any[]) => {
                 const updatedLevels = prev.map((std:any) =>
                   std.id === student.id ? { ...std,
-                    amountLeftToPay: values.level.fee,
-                    totalAmount: values.level.fee,
-                    startDate: values.level.start,
-                    nextPaymentDate: values.level.start,
-                    lastPaymentDate: values.level.start,
-                    level:values.level.level,
                     class:{name:values.name,id:classRef}}: std
                 );
                 return updatedLevels;

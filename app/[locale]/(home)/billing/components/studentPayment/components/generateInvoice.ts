@@ -241,7 +241,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
     return doc.save("invoice");
   
   }
-  export function generateBill(paymentData:any,id:string,titles:any[],words:any) {
+  export function generateBill(paymentData:any,id:string,titles:any[],words:any,paidMonths:any) {
     const doc = new jsPDF();
   
     autoTable(doc, {
@@ -349,7 +349,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             'May 24', 'Jun 24', 'Jul 24'
           ]],
         body: [
-          ["paid","paid","paid"],
+          paidMonths,
         ],
         theme: 'grid',
         headStyles:{
@@ -369,7 +369,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         body: [
           [
             {
-              content: '- - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+              content: '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -',
               styles: {
                 halign: 'center',
                 fontSize: 20,
@@ -489,7 +489,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               'May 24', 'Jun 24', 'Jul 24'
             ]],
           body: [
-            ["paid","paid","paid"],
+            paidMonths,
           ],
           theme: 'grid',
           headStyles:{

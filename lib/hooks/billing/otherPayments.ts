@@ -6,9 +6,6 @@ import { PaymentRegistrationSchema } from "@/validators/paymentSchema";
 import { z } from "zod";
 import { getMonthInfo } from "./teacherPayment";
 
-
-
-
 type PaymentFormValues = z.infer<typeof  PaymentRegistrationSchema> & {documents?:any};
 export const addPayment = async (transaction:PaymentFormValues) => {
     try {

@@ -65,8 +65,11 @@ export type StudentSummary = {
   salary: number;
 
 };
+interface DataTableDemoProps {
+  filter: string;
+}
   type StudentFormValues = z.infer<typeof studentRegistrationSchema>  & {id:string };
-  export const DataTableDemo = () => {
+  export const DataTableDemo: React.FC<DataTableDemoProps> = ({ filter }) => {
     const [open,setOpen]=React.useState(false)
     const t=useTranslations()
     const {students}=useData()
@@ -101,147 +104,99 @@ export type StudentSummary = {
       amountLeftToPay: 500,
       class: { name: 'Class Name', id: 'class123' },
     })
+      // Define your table and set up filtering
+  React.useEffect(() => {
+         
+    if (filter === "All") {
+      table.resetColumnFilters()
+    } else {
+      table.getColumn("level")?.setFilterValue(filter);
+    } 
+  }, [filter]); 
     const openEditSheet = (student:StudentFormValues) => {
       setStudent(student)
       setOpen(true); // Open the sheet after setting the level
     };
-    const getStatusColor = React.useCallback((status:Status) => {
-      switch (status) {
-        case 'accepted':
-          return '#2ECC71'; // Green for accepted
-        case 'pending':
-          return '#F1C40F'; // Yellow for pending
-        case 'rejected':
-          return '#E74C3C'; // Red for rejected
-        default:
-          return '#FFFFFF'; // Default to white for unknown status
-      }
-    }, []);
+    const getMonthAbbreviation = (monthIndex: number) => {
+      const startDate = new Date(2023, 8); // September 2023 (month index 8)
+      const date = new Date(startDate.getFullYear(), startDate.getMonth() + monthIndex);
+      const monthAbbreviation = date.toLocaleString("default", { month: "short" });
+      const yearAbbreviation = date.getFullYear().toString().substr(-2);
+      return `${monthAbbreviation}${yearAbbreviation}`;
+    };
     
-   const columns: ColumnDef<StudentFormValues>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "student",
-      header: () => <div >{t('student')}</div>,
-
-      cell: ({ row }) => (
-        <div className="capitalize">
-           <div className="font-medium">{row.getValue("student")}</div>
-                              <div className="hidden text-sm text-muted-foreground md:inline">
-                              {row.getValue("email")}
-                              </div>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "level",
-      header: () => <div >{t('level')}</div>,
-
-      cell: ({ row }) => <div className="lowercase hidden sm:table-cell">{row.getValue("level")}</div>,
-    },
-    {
-      accessorKey: "status",
-      header: () => <div >{t('status')}</div>,
-
-      cell: ({ row }) => (
-        <div className="capitalize hidden sm:table-cell">{t(row.getValue("status"))}</div>
-      ),
-    },
-    {
-      accessorKey: "joiningDate",
-      header: () => <div >{t('joining-date-0')}</div>,
-      cell: ({ row }) => (
-        <div className="lowercase hidden sm:table-cell">
-{((row.getValue("joiningDate") as Date)).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "totalAmount",
-      header: () => <div className="text-right">{t('total-amount-1')}</div>,
-
-      cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("totalAmount"))
-  
-        // Format the amount as a dollar amount
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "DZD",
-        }).format(amount)
-  
-        return <div className="text-right font-medium">{formatted}</div>
-      },
-    },
-
-
-    {
-      accessorKey: "amountLeftToPay",
-      header: () => <div className="text-right">{t('amount-left')}</div>,
-      cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("amountLeftToPay"))
-  
-        // Format the amount as a dollar amount
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "DZD",
-        }).format(amount)
-  
-        return <div className="text-right font-medium">{formatted}</div>
-      },
-    },
-
-    {
-      id: "actions",
-      enableHiding: false,
-      cell: ({ row }) => {
-        const student = row.original
-  
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">{t('open-menu')}</span>
-                <DotsHorizontalIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
-              <DropdownMenuItem
-              disabled={row.getValue("registrationStatus")==="accepted"}
-                onClick={() => navigator.clipboard.writeText(student.id)}
+    // Updated generateMonthlyPaymentColumns function
+    const generateMonthlyPaymentColumns = (
+      getMonthAbbreviation: (index: number) => string
+    ): ColumnDef<any>[] => {
+      return Array.from({ length: 12 }, (_, i) => {
+        const monthAbbreviation = getMonthAbbreviation(i);
+        return {
+          accessorKey: `monthlyPayments23_24.${monthAbbreviation}`,
+          header: () => <div>{monthAbbreviation}</div>,
+          cell: ({ row }: { row: any }) => {
+            const isPaid = row.original.monthlyPayments23_24[monthAbbreviation]?.status 
+     
+            
+            return (
+              <Badge
+                style={{ backgroundColor: isPaid === 'Paid' ? "#4CAF50" : "#F44336" }}
               >
-                {t('accept-registration')} </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>openEditSheet(student)}>
-                {t('view-student')} </DropdownMenuItem>
-              <DropdownMenuItem>{t('view-payment-details')}</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
+       {isPaid === 'Paid' && isPaid}
+            
+              </Badge>
+            );
+          },
+        };
+      });
+    };
+    const columns: ColumnDef<any>[] = [
+      {
+        accessorKey: "student",
+        header: () => <div >{t('student')}</div>,
+  
+        cell: ({ row }) => (
+          <div className="capitalize">
+             <div className="font-medium">{row.getValue("student")}</div>
+                                <div className="hidden text-sm text-muted-foreground md:inline">
+                                {row.getValue("email")}
+                                </div>
+          </div>
+        ),
       },
-    },
-  ]
+      {
+        accessorKey: "level",
+        header: () => <div >{t('level')}</div>,
+        cell: ({ row }) => <div>{row.original.level}</div>,
+      },
+      ...generateMonthlyPaymentColumns(getMonthAbbreviation),
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const student = row.original;
+    
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <DotsHorizontalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => openEditSheet(student)}>
+                  Edit
+                </DropdownMenuItem>
+       
+                <DropdownMenuItem onClick={() => console.log(`View details of ${student.firstName} ${student.lastName}`)}>
+            Print
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ];
   const handleExport = () => {
     const exceldata=students.map((student:any)=>({[`${t('Name')}`]:student.student,
     [`${t('level')}`]:student.level,
@@ -286,7 +241,7 @@ export type StudentSummary = {
     initialState: {
       pagination: {
         pageIndex: 0, //custom initial page index
-        pageSize: 3, //custom default page size
+        pageSize: 10, //custom default page size
       },
     },
   })
@@ -296,7 +251,15 @@ export type StudentSummary = {
   return (
     <>
 
-<div className="flex items-center justify-between">
+
+    <ScrollArea className="w-full whitespace-nowrap mt-2">
+    <Card x-chunk="dashboard-05-chunk-3">
+    <CardHeader className="px-7">
+      <CardTitle>{t('your-students')}</CardTitle>
+      <CardDescription>
+      {t('introducing-our-dynamic-student-dashboard-for-seamless-management-and-insightful-analysis')} 
+      
+      <div className="flex items-center justify-between">
        
     
     <Input
@@ -305,9 +268,9 @@ export type StudentSummary = {
           onChange={(event) =>
             table.getColumn("student")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="max-w-sm mt-4"
         />
-          <div className="flex items-center ml-auto">
+          <div className=" ml-auto space-y-4 ">
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -334,18 +297,15 @@ export type StudentSummary = {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" className="ml-2" onClick={handleExport}>
+        <Button variant="outline" className="ml-2"  
+        
+    onClick={handleExport}>
        {t('export')} <File className="ml-2 h-4 w-4" />
       </Button>
     </div>
  
     </div>
-    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-    <Card x-chunk="dashboard-05-chunk-3">
-    <CardHeader className="px-7">
-      <CardTitle>{t('your-students')}</CardTitle>
-      <CardDescription>
-      {t('introducing-our-dynamic-student-dashboard-for-seamless-management-and-insightful-analysis')} </CardDescription>
+      </CardDescription>
     </CardHeader>
     <CardContent>     
 

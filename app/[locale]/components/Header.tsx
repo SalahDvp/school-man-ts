@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "../(home)/dashboard/components/theme-mode"
 import { usePathname, useRouter } from "@/navigation"
@@ -70,6 +69,7 @@ const t=useTranslations()
           className={`${pathname=== '/settings' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           {t('settings')} </Link>
+
       </nav>
       <Sheet>
         <SheetTrigger asChild>
@@ -132,6 +132,7 @@ const t=useTranslations()
           className={`${pathname=== '/settings' ?'text-black-500 dark:text-white ' : 'text-muted-foreground hover:text-foreground foreground transition-colors'}`}
         >
           {t('settings')} </Link>
+
           </nav>
         </SheetContent>
       </Sheet>

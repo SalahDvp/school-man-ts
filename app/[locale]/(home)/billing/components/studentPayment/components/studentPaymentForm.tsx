@@ -36,7 +36,7 @@ import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadF
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 import { useTranslations } from "next-intl";
 import { Checkbox } from "@/components/ui/checkbox"
-import { downloadInvoice, generateBill } from "./generateInvoice";
+import { downloadInvoice, generateBill } from "@/app/[locale]/(home)/billing/components/studentPayment/components/generateInvoice"
 import { format } from "date-fns";
 const fieldNames: string[] = [
   'student',
@@ -94,6 +94,41 @@ interface FileUploadProgress {
   name: string;
   source:any;
 }
+type MonthData = {
+  status: string;
+  month: string;
+};
+
+
+function getMonthAbbreviationsInRange(startDate:Date, endDate:Date) {
+  const months = [];
+  const dateFormat:any = { month: 'short', year: '2-digit' };
+  const currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+      const monthYear = currentDate.toLocaleDateString('en-GB', dateFormat);
+      const [monthAbbreviation, year] = monthYear.split(' ');
+      const monthYearAbbreviation = `${monthAbbreviation}${year}`;
+      months.push(monthYearAbbreviation);
+      currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+
+  // Remove the last month
+  if (months.length > 0) {
+      months.pop();
+  }
+console.log(months);
+
+  return months;
+}
+
+
+
+const orderedMonths = [
+  'Sep23', 'Oct23', 'Nov23', 'Dec23',
+  'Jan24', 'Feb24', 'Mar24', 'Apr24',
+  'May24', 'Jun24', 'Jul24'
+];
 export default function StudentPaymentForm() {
   const { toast } = useToast();
   const {students,levels,setInvoices,setStudents,setAnalytics}=useData()
@@ -280,21 +315,39 @@ const onSelected=(selectedStudent:any)=>{
   };
 
   async function onSubmit(data:StudentPaymentFormValues) {
+    const monthAbbreviations = getMonthAbbreviationsInRange(getValues("student").nextPaymentDate,data.nextPaymentDate)
     const month= getMonthInfo(data.paymentDate)
-    const transactionId=await addPaymentTransaction({...data,documents:[]})
+    
+    
+    const transactionId=await addPaymentTransaction({...data,documents:[]},monthAbbreviations)
     const uploaded = await uploadFilesAndLinkToCollection("Billing/payments/Invoices", transactionId, filesToUpload);
     setInvoices((prev:StudentPaymentFormValues[])=>[{...data,id:transactionId,invoice:transactionId,
     value:transactionId,
     label:transactionId,
     documents:uploaded},...prev])
-    setStudents((prev:any) => {
-      const updatedLevels = prev.map((student:any) =>
-        student.id === data.student.id ? { ...student,
-          nextPaymentDate:data.nextPaymentDate,
-          amountLeftToPay:data.amountLeftToPay-data.paymentAmount }: student
-      );
+    let months: Record<string, MonthData>={};
+    setStudents((prev: any) => {
+      const updatedLevels = prev.map((student: any) => {
+          if (student.id === data.student.id) {
+              const updatedStudent = {
+                  ...student,
+                  nextPaymentDate: data.nextPaymentDate,
+                  amountLeftToPay: data.amountLeftToPay - data.paymentAmount
+              };
+              // Update status for each month
+              monthAbbreviations.forEach((month) => {
+                updatedStudent.monthlyPayments23_24[month].status = 'Paid';
+           
+                
+            });
+            months=updatedStudent.monthlyPayments23_24
+        
+              return updatedStudent;
+          }
+          return student;
+      });
       return updatedLevels;
-    });
+  });
     setAnalytics((prevState:any) => ({
       data: {
         ...prevState.data,
@@ -306,7 +359,14 @@ const onSelected=(selectedStudent:any)=>{
       totalIncome: prevState.totalIncome +  data.paymentAmount
     }));  
     if(printBill){
-      downloadInvoice({
+
+    const statusArray:string[] = orderedMonths.map((month)=> {
+      const monthData = months[month];
+      return monthData.status === 'Paid' ? monthData.status : ' ';
+  });
+
+  
+      generateBill({
       student: data.student.student,
       level: data.level,
       parent: data.parent.name,
@@ -317,13 +377,13 @@ const onSelected=(selectedStudent:any)=>{
     },transactionId,[t('student'), t('level'), t('parent'), t('amount'), t('paymentDate'), t('status'), t('fromWho')],
   {
     amount:t("Amount"), from:t('From:'), shippingAddress:t('shipping-address'), billedTo:t('billed-to'), subtotal:t('Subtotal:'), totalTax:t('total-tax-0'), totalAmount:t('total-amount-3'),invoice:t('invoice')
-  })
+  }, statusArray)
     } 
     toast({
       title: t('changes-applied-0'),
       description: t('changes-applied-successfully'),
     });
-   console.log(data);
+  console.log(data);
             reset(); 
   }
 

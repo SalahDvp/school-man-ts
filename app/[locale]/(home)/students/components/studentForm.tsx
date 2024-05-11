@@ -33,7 +33,13 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { addStudent } from "@/lib/hooks/students";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 import { useTranslations } from "next-intl";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 const fieldNames = [
   "firstName",
   "lastName",
@@ -44,6 +50,7 @@ const fieldNames = [
   "state",
   "postalCode",
   "country",
+  "level",
   "parentFullName",
   "parentEmail",
   "parentPhone",
@@ -87,9 +94,16 @@ interface FileUploadProgress {
   name: string;
   source:any;
 }
+const getMonthAbbreviation = (monthIndex: number) => {
+  const startDate = new Date(2023, 8); // September 2023 (month index 8)
+  const date = new Date(startDate.getFullYear(), startDate.getMonth() + monthIndex);
+  const monthAbbreviation = date.toLocaleString("default", { month: "short" });
+  const yearAbbreviation = date.getFullYear().toString().substr(-2);
+  return `${monthAbbreviation}${yearAbbreviation}`;
+};
 export default function StudentForm() {
   const { toast } = useToast();
-  const {parents,setStudents}= useData();
+  const {parents,setStudents,levels}= useData();
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
 const t=useTranslations()
   const [open, setOpen] = useState(false);
@@ -107,7 +121,13 @@ const t=useTranslations()
       totalAmount: 0,
       amountLeftToPay: 0,
       class: { name: 'Class Name', id: 'class123' },
-    },
+      monthlyPayments23_24: Object.fromEntries(
+        Array.from({ length: 12 }, (_, i) => {
+            const monthAbbreviation = getMonthAbbreviation(i);
+            return [monthAbbreviation, { month: monthAbbreviation, status: 'Not Paid' }];
+        })
+    )
+  }
  
   });
   const { reset, formState, setValue, getValues,watch} = form;
@@ -197,6 +217,37 @@ const t=useTranslations()
             }}
           />
         );
+        case "level":
+          return(   <Select
+      
+            onValueChange={(value) => {
+              const level =levels.find((lvl:any)=>lvl.level===value)
+              form.setValue("totalAmount", level.fee);
+              form.setValue("amountLeftToPay", level.fee);
+              form.setValue("startDate", level.start);
+              form.setValue("nextPaymentDate", level.start);
+              form.setValue("lastPaymentDate", level.start);
+              form.setValue("level", level.level);
+            }}
+    
+                  >
+                    <FormControl>
+                      <SelectTrigger
+                        id={`level`}
+                        aria-label={`Select level`}
+                      >
+                        <SelectValue placeholder={t('select-level')} />
+                      </SelectTrigger>
+                    </FormControl>
+
+                    <SelectContent>
+                      {levels.map((level:any,index:number) => (
+                        <SelectItem key={index} value={level.level}>
+                          {level.level}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>)
       default:
         return <Input {...field} />;
     }

@@ -32,6 +32,7 @@ const studentRegistrationSchema = z.object({
     name: z.string(),
     id:z.string()
   }),
+  [`monthlyPayments${'23'}_${'24'}`]:z.any()
 });
 
 export default studentRegistrationSchema;
