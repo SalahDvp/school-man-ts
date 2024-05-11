@@ -313,78 +313,125 @@ const onSelected=(selectedStudent:any)=>{
         return <Input {...field} />;
     }
   };
-
-  async function onSubmit(data:StudentPaymentFormValues) {
-    const monthAbbreviations = getMonthAbbreviationsInRange(getValues("student").nextPaymentDate,data.nextPaymentDate)
-    const month= getMonthInfo(data.paymentDate)
+  function generateBillIfNeeded(months: any, data: StudentPaymentFormValues) {
+    if (printBill) {
+      console.log("months", months);
+  
+      const statusArray: string[] = orderedMonths.map((month) => {
+        const monthData = months[month];
+        console.log("Data", monthData);
+  
+        return monthData?.status === 'Paid' ? monthData.status : ' ';
+      });
+  
+      generateBill(
+        {
+          student: data.student.student,
+          level: data.level,
+          parent: data.parent.name,
+          paymentAmount: data.paymentAmount,
+          paymentDate: format(data.paymentDate, 'dd/MM/yyyy'),
+          status: t(data.status),
+          fromWho: data.fromWho,
+        },
+        "qwdwqdqwd",
+        [
+          t('student'),
+          t('level'),
+          t('parent'),
+          t('amount'),
+          t('paymentDate'),
+          t('status'),
+          t('fromWho'),
+        ],
+        {
+          amount: t("Amount"),
+          from: t('From:'),
+          shippingAddress: t('shipping-address'),
+          billedTo: t('billed-to'),
+          subtotal: t('Subtotal:'),
+          totalTax: t('total-tax-0'),
+          totalAmount: t('total-amount-3'),
+          invoice: t('invoice'),
+        },
+        statusArray
+      );
+    }
+  }
+    async function onSubmit(data: StudentPaymentFormValues) {
+      const monthAbbreviations = getMonthAbbreviationsInRange(
+        getValues("student").nextPaymentDate,
+        data.nextPaymentDate
+      );
+      const month = getMonthInfo(data.paymentDate);
     
+      let months;
     
-    const transactionId=await addPaymentTransaction({...data,documents:[]},monthAbbreviations)
-    const uploaded = await uploadFilesAndLinkToCollection("Billing/payments/Invoices", transactionId, filesToUpload);
-    setInvoices((prev:StudentPaymentFormValues[])=>[{...data,id:transactionId,invoice:transactionId,
-    value:transactionId,
-    label:transactionId,
-    documents:uploaded},...prev])
-    let months: Record<string, MonthData>={};
-    setStudents((prev: any) => {
-      const updatedLevels = prev.map((student: any) => {
+      const transactionId = await addPaymentTransaction(
+        { ...data, documents: [] },
+        monthAbbreviations
+      );
+      const uploaded = await uploadFilesAndLinkToCollection(
+        "Billing/payments/Invoices",
+        transactionId,
+        filesToUpload
+      );
+      setInvoices((prev: StudentPaymentFormValues[]) => [
+        {
+          ...data,
+          id: transactionId,
+          invoice: transactionId,
+          value: transactionId,
+          label: transactionId,
+          documents: uploaded,
+        },
+        ...prev,
+      ]);
+    
+      setStudents((prev: any) => {
+        const updatedLevels = prev.map((student: any) => {
           if (student.id === data.student.id) {
-              const updatedStudent = {
-                  ...student,
-                  nextPaymentDate: data.nextPaymentDate,
-                  amountLeftToPay: data.amountLeftToPay - data.paymentAmount
-              };
-              // Update status for each month
-              monthAbbreviations.forEach((month) => {
-                updatedStudent.monthlyPayments23_24[month].status = 'Paid';
-           
-                
+            const updatedStudent = {
+              ...student,
+              nextPaymentDate: data.nextPaymentDate,
+              amountLeftToPay: data.amountLeftToPay - data.paymentAmount,
+            };
+            // Update status for each month
+            monthAbbreviations.forEach((month) => {
+              updatedStudent.monthlyPayments23_24[month].status = 'Paid';
             });
-            months=updatedStudent.monthlyPayments23_24
-        
-              return updatedStudent;
+    
+            console.log("updated", updatedStudent.monthlyPayments23_24);
+    
+            months = updatedStudent.monthlyPayments23_24;
+    
+            return updatedStudent;
           }
           return student;
+        });
+        generateBillIfNeeded(months, data);
+        return updatedLevels;
       });
-      return updatedLevels;
-  });
-    setAnalytics((prevState:any) => ({
-      data: {
-        ...prevState.data,
-        [month.abbreviation]: {
-          ...prevState.data[month.abbreviation],
-          income:prevState.data[month.abbreviation].income + data.paymentAmount
-        }
-      },
-      totalIncome: prevState.totalIncome +  data.paymentAmount
-    }));  
-    if(printBill){
-
-    const statusArray:string[] = orderedMonths.map((month)=> {
-      const monthData = months[month];
-      return monthData.status === 'Paid' ? monthData.status : ' ';
-  });
-
-  
-      generateBill({
-      student: data.student.student,
-      level: data.level,
-      parent: data.parent.name,
-      paymentAmount: data.paymentAmount,
-     paymentDate: format(data.paymentDate, 'dd/MM/yyyy'),
-      status: t(data.status),
-      fromWho: data.fromWho
-    },transactionId,[t('student'), t('level'), t('parent'), t('amount'), t('paymentDate'), t('status'), t('fromWho')],
-  {
-    amount:t("Amount"), from:t('From:'), shippingAddress:t('shipping-address'), billedTo:t('billed-to'), subtotal:t('Subtotal:'), totalTax:t('total-tax-0'), totalAmount:t('total-amount-3'),invoice:t('invoice')
-  }, statusArray)
-    } 
+    
+      setAnalytics((prevState: any) => ({
+        data: {
+          ...prevState.data,
+          [month.abbreviation]: {
+            ...prevState.data[month.abbreviation],
+            income: prevState.data[month.abbreviation].income + data.paymentAmount,
+          },
+        },
+        totalIncome: prevState.totalIncome + data.paymentAmount,
+      }));
+    
+      // Generate the bill after updating the state
+      //generateBillIfNeeded(months, data);
     toast({
       title: t('changes-applied-0'),
       description: t('changes-applied-successfully'),
     });
-  console.log(data);
-            reset(); 
+  //console.log(data);
+            //reset(); 
   }
 
   return (
