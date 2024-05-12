@@ -176,7 +176,8 @@ const paymentPlans = React.useMemo(() => {
     const selectedLevel = levels.find((level:any) => level.level === studentValue);
 
     if (selectedLevel) {
-
+      console.log(selectedLevel.prices);
+      
       return selectedLevel.prices.map((price:any)=>({...price,label:price.name,value:price.name}));
     }
   }
@@ -291,8 +292,10 @@ const onSelected=(selectedStudent:any)=>{
             value={getValues("paymentPlan")?.name}
             onSelected={(selectedValue) => {
               const paymentPlan = paymentPlans?.find(
-                (plan:any) => plan?.value === selectedValue
+                (plan:any) => plan?.value.replace(/\s/g, '') === selectedValue
               );
+              console.log("payment",paymentPlans);
+              
               if (paymentPlan) {
                 form.setValue(fieldName, paymentPlan)
                 form.setValue("paymentAmount",paymentPlan.price)

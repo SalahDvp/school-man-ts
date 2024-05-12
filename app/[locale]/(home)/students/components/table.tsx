@@ -198,10 +198,23 @@ interface DataTableDemoProps {
       },
     ];
   const handleExport = () => {
+  
+
+    
+const orderedMonths = [
+  'Sept23', 'Oct23', 'Nov23', 'Dec23',
+  'Jan24', 'Feb24', 'Mar24', 'Apr24',
+  'May24', 'Jun24', 'Jul24'
+];
     const exceldata=students.map((student:any)=>({[`${t('Name')}`]:student.student,
     [`${t('level')}`]:student.level,
     [`${t('status')}`]:t(student.status),
     [`${t('joining-date-0')}`]:student.joiningDate,
+    ...orderedMonths.reduce((acc: Record<string, string>, month: string) => {
+      const monthStatus = student.monthlyPayments23_24[month]?.status || 'Not Paid';
+      acc[`${month}`] = t(monthStatus);
+      return acc;
+    }, {}),
     [`${t('amount-left')}`]: new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "DZD",
@@ -210,6 +223,7 @@ interface DataTableDemoProps {
       style: "currency",
       currency: "DZD",
     }).format(student.totalAmount),
+
     }))
     exportTableToExcel(t('students-table'),exceldata);
   };
