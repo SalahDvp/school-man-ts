@@ -94,10 +94,12 @@ interface FileUploadProgress {
   name: string;
   source:any;
 }
+
 const getMonthAbbreviation = (monthIndex: number) => {
   const startDate = new Date(2023, 8); // September 2023 (month index 8)
+  
   const date = new Date(startDate.getFullYear(), startDate.getMonth() + monthIndex);
-  const monthAbbreviation = date.toLocaleString("default", { month: "short" });
+  const monthAbbreviation = date.toLocaleString('en-GB', { month: "short" });
   const yearAbbreviation = date.getFullYear().toString().substr(-2);
   return `${monthAbbreviation}${yearAbbreviation}`;
 };
@@ -108,8 +110,8 @@ export default function StudentForm() {
 const t=useTranslations()
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
-  const form = useForm<StudentFormValues>({
-    resolver: zodResolver(studentRegistrationSchema),
+  const form = useForm<any>({
+    //resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
       id: '123456',
       level: 'Intermediate',
@@ -253,7 +255,7 @@ const t=useTranslations()
     }
   };
 
-  async function onSubmit(data:StudentFormValues) {
+  async function onSubmit(data:any) {
     const studentId= await addStudent({...data,documents:[]})
     
     const uploaded = await uploadFilesAndLinkToCollection("Students", studentId, filesToUpload);

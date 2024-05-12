@@ -2,7 +2,7 @@
 import { format } from "date-fns";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import { font } from "@/lib/fontscustom/Amiri-Regular-normal"
 export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any){
     const doc = new jsPDF();
   
@@ -243,8 +243,12 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
   }
   export function generateBill(paymentData:any,id:string,titles:any[],words:any,paidMonths:any) {
     const doc = new jsPDF();
-  
+
+    doc.addFileToVFS('Amiri-Regular.ttf', font);
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+    doc.setFont('Amiri');
     autoTable(doc, {
+
       body: [
         [
           {
@@ -252,7 +256,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             styles: {
               halign: 'left',
               fontSize: 20,
-              textColor: '#ffffff',
+              textColor: 'black',
+              font:'Amiri'
                 
             }
           },
@@ -261,12 +266,16 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             styles: {
               halign: 'right',
               fontSize: 20,
-              textColor: '#ffffff'
+              textColor: 'black',
+              font:'Amiri'
             }
           }
         ],
       ],
       theme: 'plain',
+      styles: {
+       
+      }
     });
   
     autoTable(doc, {
@@ -276,7 +285,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             content: `ReferenceID #${id}`
             +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
             styles: {
-              halign: 'right'
+              halign: 'right',
+              font:'Amiri',
             }
           }
         ],
@@ -295,7 +305,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             +'\n'
             +'\n',
             styles: {
-              halign: 'left'
+              halign: 'left',
+              font:'Amiri',
             }
           },
           {
@@ -307,7 +318,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             +'\n'
             +'\n',
             styles: {
-              halign: 'left'
+              halign: 'left',
+              font:'Amiri',
             }
           },
           {        
@@ -318,7 +330,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             +'\n'
             +'\n',
             styles: {
-              halign: 'right'
+              halign: 'right',
+              font:'Amiri',
             }
           }
         ],
@@ -334,9 +347,12 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       ],
       theme: 'striped',
       headStyles:{
-        fillColor: '#343a40'
+        fillColor: '#343a40',
+        font:'Amiri',
       },
- 
+      bodyStyles:{
+              font:'Amiri',
+      }
       
     });
     autoTable(doc, {
@@ -351,7 +367,12 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         theme: 'grid',
         headStyles:{
           fillColor: '#E0E0E0',
-          textColor:'black'
+          textColor:'black',
+          font:'Amiri',
+        },
+        bodyStyles:{
+          
+              font:'Amiri',
         },
           didParseCell: function (data) {
            
@@ -391,6 +412,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
                 halign: 'left',
                 fontSize: 20,
                 textColor: 'black',
+                font:'Amiri',
                   
               }
             },
@@ -399,7 +421,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               styles: {
                 halign: 'right',
                 fontSize: 20,
-                textColor: 'black'
+                textColor: 'black',
+                font:'Amiri',
               }
             }
           ],
@@ -417,7 +440,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               content: `ReferenceID #${id}`
               +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
               styles: {
-                halign: 'right'
+                halign: 'right',
+                font:'Amiri',
               }
             }
           ],
@@ -436,7 +460,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               +'\n'
               +'\n',
               styles: {
-                halign: 'left'
+                halign: 'left',
+                font:'Amiri',
               }
             },
             {
@@ -448,7 +473,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               +'\n'
               +'\n',
               styles: {
-                halign: 'left'
+                halign: 'left',
+                font:'Amiri',
               }
             },
             {        
@@ -459,7 +485,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               +'\n'
               +'\n',
               styles: {
-                halign: 'right'
+                halign: 'right',
+                font:'Amiri',
               }
             }
           ],
@@ -474,8 +501,12 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         ],
         theme: 'striped',
         headStyles:{
-          fillColor: '#343a40'
+          fillColor: '#343a40',
+          font:'Amiri',
         },
+        bodyStyles:{
+          font:'Amiri'
+        }
    
         
       });
@@ -492,6 +523,9 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
           headStyles:{
             fillColor: '#E0E0E0',
             textColor:'black'
+          },
+          bodyStyles:{
+            font:'Amiri'
           },
             didParseCell: function (data) {
              

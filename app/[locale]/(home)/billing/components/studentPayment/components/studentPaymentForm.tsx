@@ -125,7 +125,7 @@ console.log(months);
 
 
 const orderedMonths = [
-  'Sep23', 'Oct23', 'Nov23', 'Dec23',
+  'Sept23', 'Oct23', 'Nov23', 'Dec23',
   'Jan24', 'Feb24', 'Mar24', 'Apr24',
   'May24', 'Jun24', 'Jul24'
 ];
@@ -315,13 +315,11 @@ const onSelected=(selectedStudent:any)=>{
   };
   function generateBillIfNeeded(months: any, data: StudentPaymentFormValues) {
     if (printBill) {
-      console.log("months", months);
   
       const statusArray: string[] = orderedMonths.map((month) => {
         const monthData = months[month];
-        console.log("Data", monthData);
   
-        return monthData?.status === 'Paid' ? monthData.status : ' ';
+        return monthData?.status === 'Paid' ? t('paid') : ' ';
       });
   
       generateBill(
@@ -366,7 +364,7 @@ const onSelected=(selectedStudent:any)=>{
       const month = getMonthInfo(data.paymentDate);
     
       let months: Record<string, MonthData>;
-    
+      let billGenerated = false;
       const transactionId = await addPaymentTransaction(
         { ...data, documents: [] },
         monthAbbreviations
@@ -388,31 +386,32 @@ const onSelected=(selectedStudent:any)=>{
         ...prev,
       ]);
     
-      setStudents((prev: any) => {
-        const updatedLevels = prev.map((student: any) => {
+      setStudents((prevStudents: any) => {
+        const updatedStudents = prevStudents.map((student: any) => {
           if (student.id === data.student.id) {
             const updatedStudent = {
               ...student,
               nextPaymentDate: data.nextPaymentDate,
               amountLeftToPay: data.amountLeftToPay - data.paymentAmount,
+              monthlyPayments23_24: { ...student.monthlyPayments23_24 }, // Ensure a new object is created for immutability
             };
+            
             // Update status for each month
             monthAbbreviations.forEach((month) => {
               updatedStudent.monthlyPayments23_24[month].status = 'Paid';
             });
     
-            console.log("updated", updatedStudent.monthlyPayments23_24);
-    
-            months = updatedStudent.monthlyPayments23_24;
-    
+            console.log("Updated student:", updatedStudent);
+            if (!billGenerated) {
+              generateBillIfNeeded(updatedStudent.monthlyPayments23_24, data);
+              billGenerated = true; // Update variable
+            }
             return updatedStudent;
           }
           return student;
-        });
-        generateBillIfNeeded(months, data);
-        return updatedLevels;
+        });  
+        return updatedStudents;
       });
-    
       setAnalytics((prevState: any) => ({
         data: {
           ...prevState.data,
@@ -423,15 +422,13 @@ const onSelected=(selectedStudent:any)=>{
         },
         totalIncome: prevState.totalIncome + data.paymentAmount,
       }));
-    
-      // Generate the bill after updating the state
-      //generateBillIfNeeded(months, data);
+
     toast({
       title: t('changes-applied-0'),
       description: t('changes-applied-successfully'),
     });
-  //console.log(data);
-            //reset(); 
+  console.log(data);
+            reset(); 
   }
 
   return (
