@@ -453,14 +453,14 @@
   "print-bill": "طباعة الفاتورة",
   "registration-and-insurance-fee": "رسوم التسجيل والتأمين",
   "this-is-a-fee-for-registration-and-insurance": "هذه رسوم التسجيل والتأمين",
-  "feeging-fee": "رسوم مطعم ",
+  "feeging-fee": "رسوم إطعام ",
   "this-is-a-fee-for-food-such-as-lunch": "هذه رسوم مقابل الطعام مثل الغداء",
-  "feegingFee": "رسوم مطعم ",
+  "feegingFee": "رسوم إطعام ",
   "ninvoice-number-id": "\\nرقم الفاتورة: {0}",
   "reference-id": "مرجع:",
   "registrationAndInsurancefee": "رسوم التسجيل والتأمين",
   "registrationAndInsuranceFee": "رسوم التسجيل والتأمين",
   "Paid": "مدفوع",
-  "feedingFee": "رسوم مطعم ",
+  "feedingFee": "رسوم إطعام ",
   "Not Paid": "غير مدفوعة"
 }
