@@ -123,11 +123,10 @@ console.log(months);
 }
 
 
-
 const orderedMonths = [
   'Sept23', 'Oct23', 'Nov23', 'Dec23',
   'Jan24', 'Feb24', 'Mar24', 'Apr24',
-  'May24', 'Jun24', 'Jul24'
+  'May24', 'Jun24', 'Jul24','Aug24'
 ];
 export default function StudentPaymentForm() {
   const { toast } = useToast();

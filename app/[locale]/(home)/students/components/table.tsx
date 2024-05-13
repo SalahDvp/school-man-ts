@@ -129,7 +129,7 @@ interface DataTableDemoProps {
     const generateMonthlyPaymentColumns = (
       getMonthAbbreviation: (index: number) => string
     ): ColumnDef<any>[] => {
-      return Array.from({ length: 12 }, (_, i) => {
+      return Array.from({ length: 11 }, (_, i) => {
         const monthAbbreviation = getMonthAbbreviation(i);
         return {
           accessorKey: `monthlyPayments23_24.${monthAbbreviation}`,
@@ -171,6 +171,40 @@ interface DataTableDemoProps {
       },
       ...generateMonthlyPaymentColumns(getMonthAbbreviation),
       {
+        accessorKey: `registrationAndInsuranceFee`,
+        header: () => <div style={{ whiteSpace: 'pre-wrap' }}>{t('registrationAndInsuranceFee')}</div>,
+        cell: ({ row }: { row: any }) => {
+          const isPaid = row.original.registrationAndInsuranceFee
+   
+          
+          return (
+            <Badge
+              style={{ backgroundColor: isPaid === 'Paid' ? "#4CAF50" : "#F44336" }}
+            >
+     {isPaid === 'Paid' && t('paid')}
+          
+            </Badge>
+          );
+        },
+      },
+      {
+        accessorKey: `feedingFee`,
+        header: () => <div style={{ whiteSpace: 'pre-wrap' }}>{t('feedingFee')}</div>,
+        cell: ({ row }: { row: any }) => {
+          const isPaid = row.original.feedingFee
+   
+          
+          return (
+            <Badge
+              style={{ backgroundColor: isPaid === 'Paid' ? "#4CAF50" : "#F44336" }}
+            >
+     {isPaid === 'Paid' && t('paid')}
+          
+            </Badge>
+          );
+        },
+      },
+      {
         id: "actions",
         enableHiding: false,
         cell: ({ row }) => {
@@ -204,17 +238,19 @@ interface DataTableDemoProps {
 const orderedMonths = [
   'Sept23', 'Oct23', 'Nov23', 'Dec23',
   'Jan24', 'Feb24', 'Mar24', 'Apr24',
-  'May24', 'Jun24', 'Jul24'
+  'May24', 'Jun24', 'Jul24','Aug24'
 ];
     const exceldata=students.map((student:any)=>({[`${t('Name')}`]:student.student,
     [`${t('level')}`]:student.level,
     [`${t('status')}`]:t(student.status),
     [`${t('joining-date-0')}`]:student.joiningDate,
     ...orderedMonths.reduce((acc: Record<string, string>, month: string) => {
-      const monthStatus = student.monthlyPayments23_24[month]?.status || 'Not Paid';
+      const monthStatus = student.monthlyPayments23_24[month]?.status;
       acc[`${month}`] = t(monthStatus);
       return acc;
     }, {}),
+    [t('registrationAndInsuranceFee')]:t(student.registrationAndInsuranceFee),
+    [t('feedingFee')]:t(student.feedingFee),
     [`${t('amount-left')}`]: new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "DZD",

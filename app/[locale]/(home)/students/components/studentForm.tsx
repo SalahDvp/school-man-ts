@@ -51,6 +51,8 @@ const fieldNames = [
   "postalCode",
   "country",
   "level",
+  'registrationAndInsuranceFee',
+  'feedingFee',
   "parentFullName",
   "parentEmail",
   "parentPhone",
@@ -58,6 +60,7 @@ const fieldNames = [
   "emergencyContactPhone",
   "medicalConditions",
   "joiningDate",
+
 ];
  
 const genders = [
@@ -88,6 +91,8 @@ type FormKeys =
   | "emergencyContactPhone"
   | "medicalConditions"
   | "joiningDate"
+  |"registrationAndInsuranceFee"
+  |"feedingFee"
 type StudentFormValues = z.infer<typeof  studentRegistrationSchema> ;
 interface FileUploadProgress {
   file: File;
@@ -110,6 +115,8 @@ export default function StudentForm() {
 const t=useTranslations()
   const [open, setOpen] = useState(false);
   const [openGender, setOpenGender] = useState(false);
+  const[openFeedingFee,setOpenFeedingFee]=useState(false)
+  const [openRegistrationAndInsuranceFee,setOpenRegistrationAndInsuranceFee]=useState(false)
   const form = useForm<any>({
     //resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
@@ -123,6 +130,8 @@ const t=useTranslations()
       totalAmount: 0,
       amountLeftToPay: 0,
       class: { name: 'Class Name', id: 'class123' },
+      'registrationAndInsuranceFee':"notPaid",
+      'feedingFee':"notPaid",
       monthlyPayments23_24: Object.fromEntries(
         Array.from({ length: 12 }, (_, i) => {
             const monthAbbreviation = getMonthAbbreviation(i);
@@ -132,6 +141,17 @@ const t=useTranslations()
   }
  
   });
+  const studentPaymentStatus =[
+    
+    {
+      value:"Paid"  ,
+      label: t('paid'),
+    },
+    {
+      value:"notPaid"  ,
+      label: t('not-paid'),
+    },
+  ]
   const { reset, formState, setValue, getValues,watch} = form;
   const { isSubmitting } = formState;
 
@@ -141,6 +161,32 @@ const t=useTranslations()
     return () => subscription.unsubscribe();
   }, [watch]);
   
+  const createMonthlyPaymentsData = (level: any) => {
+    const startYear = level.start.getFullYear().toString().substr(-2); // Get last two digits of start year
+    const endYear = level.end.getFullYear().toString().substr(-2); // Get last two digits of end year
+    const monthlyPaymentsKey = `monthly_payments${startYear}_${endYear}`;
+    const monthlyPaymentsObj: Record<string, { status: string; month: string }> = {};
+    const startDateMonth = level.start.getMonth(); // Month index from 0 to 11
+    const endDateMonth = level.end.getMonth(); // Month index from 0 to 11
+  
+    const startDate = new Date(level.start.getFullYear(), startDateMonth, 1); // First day of the start month
+    const endDate = new Date(level.end.getFullYear(), endDateMonth + 1, 0); // Last day of the end month
+  
+    let currentDate = new Date(startDate);
+  
+    while (currentDate <= endDate) {
+      const monthAbbreviation = currentDate.toLocaleString('en-GB', { month: 'short' });
+      const yearAbbreviation = currentDate.getFullYear().toString().substr(-2);
+      const monthKey = `${monthAbbreviation}${yearAbbreviation}`;
+      const monthStatus =  'Not Paid';
+      monthlyPaymentsObj[monthKey] = {status:monthStatus,month:monthKey};
+      
+      // Move to the next month
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+  
+    return { monthlyPaymentsKey, monthlyPaymentsObj };
+  };
   
   const renderInput = (fieldName: string, field:any) => {
     switch (fieldName) {
@@ -230,6 +276,9 @@ const t=useTranslations()
               form.setValue("nextPaymentDate", level.start);
               form.setValue("lastPaymentDate", level.start);
               form.setValue("level", level.level);
+              const data=createMonthlyPaymentsData(level)
+              form.setValue(data.monthlyPaymentsKey,data.monthlyPaymentsObj)
+
             }}
     
                   >
@@ -250,6 +299,34 @@ const t=useTranslations()
                       ))}
                     </SelectContent>
                   </Select>)
+        case "feedingFee":
+          return (
+            <Combobox
+            {...field}
+            open={openFeedingFee}
+            setOpen={setOpenFeedingFee}
+            placeHolder={t("status")}
+            options={studentPaymentStatus}
+            value={getValues("feedingFee")}
+            onSelected={(selectedValue) => {
+              form.setValue(fieldName, selectedValue);
+            }}
+          />
+          )
+          case "registrationAndInsuranceFee":
+            return (
+              <Combobox
+              {...field}
+              open={openRegistrationAndInsuranceFee}
+              setOpen={setOpenRegistrationAndInsuranceFee}
+              placeHolder={t("status")}
+              options={studentPaymentStatus}
+              value={getValues("registrationAndInsuranceFee")}
+              onSelected={(selectedValue) => {
+                form.setValue(fieldName, selectedValue);
+              }}
+            />
+            )
       default:
         return <Input {...field} />;
     }

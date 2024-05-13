@@ -248,9 +248,37 @@ reset({ prices: [] });
               </FormItem>
             )}
           />
-          {/*select payments methods*/}
+        
+          <FormField
+            control={control}
+            name="registrationAndInsuranceFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('registration-and-insurance-fee')}</FormLabel>
+                <FormControl>
+                <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                </FormControl>
+                <FormDescription>{t('this-is-a-fee-for-registration-and-insurance')}</FormDescription>
 
-                 
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+                    <FormField
+            control={control}
+            name="feedingFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('feeging-fee')}</FormLabel>
+                <FormControl>
+                <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                </FormControl>
+                <FormDescription>{t('this-is-a-fee-for-food-such-as-lunch')}</FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />   
           
             
                     <FormField

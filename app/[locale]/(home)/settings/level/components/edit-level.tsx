@@ -87,6 +87,8 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         fee: 1000,
         status: "open",
         registrationDeadline: new Date("2024-08-15"),
+        registrationAndInsuranceFee:0,
+        feedingFee:0,
         subjects:[{value:'',label:''}],
         prices:[]}
   });
@@ -270,7 +272,36 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         </FormItem>
       )}
     />
-    {/* select payment methods */}
+        <FormField
+            control={control}
+            name="registrationAndInsuranceFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('registration-and-insurance-fee')}</FormLabel>
+                <FormControl>
+                <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                </FormControl>
+                <FormDescription>{t('this-is-a-fee-for-registration-and-insurance')}</FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+                    <FormField
+            control={control}
+            name="feedingFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('feeging-fee')}</FormLabel>
+                <FormControl>
+                <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                </FormControl>
+                <FormDescription>{t('this-is-a-fee-for-food-such-as-lunch')}</FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />  
     <FormField
             control={control}
             name="prices"

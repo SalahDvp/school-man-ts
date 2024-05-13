@@ -44,17 +44,13 @@ export function exportTableToExcel(fileName, data) {
     return;
   }
 
-  // Create a copy of the data to avoid modifying the original array
-  const clonedData = JSON.parse(JSON.stringify(data));
-
-  // Format date objects as "dd/mm/yyyy" strings
   data.forEach(row => {
     for (const key in row) {
 
       if (Object.prototype.hasOwnProperty.call(row, key)) {
         console.log(row[key]);
         if (row[key] instanceof Date) {
-          console.log("qweqwemamamamamma");
+
           row[key] = formatDate( new Date(row[key]));
         }
       }

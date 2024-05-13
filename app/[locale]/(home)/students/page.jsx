@@ -22,7 +22,7 @@ function Dashboard() {
   
     <div className="flex-1 space-y-4 p-4 pt-6">
 <main className="flex flex-col lg:flex-row flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-  <div className="grid auto-rows-max items-start gap-4 md:gap-8  gridlg:w-9/12 ">
+  <div className="grid auto-rows-max items-start gap-4 md:gap-8  gridlg:w-8/12 ">
     <Tabs defaultValue="all">
       <div className="flex items-center">
         <TabsList>
