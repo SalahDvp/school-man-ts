@@ -276,6 +276,7 @@ const t=useTranslations()
               form.setValue("nextPaymentDate", level.start);
               form.setValue("lastPaymentDate", level.start);
               form.setValue("level", level.level);
+              form.setValue("levelId", level.id);
               const data=createMonthlyPaymentsData(level)
               form.setValue(data.monthlyPaymentsKey,data.monthlyPaymentsObj)
 

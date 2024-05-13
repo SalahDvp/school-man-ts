@@ -327,6 +327,10 @@ useEffect(() => {
                     form.setValue("nextPaymentDate", level.start);
                     form.setValue("lastPaymentDate", level.start);
                     form.setValue("level", level.level);
+                    form.setValue("levelId", level.id);
+                    form.setValue("registrationAndInsuranceFee", "notPaid");
+                    form.setValue("feedingFee", "notPaid");
+                    form.setValue("level", level.level);
                     const data=createMonthlyPaymentsData(level)
                     form.setValue(data.monthlyPaymentsKey,data.monthlyPaymentsObj)
       
@@ -368,9 +372,9 @@ useEffect(() => {
     return changes;
   };
   async function onSubmit(data: StudentFormValues) {
-    const changes = getChanges(data);
+    const level=levels.find((level:any)=>level.level===data.level)
     const { value, label, ...updatedData } = data;
-    await updateStudent(updatedData,student.id)
+    await updateStudent(updatedData,student.id,student,level)
     console.log(data);
     
     const documents= await updateDocuments(student.documents && student.documents> 0?student.documents:[],filesToUpload,'Students',student.id)
@@ -390,7 +394,7 @@ toast({
   
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={setOpen} >
    <SheetContent className=" sm:max-w-[650px]">
         <ScrollArea className="h-screen pb-20 ">
           <SheetHeader>

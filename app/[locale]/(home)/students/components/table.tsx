@@ -103,6 +103,8 @@ interface DataTableDemoProps {
       totalAmount: 1000,
       amountLeftToPay: 500,
       class: { name: 'Class Name', id: 'class123' },
+      registrationAndInsuranceFee:"Paid",
+      feedingFee:"Paid"
     })
       // Define your table and set up filtering
   React.useEffect(() => {
