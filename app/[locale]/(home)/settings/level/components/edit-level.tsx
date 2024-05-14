@@ -51,7 +51,7 @@ import { useData } from "@/context/admin/fetchDataContext";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
-type LevelFormValues = z.infer<typeof levelSchema> & {value:string;label:string};
+type LevelFormValues = z.infer<typeof levelSchema> & {value:string;label:string,classes:string[]};
 interface SheetDemoProps {
     level: Level;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;

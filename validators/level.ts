@@ -10,7 +10,7 @@ const levelSchema: ZodSchema<{
     registrationDeadline: Date;
     subjects: Array<{ value: string; label: string }>;
     prices: Array<any>;
-    
+    classes: Array<any>;
     registrationAndInsuranceFee:number;
     feedingFee:number;
 
@@ -33,7 +33,7 @@ const levelSchema: ZodSchema<{
   })).min(1, { message: 'At least one method is required' }),
   registrationAndInsuranceFee:z.number(),
   feedingFee:z.number(),
-classes : z.any()
+classes : z.array(z.string())
 });
 
 export default levelSchema;
