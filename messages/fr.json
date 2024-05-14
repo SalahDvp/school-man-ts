@@ -465,5 +465,7 @@
   "Not Paid": "impayé",
   "add-class-0": "ajouter une classe",
   "add-classes-to-this-level": "ajouter des classes à ce niveau",
-  "remove": "Retirer"
+  "remove": "Retirer",
+  "select-a-class": "sélectionnez une classe",
+  "amount-left-to-pay": "montant restant à payer"
 }

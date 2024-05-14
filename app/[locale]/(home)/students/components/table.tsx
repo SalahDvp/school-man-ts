@@ -54,6 +54,7 @@ import  studentRegistrationSchema  from "@/validators/auth";
 import { useData } from "@/context/admin/fetchDataContext";
 import { z } from "zod"
 import { useTranslations } from "next-intl"
+import { deleteStudent } from "@/lib/hooks/students"
 
 type Status = 'accepted' | 'pending' | 'rejected';
 export type StudentSummary = {
@@ -72,7 +73,7 @@ interface DataTableDemoProps {
   export const DataTableDemo: React.FC<DataTableDemoProps> = ({ filter }) => {
     const [open,setOpen]=React.useState(false)
     const t=useTranslations()
-    const {students}=useData()
+    const {students,setStudents}=useData()
     const [student,setStudent]=React.useState<StudentFormValues>({  
       id: '123456',
       level: 'Intermediate',
@@ -102,7 +103,7 @@ interface DataTableDemoProps {
       nextPaymentDate: new Date(),
       totalAmount: 1000,
       amountLeftToPay: 500,
-      class: { name: 'Class Name', id: 'class123' },
+      class: "S",
       registrationAndInsuranceFee:"Paid",
       feedingFee:"Paid"
     })
@@ -120,13 +121,12 @@ interface DataTableDemoProps {
       setOpen(true); // Open the sheet after setting the level
     };
     const getMonthAbbreviation = (monthIndex: number) => {
-      const startDate = new Date(2023, 8); // September 2023 (month index 8)
+      const startDate = new Date(2024, 8); // September 2023 (month index 8)
       const date = new Date(startDate.getFullYear(), startDate.getMonth() + monthIndex);
-      const monthAbbreviation = date.toLocaleString("default", { month: "short" });
+      const monthAbbreviation = date.toLocaleString('en-GB', { month: "short" });
       const yearAbbreviation = date.getFullYear().toString().substr(-2);
       return `${monthAbbreviation}${yearAbbreviation}`;
     };
-    
     // Updated generateMonthlyPaymentColumns function
     const generateMonthlyPaymentColumns = (
       getMonthAbbreviation: (index: number) => string
@@ -134,10 +134,10 @@ interface DataTableDemoProps {
       return Array.from({ length: 11 }, (_, i) => {
         const monthAbbreviation = getMonthAbbreviation(i);
         return {
-          accessorKey: `monthlyPayments23_24.${monthAbbreviation}`,
+          accessorKey: `monthlyPayments.${monthAbbreviation}`,
           header: () => <div>{monthAbbreviation}</div>,
           cell: ({ row }: { row: any }) => {
-            const isPaid = row.original.monthlyPayments23_24[monthAbbreviation]?.status 
+            const isPaid = row.original.monthly_payments[monthAbbreviation]?.status 
      
             
             return (
@@ -168,8 +168,13 @@ interface DataTableDemoProps {
       },
       {
         accessorKey: "level",
-        header: () => <div >{t('level')}</div>,
+        header: () => <div style={{ whiteSpace: 'pre-wrap' }}>{t('level')}</div>,
         cell: ({ row }) => <div>{row.original.level}</div>,
+      },
+      {
+        accessorKey: "class",
+        header: () => <div >{t('class')}</div>,
+        cell: ({ row }) => <div>{row.original.class}</div>,
       },
       ...generateMonthlyPaymentColumns(getMonthAbbreviation),
       {
@@ -221,12 +226,12 @@ interface DataTableDemoProps {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => openEditSheet(student)}>
-                  Edit
-                </DropdownMenuItem>
+                  {t('edit')} </DropdownMenuItem>
        
-                <DropdownMenuItem onClick={() => console.log(`View details of ${student.firstName} ${student.lastName}`)}>
-            Print
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() =>{deleteStudent(student.id), setStudents((prevStudents:any) =>
+      prevStudents.filter((std:any) => std.id !== student.id)
+    )}}>
+          {t('delete')} </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           );
@@ -244,6 +249,7 @@ const orderedMonths = [
 ];
     const exceldata=students.map((student:any)=>({[`${t('Name')}`]:student.student,
     [`${t('level')}`]:student.level,
+    [`${t('class')}`]:student.class,
     [`${t('status')}`]:t(student.status),
     [`${t('joining-date-0')}`]:student.joiningDate,
     ...orderedMonths.reduce((acc: Record<string, string>, month: string) => {

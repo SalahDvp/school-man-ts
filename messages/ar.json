@@ -465,5 +465,7 @@
   "Not Paid": "غير مدفوعة",
   "add-class-0": "إضافة فئة",
   "add-classes-to-this-level": "إضافة فئات إلى هذا المستوى",
-  "remove": "يزيل"
+  "remove": "يزيل",
+  "select-a-class": "حدد فئة",
+  "amount-left-to-pay": "المبلغ المتبقي للدفع"
 }

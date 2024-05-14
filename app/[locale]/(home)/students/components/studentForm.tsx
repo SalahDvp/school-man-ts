@@ -51,6 +51,7 @@ const fieldNames = [
   "postalCode",
   "country",
   "level",
+  "class",
   'registrationAndInsuranceFee',
   'feedingFee',
   "parentFullName",
@@ -60,6 +61,7 @@ const fieldNames = [
   "emergencyContactPhone",
   "medicalConditions",
   "joiningDate",
+
 
 ];
  
@@ -93,6 +95,7 @@ type FormKeys =
   | "joiningDate"
   |"registrationAndInsuranceFee"
   |"feedingFee"
+  |"class";
 type StudentFormValues = z.infer<typeof  studentRegistrationSchema> ;
 interface FileUploadProgress {
   file: File;
@@ -117,6 +120,7 @@ const t=useTranslations()
   const [openGender, setOpenGender] = useState(false);
   const[openFeedingFee,setOpenFeedingFee]=useState(false)
   const [openRegistrationAndInsuranceFee,setOpenRegistrationAndInsuranceFee]=useState(false)
+  const [classes,setClasses]=useState([])
   const form = useForm<any>({
     //resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
@@ -129,10 +133,9 @@ const t=useTranslations()
       nextPaymentDate: new Date(),
       totalAmount: 0,
       amountLeftToPay: 0,
-      class: { name: 'Class Name', id: 'class123' },
       'registrationAndInsuranceFee':"notPaid",
       'feedingFee':"notPaid",
-      monthlyPayments23_24: Object.fromEntries(
+      monthlyPayments: Object.fromEntries(
         Array.from({ length: 12 }, (_, i) => {
             const monthAbbreviation = getMonthAbbreviation(i);
             return [monthAbbreviation, { month: monthAbbreviation, status: 'Not Paid' }];
@@ -141,6 +144,7 @@ const t=useTranslations()
   }
  
   });
+
   const studentPaymentStatus =[
     
     {
@@ -162,9 +166,7 @@ const t=useTranslations()
   }, [watch]);
   
   const createMonthlyPaymentsData = (level: any) => {
-    const startYear = level.start.getFullYear().toString().substr(-2); // Get last two digits of start year
-    const endYear = level.end.getFullYear().toString().substr(-2); // Get last two digits of end year
-    const monthlyPaymentsKey = `monthly_payments${startYear}_${endYear}`;
+    const monthlyPaymentsKey = `monthly_payments`;
     const monthlyPaymentsObj: Record<string, { status: string; month: string }> = {};
     const startDateMonth = level.start.getMonth(); // Month index from 0 to 11
     const endDateMonth = level.end.getMonth(); // Month index from 0 to 11
@@ -279,6 +281,7 @@ const t=useTranslations()
               form.setValue("levelId", level.id);
               const data=createMonthlyPaymentsData(level)
               form.setValue(data.monthlyPaymentsKey,data.monthlyPaymentsObj)
+              setClasses(level.classes)
 
             }}
     
@@ -300,6 +303,33 @@ const t=useTranslations()
                       ))}
                     </SelectContent>
                   </Select>)
+                   case "class":
+                    return(   <Select
+                
+                      onValueChange={(value) => {
+                       
+                        form.setValue("class", value);
+          
+                      }}
+              
+                            >
+                              <FormControl>
+                                <SelectTrigger
+                                  id={`class`}
+                                  aria-label={`Select class`}
+                                >
+                                  <SelectValue placeholder={t('select-a-class')} />
+                                </SelectTrigger>
+                              </FormControl>
+          
+                              <SelectContent>
+                                {classes.map((cls:any,index:number) => (
+                                  <SelectItem key={index} value={cls}>
+                                    {cls}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>)
         case "feedingFee":
           return (
             <Combobox

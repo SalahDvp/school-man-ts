@@ -61,6 +61,7 @@ type FormKeys =
   | "medicalConditions"
   |"registrationAndInsuranceFee"
   |"feedingFee"
+  |"class";
   type StudentFormValues = z.infer<typeof studentRegistrationSchema> & { [key: string]: string | Date | number | any;}
 
 interface openModelProps {
@@ -85,6 +86,7 @@ const fieldNames = [
   "parentEmail",
   "parentPhone",
   "level",
+  "class",
   'registrationAndInsuranceFee',
   'feedingFee',
   "class",
@@ -117,6 +119,8 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open,student }) => {
   const {parents,setStudents,levels}=useData()
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
   const[openFeedingFee,setOpenFeedingFee]=useState(false)
+  const [classes,setClasses]=useState([])
+
   const [openRegistrationAndInsuranceFee,setOpenRegistrationAndInsuranceFee]=useState(false)
 const t=useTranslations()
   const form = useForm<StudentFormValues>({
@@ -150,7 +154,7 @@ const t=useTranslations()
       nextPaymentDate: new Date(),
       totalAmount: 1000,
       amountLeftToPay: 500,
-      class: { name: 'Class Name', id: 'class123' },
+      class: "lol",
     }
   });
   const { formState, setValue, getValues,reset} = form;
@@ -167,9 +171,8 @@ const t=useTranslations()
     },
   ]
   const createMonthlyPaymentsData = (level: any) => {
-    const startYear = level.start.getFullYear().toString().substr(-2); // Get last two digits of start year
-    const endYear = level.end.getFullYear().toString().substr(-2); // Get last two digits of end year
-    const monthlyPaymentsKey = `monthly_payments${startYear}_${endYear}`;
+
+    const monthlyPaymentsKey = `monthly_payments`;
     const monthlyPaymentsObj: Record<string, { status: string; month: string }> = {};
     const startDateMonth = level.start.getMonth(); // Month index from 0 to 11
     const endDateMonth = level.end.getMonth(); // Month index from 0 to 11
@@ -204,8 +207,12 @@ useEffect(() => {
   
     if (student) {
       console.log("studwnt loaded");
-      
+     
       reset(student)
+      const level =levels.find((lvl:any)=>lvl.level===student.level)
+      setClasses(level?.classes)
+      console.log("classes",level?.classes);
+      
       downloadFiles();
     }
   }, [student,reset])
@@ -286,8 +293,6 @@ useEffect(() => {
             }}
           />
         );
-        case "class":
-          return <Input {...field}  value={getValues("class").name}/>;
           case "feedingFee":
             return (
               <Combobox
@@ -333,7 +338,8 @@ useEffect(() => {
                     form.setValue("level", level.level);
                     const data=createMonthlyPaymentsData(level)
                     form.setValue(data.monthlyPaymentsKey,data.monthlyPaymentsObj)
-      
+                    setClasses(level.classes)
+
                   }}
           
                         >
@@ -354,6 +360,33 @@ useEffect(() => {
                             ))}
                           </SelectContent>
                         </Select>)
+                                           case "class":
+                                            return(   <Select
+                                              defaultValue={form.getValues("class")}
+                                              onValueChange={(value) => {
+                                               
+                                                form.setValue("class", value);
+                                  
+                                              }}
+                                      
+                                                    >
+                                                      <FormControl>
+                                                        <SelectTrigger
+                                                          id={`class`}
+                                                          aria-label={`Select class`}
+                                                        >
+                                                          <SelectValue placeholder={t('select-a-class')} />
+                                                        </SelectTrigger>
+                                                      </FormControl>
+                                  
+                                                      <SelectContent>
+                                                        {classes.map((cls:any,index:number) => (
+                                                          <SelectItem key={index} value={cls}>
+                                                            {cls}
+                                                          </SelectItem>
+                                                        ))}
+                                                      </SelectContent>
+                                                    </Select>)
           
       default:
         return <Input {...field} />;

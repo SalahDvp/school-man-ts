@@ -25,7 +25,7 @@ export const addPaymentTransaction = async (transaction:StudentPaymentFormValues
             nextPaymentDate: transaction.nextPaymentDate,
             amountLeftToPay: transaction.amountLeftToPay - transaction.paymentAmount,
             ...Object.fromEntries(
-                months.map((month) => [`monthlyPayments23_24.${month}.status`, 'Paid'])
+                months.map((month) => [`monthly_payments.${month}.status`, 'Paid'])
             )
         });
         await updateDoc(doc(db,"Parents",transaction.parent.id),{

@@ -29,7 +29,7 @@ import { ScrollArea} from "@/components/ui/scroll-area";
 import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
-import { z } from "zod";
+import { date, z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addPaymentTransaction } from "@/lib/hooks/billing/student-billing";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
@@ -124,9 +124,9 @@ console.log(months);
 
 
 const orderedMonths = [
-  'Sept23', 'Oct23', 'Nov23', 'Dec23',
-  'Jan24', 'Feb24', 'Mar24', 'Apr24',
-  'May24', 'Jun24', 'Jul24','Aug24'
+  'Sept24', 'Oct24', 'Nov24', 'Dec24',
+  'Jan25', 'Feb25', 'Mar25', 'Apr25',
+  'May25', 'Jun25', 'Jul25','Aug25'
 ];
 export default function StudentPaymentForm() {
   const { toast } = useToast();
@@ -174,16 +174,14 @@ const paymentPlans = React.useMemo(() => {
   if (studentValue) {
     const selectedLevel = levels.find((level:any) => level.level === studentValue);
 
-    if (selectedLevel) {
-      console.log(selectedLevel.prices);
-      
+    if (selectedLevel) {      
       return selectedLevel.prices.map((price:any)=>({...price,label:price.name,value:price.name}));
     }
   }
   return [];
 }, [form,levels,watchlevel]);
 const onSelected=(selectedStudent:any)=>{
-  form.setValue("class",selectedStudent.class.name)
+  form.setValue("class",selectedStudent.class)
   form.setValue("parent",{name:selectedStudent.parentFullName,id:selectedStudent.parentId})
   form.setValue("level",selectedStudent.level)
   form.setValue("amountLeftToPay",selectedStudent.amountLeftToPay)
@@ -229,6 +227,8 @@ const onSelected=(selectedStudent:any)=>{
               value={getValues("student")?.student}
               onSelected={(selectedValue) => {
                 const selectedStudent = students.find((student:any) => student.value === selectedValue);
+          
+                
                 if (selectedStudent) {
                   const { value, label, ...rest } = selectedStudent; 
                   const updatedStudent:any = { ...rest };
@@ -290,11 +290,12 @@ const onSelected=(selectedStudent:any)=>{
             options={paymentPlans}
             value={getValues("paymentPlan")?.name}
             onSelected={(selectedValue) => {
+              console.log("value",selectedValue);
+              
               const paymentPlan = paymentPlans?.find(
-                (plan:any) => plan?.value.replace(/\s/g, '') === selectedValue
+                (plan:any) => plan.value === selectedValue
               );
               console.log("payment",paymentPlans);
-              
               if (paymentPlan) {
                 form.setValue(fieldName, paymentPlan)
                 form.setValue("paymentAmount",paymentPlan.price)
@@ -311,6 +312,8 @@ const onSelected=(selectedStudent:any)=>{
           )
           case "nextPaymentDate":
             return (<Input {...field} value={field.value?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} readOnly/>)
+            case "class":
+              return <Input {...field}  value={getValues("class")}/>;
                       default:
         return <Input {...field} />;
     }
@@ -331,7 +334,8 @@ const onSelected=(selectedStudent:any)=>{
           level: data.level,
           parent: data.parent.name,
           paymentAmount: data.paymentAmount,
-          paymentDate: new Date().toLocaleDateString(),
+          amountLeftToPay:data.amountLeftToPay,
+          paymentDate: data.paymentDate.toLocaleDateString(),
           status: t(data.status),
           fromWho: data.fromWho,
         },
@@ -341,6 +345,7 @@ const onSelected=(selectedStudent:any)=>{
           t('level'),
           t('parent'),
           t('amount'),
+          t('amount-left-to-pay'),
           t('paymentDate'),
           t('status'),
           t('fromWho'),
@@ -396,17 +401,17 @@ const onSelected=(selectedStudent:any)=>{
               ...student,
               nextPaymentDate: data.nextPaymentDate,
               amountLeftToPay: data.amountLeftToPay - data.paymentAmount,
-              monthlyPayments23_24: { ...student.monthlyPayments23_24 }, // Ensure a new object is created for immutability
+              monthly_payments: { ...student.monthly_payments }, // Ensure a new object is created for immutability
             };
             
             // Update status for each month
             monthAbbreviations.forEach((month) => {
-              updatedStudent.monthlyPayments23_24[month].status = 'Paid';
+              updatedStudent.monthly_payments[month].status = 'Paid';
             });
     
             console.log("Updated student:", updatedStudent);
             if (!billGenerated) {
-              generateBillIfNeeded(updatedStudent.monthlyPayments23_24, data);
+              generateBillIfNeeded(updatedStudent.monthly_payments, data);
               billGenerated = true; // Update variable
             }
             return updatedStudent;

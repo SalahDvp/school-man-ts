@@ -461,5 +461,7 @@
   "notPaid": "not Paid",
   "add-class-0": "add Class",
   "add-classes-to-this-level": "add Classes to this level",
-  "remove": "Remove"
+  "remove": "Remove",
+  "select-a-class": "select a Class",
+  "amount-left-to-pay": "amount left to pay"
 }
