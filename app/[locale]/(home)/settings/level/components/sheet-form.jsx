@@ -31,6 +31,7 @@ import CalendarDatePicker from "../../../students/components/date-picker";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import { PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -38,7 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
+import { X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -61,7 +62,7 @@ export function SheetDemo() {
 
       status: "open",
 
-
+      classes:[]
     },
    
   });
@@ -89,7 +90,10 @@ const objectOptions = [
     control: form.control,
     name: "prices",
   });
-  
+  const { fields: fields, append: append,remove:removeClass } = useFieldArray({
+    control: form.control,
+    name: "classes",
+  });
 
   const {toast}=useToast()
   const onSubmit = async(data) => {
@@ -359,7 +363,39 @@ reset({ prices: [] });
               </FormItem>
             )}
           />
-          {/* Checkboxes for Objects of Study */}
+          <div>
+   {fields.map((field, index) => (
+            <FormField
+              control={form.control}
+              key={field.id}
+              name={`classes.${index}`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={cn(index !== 0 && "sr-only")}>
+                    {t('classes')} </FormLabel>
+                  <FormDescription className={cn(index !== 0 && "sr-only")}>
+                 {t('add-classes-to-this-level')} </FormDescription>
+                  <FormControl>
+                  <div className="flex w-full max-w-sm items-center space-x-2">
+                    <Input {...field} />
+                    <Button  type="button" variant="destructive" onClick={()=>removeClass(index)}>{t('remove')}</Button>
+    </div>
+
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+                   <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-2"
+            onClick={() => append("")}
+          >
+            {t('add-class-0')} </Button>
+        </div>
           <FormField
             control={control}
             name="subjects"

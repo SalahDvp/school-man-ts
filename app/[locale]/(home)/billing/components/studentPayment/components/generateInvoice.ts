@@ -345,9 +345,10 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       body: [
         valuesArray
       ],
-      theme: 'striped',
+      theme: 'grid',
       headStyles:{
-        fillColor: '#343a40',
+        fillColor: '#E0E0E0',
+        textColor:'black',
         font:'Amiri',
       },
       bodyStyles:{
@@ -357,9 +358,9 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
     });
     autoTable(doc, {
         head: [[
-            'Sep 23', 'Oct 23', 'Nov 23', 'Dec 23',
-            'Jan 24', 'Feb 24', 'Mar 24', 'Apr 24',
-            'May 24', 'Jun 24', 'Jul 24'
+            'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24',
+            'Jan 25', 'Feb 25', 'Mar 25', 'Apr 25',
+            'May 25', 'Jun 25', 'Jul 25'
           ]],
         body: [
           paidMonths,
@@ -499,9 +500,10 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         body: [
           valuesArray
         ],
-        theme: 'striped',
+        theme: 'grid',
         headStyles:{
-          fillColor: '#343a40',
+          fillColor: '#E0E0E0',
+          textColor:'black',
           font:'Amiri',
         },
         bodyStyles:{
@@ -512,9 +514,9 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       });
       autoTable(doc, {
           head: [[
-              'Sep 23', 'Oct 23', 'Nov 23', 'Dec 23',
-              'Jan 24', 'Feb 24', 'Mar 24', 'Apr 24',
-              'May 24', 'Jun 24', 'Jul 24'
+              'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24',
+              'Jan 25', 'Feb 25', 'Mar 25', 'Apr 25',
+              'May 25', 'Jun 25', 'Jul 25'
             ]],
           body: [
             paidMonths,

@@ -457,6 +457,9 @@
   "this-is-a-fee-for-food-such-as-lunch": "this is a fee for food such as lunch",
   "feedingFee": "Feeding Fee",
   "registrationAndInsuranceFee": "registration And Insurance Fee",
-  "Paid":"Paid",
-  "notPaid":"not Paid"
+  "Paid": "Paid",
+  "notPaid": "not Paid",
+  "add-class-0": "add Class",
+  "add-classes-to-this-level": "add Classes to this level",
+  "remove": "Remove"
 }

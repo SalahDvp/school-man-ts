@@ -462,5 +462,8 @@
   "registrationAndInsuranceFee": "frais d'inscription et d'assurance",
   "feedingFee": "Frais de cantine",
   "Paid": "Payé",
-  "Not Paid": "impayé"
+  "Not Paid": "impayé",
+  "add-class-0": "ajouter une classe",
+  "add-classes-to-this-level": "ajouter des classes à ce niveau",
+  "remove": "Retirer"
 }

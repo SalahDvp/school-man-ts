@@ -317,7 +317,8 @@ const onSelected=(selectedStudent:any)=>{
   };
   function generateBillIfNeeded(months: any, data: StudentPaymentFormValues) {
     if (printBill) {
-  
+      console.log(data.paymentDate);
+      
       const statusArray: string[] = orderedMonths.map((month) => {
         const monthData = months[month];
   
@@ -330,7 +331,7 @@ const onSelected=(selectedStudent:any)=>{
           level: data.level,
           parent: data.parent.name,
           paymentAmount: data.paymentAmount,
-          paymentDate: format(data.paymentDate, 'dd/MM/yyyy'),
+          paymentDate: new Date().toLocaleDateString(),
           status: t(data.status),
           fromWho: data.fromWho,
         },

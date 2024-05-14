@@ -462,5 +462,8 @@
   "registrationAndInsuranceFee": "رسوم التسجيل والتأمين",
   "Paid": "مدفوع",
   "feedingFee": "رسوم إطعام ",
-  "Not Paid": "غير مدفوعة"
+  "Not Paid": "غير مدفوعة",
+  "add-class-0": "إضافة فئة",
+  "add-classes-to-this-level": "إضافة فئات إلى هذا المستوى",
+  "remove": "يزيل"
 }
