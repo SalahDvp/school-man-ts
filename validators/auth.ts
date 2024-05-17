@@ -28,10 +28,10 @@ const studentRegistrationSchema = z.object({
   nextPaymentDate: z.date(), // You may need to adjust this based on your actual date format
   totalAmount: z.number(),
   amountLeftToPay: z.number(),
-  class: z.object({
-    name: z.string(),
-    id:z.string()
-  }),
+  class: z.string(),
+  [`monthlyPayments${'23'}_${'24'}`]:z.any(),
+  registrationAndInsuranceFee:z.string(),
+  feedingFee:z.string()
 });
 
 export default studentRegistrationSchema;

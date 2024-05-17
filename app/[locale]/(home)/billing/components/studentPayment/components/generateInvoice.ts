@@ -2,7 +2,7 @@
 import { format } from "date-fns";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import { font } from "@/lib/fontscustom/Amiri-Regular-normal"
 export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any){
     const doc = new jsPDF();
   
@@ -241,8 +241,9 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
     return doc.save("invoice");
   
   }
-  export function generateBill(paymentData:any,id:string,titles:any[],words:any) {
+  export function generateBill(paymentData:any,id:string,titles:any[],words:any,paidMonths:any) {
     const doc = new jsPDF();
+<<<<<<< HEAD
     doc.addFileToVFS(
       "(A) Arslan Wessam A (A) Arslan Wessam A-normal.ttf",
       font
@@ -252,15 +253,23 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       "(A) Arslan Wessam A (A) Arslan Wessam A",
       "normal"
     );
+=======
+
+    doc.addFileToVFS('Amiri-Regular.ttf', font);
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal');
+    doc.setFont('Amiri');
+>>>>>>> 4ccda59a7e4439f56fbf57c1ec26336c0f06398f
     autoTable(doc, {
+
       body: [
         [
           {
-            content: 'school Erp',
+            content: 'Newton school',
             styles: {
               halign: 'left',
               fontSize: 20,
-              textColor: '#ffffff',
+              textColor: 'black',
+              font:'Amiri'
                 
             }
           },
@@ -269,14 +278,15 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             styles: {
               halign: 'right',
               fontSize: 20,
-              textColor: '#ffffff'
+              textColor: 'black',
+              font:'Amiri'
             }
           }
         ],
       ],
       theme: 'plain',
       styles: {
-        fillColor: '#3366ff'
+       
       }
     });
   
@@ -287,7 +297,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             content: `ReferenceID #${id}`
             +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
             styles: {
-              halign: 'right'
+              halign: 'right',
+              font:'Amiri',
             }
           }
         ],
@@ -301,35 +312,38 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
           {   
             content: words.billedTo
             +`\n${paymentData.parent}`
-            +'\nBilling Address line 1'
-            +'\nBilling Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
+            +'\n'
+            +'\n'
+            +'\n'
+            +'\n',
             styles: {
-              halign: 'left'
+              halign: 'left',
+              font:'Amiri',
             }
           },
           {
     
             content: words.shippingAddress
             +`\n${paymentData.parent}`
-            +'\nShipping Address line 1'
-            +'\nShipping Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
+            +'\n'
+            +'\n'
+            +'\n'
+            +'\n',
             styles: {
-              halign: 'left'
+              halign: 'left',
+              font:'Amiri',
             }
           },
           {        
             content:words.from
-            +'\nSchool erp'
-            +'\nShipping Address line 1'
-            +'\nShipping Address line 2'
-            +'\nZip code - City'
-            +'\nCountry',
+            +'\nNewton school'
+            +'\n'
+            +'\n'
+            +'\n'
+            +'\n',
             styles: {
-              halign: 'right'
+              halign: 'right',
+              font:'Amiri',
             }
           }
         ],
@@ -343,26 +357,35 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
       body: [
         valuesArray
       ],
-      theme: 'striped',
+      theme: 'grid',
       headStyles:{
-        fillColor: '#343a40'
+        fillColor: '#E0E0E0',
+        textColor:'black',
+        font:'Amiri',
       },
- 
+      bodyStyles:{
+              font:'Amiri',
+      }
       
     });
     autoTable(doc, {
         head: [[
-            'Sep 23', 'Oct 23', 'Nov 23', 'Dec 23',
-            'Jan 24', 'Feb 24', 'Mar 24', 'Apr 24',
-            'May 24', 'Jun 24', 'Jul 24'
+            'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24',
+            'Jan 25', 'Feb 25', 'Mar 25', 'Apr 25',
+            'May 25', 'Jun 25', 'Jul 25'
           ]],
         body: [
-          ["paid","paid","paid"],
+          paidMonths,
         ],
         theme: 'grid',
         headStyles:{
           fillColor: '#E0E0E0',
-          textColor:'black'
+          textColor:'black',
+          font:'Amiri',
+        },
+        bodyStyles:{
+          
+              font:'Amiri',
         },
           didParseCell: function (data) {
            
@@ -377,7 +400,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         body: [
           [
             {
-              content: '- - - - - - - - - - - - - - - - - - - - - - - - - - - - ',
+              content: '- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -',
               styles: {
                 halign: 'center',
                 fontSize: 20,
@@ -397,11 +420,12 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         body: [
           [
             {
-              content: 'school Erp',
+              content: 'Newton school',
               styles: {
                 halign: 'left',
                 fontSize: 20,
                 textColor: 'black',
+                font:'Amiri',
                   
               }
             },
@@ -410,7 +434,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               styles: {
                 halign: 'right',
                 fontSize: 20,
-                textColor: 'black'
+                textColor: 'black',
+                font:'Amiri',
               }
             }
           ],
@@ -428,7 +453,8 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
               content: `ReferenceID #${id}`
               +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
               styles: {
-                halign: 'right'
+                halign: 'right',
+                font:'Amiri',
               }
             }
           ],
@@ -442,35 +468,38 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
             {   
               content: words.billedTo
               +`\n${paymentData.parent}`
-              +'\nBilling Address line 1'
-              +'\nBilling Address line 2'
-              +'\nZip code - City'
-              +'\nCountry',
+              +'\n'
+              +'\n'
+              +'\n'
+              +'\n',
               styles: {
-                halign: 'left'
+                halign: 'left',
+                font:'Amiri',
               }
             },
             {
       
               content: words.shippingAddress
               +`\n${paymentData.parent}`
-              +'\nShipping Address line 1'
-              +'\nShipping Address line 2'
-              +'\nZip code - City'
-              +'\nCountry',
+              +'\n'
+              +'\n'
+              +'\n'
+              +'\n',
               styles: {
-                halign: 'left'
+                halign: 'left',
+                font:'Amiri',
               }
             },
             {        
               content:words.from
-              +'\nSchool erp'
-              +'\nShipping Address line 1'
-              +'\nShipping Address line 2'
-              +'\nZip code - City'
-              +'\nCountry',
+              +'\nNewton school'
+              +'\n'
+              +'\n'
+              +'\n'
+              +'\n',
               styles: {
-                halign: 'right'
+                halign: 'right',
+                font:'Amiri',
               }
             }
           ],
@@ -483,26 +512,34 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         body: [
           valuesArray
         ],
-        theme: 'striped',
+        theme: 'grid',
         headStyles:{
-          fillColor: '#343a40'
+          fillColor: '#E0E0E0',
+          textColor:'black',
+          font:'Amiri',
         },
+        bodyStyles:{
+          font:'Amiri'
+        }
    
         
       });
       autoTable(doc, {
           head: [[
-              'Sep 23', 'Oct 23', 'Nov 23', 'Dec 23',
-              'Jan 24', 'Feb 24', 'Mar 24', 'Apr 24',
-              'May 24', 'Jun 24', 'Jul 24'
+              'Sep 24', 'Oct 24', 'Nov 24', 'Dec 24',
+              'Jan 25', 'Feb 25', 'Mar 25', 'Apr 25',
+              'May 25', 'Jun 25', 'Jul 25'
             ]],
           body: [
-            ["paid","paid","paid"],
+            paidMonths,
           ],
           theme: 'grid',
           headStyles:{
             fillColor: '#E0E0E0',
             textColor:'black'
+          },
+          bodyStyles:{
+            font:'Amiri'
           },
             didParseCell: function (data) {
              

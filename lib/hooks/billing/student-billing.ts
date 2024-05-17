@@ -10,7 +10,7 @@ function getMonthInfo(date:Date) {
     return { fullName: monthName, abbreviation: monthAbbreviation };
   }
 type StudentPaymentFormValues = z.infer<typeof studentPaymentSchema> & {documents?:any[]};
-export const addPaymentTransaction = async (transaction:StudentPaymentFormValues) => {
+export const addPaymentTransaction = async (transaction:StudentPaymentFormValues,months:any[]) => {
     try {
         const month=getMonthInfo(transaction.paymentDate)
 
@@ -21,10 +21,13 @@ export const addPaymentTransaction = async (transaction:StudentPaymentFormValues
             totalIncome: increment(transaction.paymentAmount),
             [`data.${month.abbreviation}.income`]: increment(transaction.paymentAmount)
         });
-        await updateDoc(doc(db,"Students",transaction.student.id),{
-            nextPaymentDate:transaction.nextPaymentDate,
-            amountLeftToPay:transaction.amountLeftToPay-transaction.paymentAmount
-        })
+        await updateDoc(doc(db, "Students", transaction.student.id), {
+            nextPaymentDate: transaction.nextPaymentDate,
+            amountLeftToPay: transaction.amountLeftToPay - transaction.paymentAmount,
+            ...Object.fromEntries(
+                months.map((month) => [`monthly_payments.${month}.status`, 'Paid'])
+            )
+        });
         await updateDoc(doc(db,"Parents",transaction.parent.id),{
             totalPayment:increment(transaction.paymentAmount)
         })

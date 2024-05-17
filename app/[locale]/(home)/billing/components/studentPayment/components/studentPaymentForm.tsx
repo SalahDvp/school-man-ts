@@ -29,14 +29,14 @@ import { ScrollArea} from "@/components/ui/scroll-area";
 import ImageUpload from "@/app/[locale]/(home)/students/components/uploadFile";
 import Combobox from "@/components/ui/comboBox";
 import { LoadingButton } from "@/components/ui/loadingButton";
-import { z } from "zod";
+import { date, z } from "zod";
 import { useData } from "@/context/admin/fetchDataContext";
 import { addPaymentTransaction } from "@/lib/hooks/billing/student-billing";
 import { uploadFilesAndLinkToCollection } from "@/context/admin/hooks/useUploadFiles";
 import { getMonthInfo } from "@/lib/hooks/billing/teacherPayment";
 import { useTranslations } from "next-intl";
 import { Checkbox } from "@/components/ui/checkbox"
-import { downloadInvoice, generateBill } from "./generateInvoice";
+import { downloadInvoice, generateBill } from "@/app/[locale]/(home)/billing/components/studentPayment/components/generateInvoice"
 import { format } from "date-fns";
 const fieldNames: string[] = [
   'student',
@@ -94,6 +94,40 @@ interface FileUploadProgress {
   name: string;
   source:any;
 }
+type MonthData = {
+  status: string;
+  month: string;
+};
+
+
+function getMonthAbbreviationsInRange(startDate:Date, endDate:Date) {
+  const months = [];
+  const dateFormat:any = { month: 'short', year: '2-digit' };
+  const currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+      const monthYear = currentDate.toLocaleDateString('en-GB', dateFormat);
+      const [monthAbbreviation, year] = monthYear.split(' ');
+      const monthYearAbbreviation = `${monthAbbreviation}${year}`;
+      months.push(monthYearAbbreviation);
+      currentDate.setMonth(currentDate.getMonth() + 1);
+  }
+
+  // Remove the last month
+  if (months.length > 0) {
+      months.pop();
+  }
+console.log(months);
+
+  return months;
+}
+
+
+const orderedMonths = [
+  'Sept24', 'Oct24', 'Nov24', 'Dec24',
+  'Jan25', 'Feb25', 'Mar25', 'Apr25',
+  'May25', 'Jun25', 'Jul25','Aug25'
+];
 export default function StudentPaymentForm() {
   const { toast } = useToast();
   const {students,levels,setInvoices,setStudents,setAnalytics}=useData()
@@ -140,15 +174,14 @@ const paymentPlans = React.useMemo(() => {
   if (studentValue) {
     const selectedLevel = levels.find((level:any) => level.level === studentValue);
 
-    if (selectedLevel) {
-
+    if (selectedLevel) {      
       return selectedLevel.prices.map((price:any)=>({...price,label:price.name,value:price.name}));
     }
   }
   return [];
 }, [form,levels,watchlevel]);
 const onSelected=(selectedStudent:any)=>{
-  form.setValue("class",selectedStudent.class.name)
+  form.setValue("class",selectedStudent.class)
   form.setValue("parent",{name:selectedStudent.parentFullName,id:selectedStudent.parentId})
   form.setValue("level",selectedStudent.level)
   form.setValue("amountLeftToPay",selectedStudent.amountLeftToPay)
@@ -194,6 +227,8 @@ const onSelected=(selectedStudent:any)=>{
               value={getValues("student")?.student}
               onSelected={(selectedValue) => {
                 const selectedStudent = students.find((student:any) => student.value === selectedValue);
+          
+                
                 if (selectedStudent) {
                   const { value, label, ...rest } = selectedStudent; 
                   const updatedStudent:any = { ...rest };
@@ -255,9 +290,12 @@ const onSelected=(selectedStudent:any)=>{
             options={paymentPlans}
             value={getValues("paymentPlan")?.name}
             onSelected={(selectedValue) => {
+              console.log("value",selectedValue);
+              
               const paymentPlan = paymentPlans?.find(
-                (plan:any) => plan?.value === selectedValue
+                (plan:any) => plan.value === selectedValue
               );
+              console.log("payment",paymentPlans);
               if (paymentPlan) {
                 form.setValue(fieldName, paymentPlan)
                 form.setValue("paymentAmount",paymentPlan.price)
@@ -274,56 +312,130 @@ const onSelected=(selectedStudent:any)=>{
           )
           case "nextPaymentDate":
             return (<Input {...field} value={field.value?.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })} readOnly/>)
+            case "class":
+              return <Input {...field}  value={getValues("class")}/>;
                       default:
         return <Input {...field} />;
     }
   };
-
-  async function onSubmit(data:StudentPaymentFormValues) {
-    const month= getMonthInfo(data.paymentDate)
-    const transactionId=await addPaymentTransaction({...data,documents:[]})
-    const uploaded = await uploadFilesAndLinkToCollection("Billing/payments/Invoices", transactionId, filesToUpload);
-    setInvoices((prev:StudentPaymentFormValues[])=>[{...data,id:transactionId,invoice:transactionId,
-    value:transactionId,
-    label:transactionId,
-    documents:uploaded},...prev])
-    setStudents((prev:any) => {
-      const updatedLevels = prev.map((student:any) =>
-        student.id === data.student.id ? { ...student,
-          nextPaymentDate:data.nextPaymentDate,
-          amountLeftToPay:data.amountLeftToPay-data.paymentAmount }: student
+  function generateBillIfNeeded(months: any, data: StudentPaymentFormValues) {
+    if (printBill) {
+      console.log(data.paymentDate);
+      
+      const statusArray: string[] = orderedMonths.map((month) => {
+        const monthData = months[month];
+  
+        return monthData?.status === 'Paid' ? t('paid') : ' ';
+      });
+  
+      generateBill(
+        {
+          student: data.student.student,
+          level: data.level,
+          parent: data.parent.name,
+          paymentAmount: data.paymentAmount,
+          amountLeftToPay:data.amountLeftToPay,
+          paymentDate: data.paymentDate.toLocaleDateString(),
+          status: t(data.status),
+          fromWho: data.fromWho,
+        },
+        "qwdwqdqwd",
+        [
+          t('student'),
+          t('level'),
+          t('parent'),
+          t('amount'),
+          t('amount-left-to-pay'),
+          t('paymentDate'),
+          t('status'),
+          t('fromWho'),
+        ],
+        {
+          amount: t("Amount"),
+          from: t('From:'),
+          shippingAddress: t('shipping-address'),
+          billedTo: t('billed-to'),
+          subtotal: t('Subtotal:'),
+          totalTax: t('total-tax-0'),
+          totalAmount: t('total-amount-3'),
+          invoice: t('invoice'),
+        },
+        statusArray
       );
-      return updatedLevels;
-    });
-    setAnalytics((prevState:any) => ({
-      data: {
-        ...prevState.data,
-        [month.abbreviation]: {
-          ...prevState.data[month.abbreviation],
-          income:prevState.data[month.abbreviation].income + data.paymentAmount
-        }
-      },
-      totalIncome: prevState.totalIncome +  data.paymentAmount
-    }));  
-    if(printBill){
-      downloadInvoice({
-      student: data.student.student,
-      level: data.level,
-      parent: data.parent.name,
-      paymentAmount: data.paymentAmount,
-     paymentDate: format(data.paymentDate, 'dd/MM/yyyy'),
-      status: t(data.status),
-      fromWho: data.fromWho
-    },transactionId,[t('student'), t('level'), t('parent'), t('amount'), t('paymentDate'), t('status'), t('fromWho')],
-  {
-    amount:t("Amount"), from:t('From:'), shippingAddress:t('shipping-address'), billedTo:t('billed-to'), subtotal:t('Subtotal:'), totalTax:t('total-tax-0'), totalAmount:t('total-amount-3'),invoice:t('invoice')
-  })
-    } 
+    }
+  }
+    async function onSubmit(data: StudentPaymentFormValues) {
+      const monthAbbreviations = getMonthAbbreviationsInRange(
+        getValues("student").nextPaymentDate,
+        data.nextPaymentDate
+      );
+      const month = getMonthInfo(data.paymentDate);
+    
+      let months: Record<string, MonthData>;
+      let billGenerated = false;
+      const transactionId = await addPaymentTransaction(
+        { ...data, documents: [] },
+        monthAbbreviations
+      );
+      const uploaded = await uploadFilesAndLinkToCollection(
+        "Billing/payments/Invoices",
+        transactionId,
+        filesToUpload
+      );
+      setInvoices((prev: StudentPaymentFormValues[]) => [
+        {
+          ...data,
+          id: transactionId,
+          invoice: transactionId,
+          value: transactionId,
+          label: transactionId,
+          documents: uploaded,
+        },
+        ...prev,
+      ]);
+    
+      setStudents((prevStudents: any) => {
+        const updatedStudents = prevStudents.map((student: any) => {
+          if (student.id === data.student.id) {
+            const updatedStudent = {
+              ...student,
+              nextPaymentDate: data.nextPaymentDate,
+              amountLeftToPay: data.amountLeftToPay - data.paymentAmount,
+              monthly_payments: { ...student.monthly_payments }, // Ensure a new object is created for immutability
+            };
+            
+            // Update status for each month
+            monthAbbreviations.forEach((month) => {
+              updatedStudent.monthly_payments[month].status = 'Paid';
+            });
+    
+            console.log("Updated student:", updatedStudent);
+            if (!billGenerated) {
+              generateBillIfNeeded(updatedStudent.monthly_payments, data);
+              billGenerated = true; // Update variable
+            }
+            return updatedStudent;
+          }
+          return student;
+        });  
+        return updatedStudents;
+      });
+      setAnalytics((prevState: any) => ({
+        data: {
+          ...prevState.data,
+          [month.abbreviation]: {
+            ...prevState.data[month.abbreviation],
+            income: prevState.data[month.abbreviation].income + data.paymentAmount,
+          },
+        },
+        totalIncome: prevState.totalIncome + data.paymentAmount,
+      }));
+
     toast({
       title: t('changes-applied-0'),
       description: t('changes-applied-successfully'),
     });
-   console.log(data);
+  console.log(data);
             reset(); 
   }
 

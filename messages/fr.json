@@ -450,5 +450,22 @@
   "total-amount-3": "Montant total",
   "From:": "Depuis:",
   "payslip": "Fiche de paie",
-  "print-bill": "Imprimer la facture"
+  "print-bill": "Imprimer la facture",
+  "registration-and-insurance-fee": "frais d'inscription et d'assurance",
+  "this-is-a-fee-for-registration-and-insurance": "il s'agit de frais d'inscription et d'assurance",
+  "feeging-fee": "Frais de cantine",
+  "this-is-a-fee-for-food-such-as-lunch": "il s'agit de frais pour la nourriture telle que le déjeuner",
+  "feegingFee": "Frais de cantine",
+  "ninvoice-number-id": "\\nNuméro de facture : {0}",
+  "reference-id": "Référence:",
+  "registrationAndInsurancefee": "frais d'inscription et d'assurance",
+  "registrationAndInsuranceFee": "frais d'inscription et d'assurance",
+  "feedingFee": "Frais de cantine",
+  "Paid": "Payé",
+  "Not Paid": "impayé",
+  "add-class-0": "ajouter une classe",
+  "add-classes-to-this-level": "ajouter des classes à ce niveau",
+  "remove": "Retirer",
+  "select-a-class": "sélectionnez une classe",
+  "amount-left-to-pay": "montant restant à payer"
 }

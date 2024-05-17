@@ -49,9 +49,9 @@ import { updateLevel } from "@/lib/hooks/levels";
 import React from "react";
 import { useData } from "@/context/admin/fetchDataContext";
 import { useTranslations } from "next-intl";
+import { cn } from "@/lib/utils";
 
-
-type LevelFormValues = z.infer<typeof levelSchema> & {value:string;label:string};
+type LevelFormValues = z.infer<typeof levelSchema> & {value:string;label:string,classes:string[]};
 interface SheetDemoProps {
     level: Level;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -87,7 +87,10 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         fee: 1000,
         status: "open",
         registrationDeadline: new Date("2024-08-15"),
+        registrationAndInsuranceFee:0,
+        feedingFee:0,
         subjects:[{value:'',label:''}],
+        classes:[],
         prices:[]}
   });
   const {toast}=useToast()
@@ -111,7 +114,10 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
     control: form.control,
     name: "prices",
   });
-  
+  const { fields: fields, append: append,remove:removeClass } = useFieldArray({
+    control: form.control,
+    name: "classes",
+  });
   const onSubmit =async (data:LevelFormValues ) => {
     const {value, label, ...updatedData} = data;
     await updateLevel(updatedData,data.id)
@@ -270,7 +276,36 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
         </FormItem>
       )}
     />
-    {/* select payment methods */}
+        <FormField
+            control={control}
+            name="registrationAndInsuranceFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('registration-and-insurance-fee')}</FormLabel>
+                <FormControl>
+                <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                </FormControl>
+                <FormDescription>{t('this-is-a-fee-for-registration-and-insurance')}</FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+                    <FormField
+            control={control}
+            name="feedingFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('feeging-fee')}</FormLabel>
+                <FormControl>
+                <Input {...field} placeholder={t('enter-price')}  type="number"  onChange={event => field.onChange(+event.target.value)}/>
+                </FormControl>
+                <FormDescription>{t('this-is-a-fee-for-food-such-as-lunch')}</FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />  
     <FormField
             control={control}
             name="prices"
@@ -350,6 +385,39 @@ const EditFormSheetDemo: React.FC<SheetDemoProps> = ({ level,setOpen,open }) => 
               </FormItem>
             )}
           />
+                    <div>
+   {fields.map((field, index) => (
+            <FormField
+              control={form.control}
+              key={field.id}
+              name={`classes.${index}`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className={cn(index !== 0 && "sr-only")}>
+                    {t('classes')} </FormLabel>
+                  <FormDescription className={cn(index !== 0 && "sr-only")}>
+                 {t('add-classes-to-this-level')} </FormDescription>
+                  <FormControl>
+                  <div className="flex w-full max-w-sm items-center space-x-2">
+                    <Input {...field} />
+                    <Button  type="button" variant="destructive" onClick={()=>removeClass(index)}>{t('remove')}</Button>
+    </div>
+
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ))}
+                   <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-2"
+            onClick={() => append("")}
+          >
+            {t('add-class-0')} </Button>
+        </div>
     {/* Checkboxes for Objects of Study */}
     <FormField
       control={control}

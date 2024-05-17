@@ -450,5 +450,18 @@
   "total-amount-3": "Total amount",
   "From:": "From:",
   "payslip": "Payslip",
-  "print-bill": "Print bill"
+  "print-bill": "Print bill",
+  "registration-and-insurance-fee": "registration And Insurance Fee",
+  "this-is-a-fee-for-registration-and-insurance": "this is a fee for registration and Insurance",
+  "feeging-fee": "Feeding Fee",
+  "this-is-a-fee-for-food-such-as-lunch": "this is a fee for food such as lunch",
+  "feedingFee": "Feeding Fee",
+  "registrationAndInsuranceFee": "registration And Insurance Fee",
+  "Paid": "Paid",
+  "notPaid": "not Paid",
+  "add-class-0": "add Class",
+  "add-classes-to-this-level": "add Classes to this level",
+  "remove": "Remove",
+  "select-a-class": "select a Class",
+  "amount-left-to-pay": "amount left to pay"
 }

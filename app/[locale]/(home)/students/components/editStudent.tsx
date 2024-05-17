@@ -32,12 +32,18 @@ import { z } from "zod";
 import { fetchFiles, updateDocuments } from "@/context/admin/hooks/useUploadFiles";
 import { updateStudent } from "@/lib/hooks/students";
 import { useTranslations } from "next-intl";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 type FormKeys =
   | "firstName"
   | "lastName"
   | "dateOfBirth"
   | "gender"
-  | "year"
   | "address"
   | "city"
   | "state"
@@ -52,7 +58,10 @@ type FormKeys =
     |"amountLeftToPay"
   | "emergencyContactName"
   | "emergencyContactPhone"
-  | "medicalConditions";
+  | "medicalConditions"
+  |"registrationAndInsuranceFee"
+  |"feedingFee"
+  |"class";
   type StudentFormValues = z.infer<typeof studentRegistrationSchema> & { [key: string]: string | Date | number | any;}
 
 interface openModelProps {
@@ -67,7 +76,6 @@ const fieldNames = [
   "lastName",
   "dateOfBirth",
   "gender",
-  "year",
   "address",
   "city",
   "state",
@@ -78,6 +86,9 @@ const fieldNames = [
   "parentEmail",
   "parentPhone",
   "level",
+  "class",
+  'registrationAndInsuranceFee',
+  'feedingFee',
   "class",
   "amountLeftToPay",
   "emergencyContactName",
@@ -105,15 +116,18 @@ const SheetDemo: React.FC<openModelProps> = ({ setOpen, open,student }) => {
   const { toast } = useToast();
   const [openParent, setOpenParent] = useState(false);
   const [openGender, setOpenGender] = useState(false);
-  const {parents,setStudents}=useData()
+  const {parents,setStudents,levels}=useData()
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
+  const[openFeedingFee,setOpenFeedingFee]=useState(false)
+  const [classes,setClasses]=useState([])
+
+  const [openRegistrationAndInsuranceFee,setOpenRegistrationAndInsuranceFee]=useState(false)
 const t=useTranslations()
   const form = useForm<StudentFormValues>({
     //resolver: zodResolver(studentRegistrationSchema),
     defaultValues: {
       id: '123456',
       level: 'Intermediate',
-      year: '2024',
       firstName: 'John',
       lastName: 'Doe',
       dateOfBirth: new Date('1990-01-01'),
@@ -140,13 +154,47 @@ const t=useTranslations()
       nextPaymentDate: new Date(),
       totalAmount: 1000,
       amountLeftToPay: 500,
-      class: { name: 'Class Name', id: 'class123' },
+      class: "lol",
     }
   });
   const { formState, setValue, getValues,reset} = form;
   const { isSubmitting } = formState;
+  const studentPaymentStatus =[
+    
+    {
+      value:"Paid"  ,
+      label: t('paid'),
+    },
+    {
+      value:"notPaid"  ,
+      label: t('not-paid'),
+    },
+  ]
+  const createMonthlyPaymentsData = (level: any) => {
 
+    const monthlyPaymentsKey = `monthly_payments`;
+    const monthlyPaymentsObj: Record<string, { status: string; month: string }> = {};
+    const startDateMonth = level.start.getMonth(); // Month index from 0 to 11
+    const endDateMonth = level.end.getMonth(); // Month index from 0 to 11
   
+    const startDate = new Date(level.start.getFullYear(), startDateMonth, 1); // First day of the start month
+    const endDate = new Date(level.end.getFullYear(), endDateMonth + 1, 0); // Last day of the end month
+  
+    let currentDate = new Date(startDate);
+  
+    while (currentDate <= endDate) {
+      const monthAbbreviation = currentDate.toLocaleString('en-GB', { month: 'short' });
+      const yearAbbreviation = currentDate.getFullYear().toString().substr(-2);
+      const monthKey = `${monthAbbreviation}${yearAbbreviation}`;
+      const monthStatus =  'Not Paid';
+      monthlyPaymentsObj[monthKey] = {status:monthStatus,month:monthKey};
+      
+      // Move to the next month
+      currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+  
+    return { monthlyPaymentsKey, monthlyPaymentsObj };
+  };
 useEffect(() => {
     const downloadFiles = async () => {
       if (student && student.documents) {
@@ -159,8 +207,12 @@ useEffect(() => {
   
     if (student) {
       console.log("studwnt loaded");
-      
+     
       reset(student)
+      const level =levels.find((lvl:any)=>lvl.level===student.level)
+      setClasses(level?.classes)
+      console.log("classes",level?.classes);
+      
       downloadFiles();
     }
   }, [student,reset])
@@ -241,8 +293,101 @@ useEffect(() => {
             }}
           />
         );
-        case "class":
-          return <Input {...field}  value={getValues("class").name}/>;
+          case "feedingFee":
+            return (
+              <Combobox
+              {...field}
+              open={openFeedingFee}
+              setOpen={setOpenFeedingFee}
+              placeHolder={t("status")}
+              options={studentPaymentStatus}
+              value={getValues("feedingFee")}
+              onSelected={(selectedValue) => {
+                form.setValue(fieldName, selectedValue);
+              }}
+            />
+            )
+            case "registrationAndInsuranceFee":
+              return (
+                <Combobox
+                {...field}
+                open={openRegistrationAndInsuranceFee}
+                setOpen={setOpenRegistrationAndInsuranceFee}
+                placeHolder={t("status")}
+                options={studentPaymentStatus}
+                value={getValues("registrationAndInsuranceFee")}
+                onSelected={(selectedValue) => {
+                  form.setValue(fieldName, selectedValue);
+                }}
+              />
+              )
+              case "level":
+                return(   <Select
+                  defaultValue={levels.find((lvl:any)=>lvl.level===getValues("level")).level}
+                  onValueChange={(value) => {
+                    const level =levels.find((lvl:any)=>lvl.level===value)
+                    form.setValue("totalAmount", level.fee);
+                    form.setValue("amountLeftToPay", level.fee);
+                    form.setValue("startDate", level.start);
+                    form.setValue("nextPaymentDate", level.start);
+                    form.setValue("lastPaymentDate", level.start);
+                    form.setValue("level", level.level);
+                    form.setValue("levelId", level.id);
+                    form.setValue("registrationAndInsuranceFee", "notPaid");
+                    form.setValue("feedingFee", "notPaid");
+                    form.setValue("level", level.level);
+                    const data=createMonthlyPaymentsData(level)
+                    form.setValue(data.monthlyPaymentsKey,data.monthlyPaymentsObj)
+                    setClasses(level.classes)
+
+                  }}
+          
+                        >
+                          <FormControl>
+                            <SelectTrigger
+                              id={`level`}
+                              aria-label={`Select level`}
+                            >
+                              <SelectValue placeholder={t('select-level')} />
+                            </SelectTrigger>
+                          </FormControl>
+      
+                          <SelectContent>
+                            {levels.map((level:any,index:number) => (
+                              <SelectItem key={index} value={level.level}>
+                                {level.level}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>)
+                                           case "class":
+                                            return(   <Select
+                                              defaultValue={form.getValues("class")}
+                                              onValueChange={(value) => {
+                                               
+                                                form.setValue("class", value);
+                                  
+                                              }}
+                                      
+                                                    >
+                                                      <FormControl>
+                                                        <SelectTrigger
+                                                          id={`class`}
+                                                          aria-label={`Select class`}
+                                                        >
+                                                          <SelectValue placeholder={t('select-a-class')} />
+                                                        </SelectTrigger>
+                                                      </FormControl>
+                                  
+                                                      <SelectContent>
+                                                        {classes.map((cls:any,index:number) => (
+                                                          <SelectItem key={index} value={cls}>
+                                                            {cls}
+                                                          </SelectItem>
+                                                        ))}
+                                                      </SelectContent>
+                                                    </Select>)
+          
       default:
         return <Input {...field} />;
     }
@@ -260,9 +405,9 @@ useEffect(() => {
     return changes;
   };
   async function onSubmit(data: StudentFormValues) {
-    const changes = getChanges(data);
+    const level=levels.find((level:any)=>level.level===data.level)
     const { value, label, ...updatedData } = data;
-    await updateStudent(updatedData,student.id)
+    await updateStudent(updatedData,student.id,student,level)
     console.log(data);
     
     const documents= await updateDocuments(student.documents && student.documents> 0?student.documents:[],filesToUpload,'Students',student.id)
@@ -282,7 +427,7 @@ toast({
   
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={setOpen} >
    <SheetContent className=" sm:max-w-[650px]">
         <ScrollArea className="h-screen pb-20 ">
           <SheetHeader>
