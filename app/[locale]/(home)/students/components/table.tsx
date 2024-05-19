@@ -137,7 +137,8 @@ interface DataTableDemoProps {
           accessorKey: `monthlyPayments23_24.${monthAbbreviation}`,
           header: () => <div>{monthAbbreviation}</div>,
           cell: ({ row }: { row: any }) => {
-            const isPaid = row.original.monthlyPayments23_24[monthAbbreviation]?.status 
+            const isPaid = row?.original?.monthlyPayments23_24?.[monthAbbreviation]?.status;
+
      
             
             return (
