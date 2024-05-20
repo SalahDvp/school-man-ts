@@ -463,5 +463,9 @@
   "add-classes-to-this-level": "add Classes to this level",
   "remove": "Remove",
   "select-a-class": "select a Class",
-  "amount-left-to-pay": "amount left to pay"
+  "amount-left-to-pay": "amount left to pay",
+  "about": "About",
+  "family": "Family",
+  "appointments": "Appointments",
+  "years": ", 2 years"
 }

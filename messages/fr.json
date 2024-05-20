@@ -467,5 +467,8 @@
   "add-classes-to-this-level": "ajouter des classes à ce niveau",
   "remove": "Retirer",
   "select-a-class": "sélectionnez une classe",
-  "amount-left-to-pay": "montant restant à payer"
+  "amount-left-to-pay": "montant restant à payer",
+  "about": "À propos",
+  "family": "Famille",
+  "appointments": "Rendez-vous"
 }

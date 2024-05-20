@@ -467,5 +467,8 @@
   "add-classes-to-this-level": "إضافة فئات إلى هذا المستوى",
   "remove": "يزيل",
   "select-a-class": "حدد فئة",
-  "amount-left-to-pay": "المبلغ المتبقي للدفع"
+  "amount-left-to-pay": "المبلغ المتبقي للدفع",
+  "about": "عن",
+  "family": "عائلة",
+  "appointments": "تعيينات"
 }
