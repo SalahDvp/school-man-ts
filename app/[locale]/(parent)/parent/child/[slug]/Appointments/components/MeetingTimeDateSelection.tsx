@@ -1,10 +1,20 @@
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { CalendarCheck, Clock, LoaderIcon, MapPin, Timer } from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import TimeDateSelection from './TimeDateSelection'
+import { Calendar } from '@/components/ui/calendar'
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
+import { BellIcon, EyeNoneIcon, PersonIcon } from "@radix-ui/react-icons"
+
 function MeetingTimeDateSelection({eventInfo,businessInfo}) {
     const [date,setDate]=useState(new Date())
     const [timeSlots,setTimeSlots]=useState();
@@ -12,7 +22,7 @@ function MeetingTimeDateSelection({eventInfo,businessInfo}) {
     const [selectedTime,setSelectedTime]=useState();
     const [prevBooking,setPrevBooking]=useState([]);
     const [loading,setLoading]=useState(false);
-   
+
     useEffect(()=>{
     createTimeSlot(20)
     },[eventInfo])
@@ -33,72 +43,113 @@ function MeetingTimeDateSelection({eventInfo,businessInfo}) {
     setTimeSlots(slots); 
     }
 
-    /**
-     * On Date Change Handle Method
-     * @param {*} date 
-     */
-    const handleDateChange=(date)=>{
-    }
-
-    /**
-     * Handle Schedule Event on Click Schedule Button
-     * @returns 
-     */
-    const handleScheduleEvent=async()=>{
-    }
-
-  return (
-    <div className='p-5 py-10 shadow-lg m-5 border-t-8
-    mx-10
-    md:mx-26
-    lg:mx-56
-    my-10'
-    style={{borderTopColor:eventInfo?.themeColor}}
-    >
-       <Image src='/logo.svg' alt='logo'
-       width={150}
-       height={150}/>
-       <div className='grid grid-cols-1 md:grid-cols-3 mt-5'>
-            {/* Meeting Info  */}
-            <div className='p-4 border-r'>
-                <h2>{businessInfo?.businessName}</h2>
-                <h2
-                className='font-bold text-3xl'
-                >{eventInfo?.eventName?eventInfo?.eventName:'Meeting Name'}</h2>
-                <div className='mt-5 flex flex-col gap-4'>
-                    <h2 className='flex gap-2'><Clock/>{eventInfo?.duration} Min </h2>
-                    <h2 className='flex gap-2'><MapPin/>{eventInfo?.locationType} Meeting </h2>
-                    <h2 className='flex gap-2'><CalendarCheck/>{format(date,'PPP')}  </h2>
-                  {selectedTime&&  <h2 className='flex gap-2'><Timer/>{selectedTime}  </h2>}
-                  
-                    <Link href={eventInfo?.locationUrl?eventInfo?.locationUrl:'#'}
-                    className='text-primary'
-                    >{eventInfo?.locationUrl}</Link>
-                </div>
-            </div>
-            {/* Time & Date Selction  */}
-<TimeDateSelection
-            date={date}
-            enableTimeSlot={enableTimeSlot}
-            handleDateChange={handleDateChange}
-            setSelectedTime={setSelectedTime}
-            timeSlots={timeSlots}
-            selectedTime={selectedTime}
-            prevBooking={prevBooking}
-           />
-     
-
-       </div>
-       <div className='flex gap-3 justify-end'>
-
-       <Button 
-       onClick={handleScheduleEvent}
-       > 
-       {loading?<LoaderIcon className='animate-spin'/>:'Schedule' }
+  return  (
+  <div className='md:flex md:flex-row'>
+<Card className='w-full md:w-2/3 mr-2'>
+  <CardHeader className='flex flex-col items-center justify-center text-center'>
+    <CardTitle>Schedule an Appointment</CardTitle>
+    <CardDescription>
+      Pick a time that works best for you.
+    </CardDescription>
+  </CardHeader>
+  <CardContent className="grid gap-6 md:grid-cols-3 items-center justify-center">
+    <div className="grid gap-2 w-full">
+      <div className="space-y-2">
+        <Label htmlFor="teacher">Teacher</Label>
+        <Select required>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a teacher" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="teacher1">Teacher 1</SelectItem>
+            <SelectItem value="teacher2">Teacher 2</SelectItem>
+            <SelectItem value="teacher3">Teacher 3</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="duration">Duration</Label>
+        <Select required>
+          <SelectTrigger>
+            <SelectValue placeholder="Select duration" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="30">30 minutes</SelectItem>
+            <SelectItem value="60">1 hour</SelectItem>
+            <SelectItem value="90">1.5 hours</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="date">Date</Label>
+        <Button className="w-full flex-col h-auto items-start" variant="outline">
+          <span className="font-semibold uppercase text-[0.65rem]">Select date</span>
+          <span className="font-normal">4/2/2024</span>
+        </Button>
+      </div>
+      <Button type="submit">
+        Book Appointment
       </Button>
-       </div>
     </div>
-  )
+    <div className="grid gap-2 items-center justify-center md:justify-items-center w-full md:w-auto">
+      <Calendar className="h-full w-full md:w-auto" />
+    </div>
+    <div className="grid gap-2 items-center justify-center md:justify-items-center w-full md:w-48">
+      <ScrollArea className="h-72 w-full">
+        {timeSlots?.map((time, index) => (
+          <Button
+            onClick={() => setSelectedTime(time)}
+            className={`border-primary w-full mb-2 text-primary ${
+              time === selectedTime && 'bg-primary text-white'
+            }`}
+            variant="outline"
+            key={index}
+          >
+            {time}
+          </Button>
+        ))}
+      </ScrollArea>
+    </div>
+  </CardContent>
+</Card>
+   <Card className='w-full md:w-1/3'>
+   <CardHeader className="pb-3">
+     <CardTitle>Appointment History</CardTitle>
+    
+   </CardHeader>
+   <CardContent className="grid gap-1 mt-10">
+     <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+       <BellIcon className="mt-px h-5 w-5" />
+       <div className="space-y-1">
+         <p className="text-sm font-medium leading-none">Everything</p>
+         <p className="text-sm text-muted-foreground">
+           Email digest, mentions & all activity.
+         </p>
+       </div>
+     </div>
+     <div className="-mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 text-accent-foreground transition-all">
+       <PersonIcon className="mt-px h-5 w-5" />
+       <div className="space-y-1">
+         <p className="text-sm font-medium leading-none">Available</p>
+         <p className="text-sm text-muted-foreground">
+           Only mentions and comments.
+         </p>
+       </div>
+     </div>
+     <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
+       <EyeNoneIcon className="mt-px h-5 w-5" />
+       <div className="space-y-1">
+         <p className="text-sm font-medium leading-none">Ignoring</p>
+         <p className="text-sm text-muted-foreground">
+           Turn off all notifications.
+         </p>
+       </div>
+     </div>
+   </CardContent>
+ </Card>
+ </div>
+ 
+  );
 }
 
 export default MeetingTimeDateSelection

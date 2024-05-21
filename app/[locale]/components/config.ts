@@ -85,6 +85,11 @@ export const pathnames = {
     "ar": "/parent/child/[slug]/Appointments",
     "fr":"/parent/child/[slug]/Appointments"
   },
+  "/parent/child/[slug]/Courses": {
+    "en": "/parent/child/[slug]/Courses",
+    "ar": "/parent/child/[slug]/Courses",
+    "fr":"/parent/child/[slug]/Courses"
+  },
 } satisfies Pathnames<typeof locales>;
 
 // Use the default: `always`

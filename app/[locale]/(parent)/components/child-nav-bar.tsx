@@ -55,6 +55,14 @@ export function ChildNav({
             "justify-start"
           )} href={{pathname:'/parent/child/[slug]/Appointments',params:{slug:slug}}}>
                 {t('appointments')} </Link>
+                <Link className={cn(
+            buttonVariants({ variant: "ghost" }),
+            pathname === '/parent/child/[slug]/Courses'
+              ? "bg-muted hover:bg-muted"
+              : "hover:bg-transparent hover:underline",
+            "justify-start"
+          )} href={{pathname:'/parent/child/[slug]/Courses',params:{slug:slug}}}>
+                Courses </Link>
               {/*<Link className={cn(
             buttonVariants({ variant: "ghost" }),
             pathname === item.href
