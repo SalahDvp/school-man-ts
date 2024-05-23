@@ -39,7 +39,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         [
           {
             content: `ReferenceID #${id}`
-            +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
+            +`\nDate:${paymentData.paymentDate}`,
             styles: {
               halign: 'right'
             }
@@ -283,7 +283,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
         [
           {
             content: `ReferenceID #${id}`
-            +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
+            +`\nDate:${paymentData.paymentDate}`,
             styles: {
               halign: 'right',
               font:'Amiri',
@@ -439,7 +439,7 @@ export function downloadInvoice(paymentData:any,id:string,titles:any[],words:any
           [
             {
               content: `ReferenceID #${id}`
-              +`\nDate: ${format(paymentData.paymentDate, 'dd/MM/yyyy')}`,
+              +`\nDate:${paymentData.paymentDate}`,
               styles: {
                 halign: 'right',
                 font:'Amiri',
