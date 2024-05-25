@@ -41,12 +41,12 @@ export function ChildNav({
                 {t('about')} </Link>
               <Link className={cn(
             buttonVariants({ variant: "ghost" }),
-            pathname === '/parent/child/[slug]/Family'
+            pathname === '/parent/child/[slug]/Balance'
               ? "bg-muted hover:bg-muted"
               : "hover:bg-transparent hover:underline",
             "justify-start"
-          )}  href={{pathname:'/parent/child/[slug]/Family',params:{slug:slug}}}>
-                {t('family')} </Link>
+          )}  href={{pathname:'/parent/child/[slug]/Balance',params:{slug:slug}}}>
+                {t('Balance')} </Link>
                <Link className={cn(
             buttonVariants({ variant: "ghost" }),
             pathname === '/parent/child/[slug]/Appointments'
@@ -69,7 +69,7 @@ export function ChildNav({
               ? "bg-muted hover:bg-muted"
               : "hover:bg-transparent hover:underline",
             "justify-start"
-          )}  href={{pathname:'/parent/child/[slug]/Family',params:{slug:slug}}}>
+          )}  href={{pathname:'/parent/child/[slug]/Balance',params:{slug:slug}}}>
                 Classes
               </Link> */}
             </nav>

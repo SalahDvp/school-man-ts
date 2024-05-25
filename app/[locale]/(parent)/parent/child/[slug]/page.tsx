@@ -1,4 +1,4 @@
-
+'use client'
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
@@ -7,10 +7,14 @@ import { Label } from "@/components/ui/label"
 import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { useChildData } from '@/app/[locale]/(parent)/components/childDataProvider';
 
-const ChildPage = ({ params }: { params: { slug: string } }) => {
-  const t=useTranslations()
-    return (
+
+function ChildPage({ params }: { params: { slug: string} } ): any {
+  const {childData} = useChildData()
+
+  const t = useTranslations()
+  return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">{t('general-information')}</h3>
@@ -49,27 +53,27 @@ const ChildPage = ({ params }: { params: { slug: string } }) => {
           <div className="space-y-4">
             <div>
               <Label htmlFor="address">Address</Label>
-              <Input className="mt-1" id="address" placeholder="123 Main St" />
+              <Input className="mt-1" id="address" placeholder={childData.address} />
             </div>
             <div>
               <Label htmlFor="city">City</Label>
-              <Input className="mt-1" id="city" placeholder="Anytown" />
+              <Input className="mt-1" id="city" placeholder={childData.city} />
             </div>
             <div>
               <Label htmlFor="state">State</Label>
-              <Input className="mt-1" id="state" placeholder="CA" />
+              <Input className="mt-1" id="state" placeholder={childData.state} />
             </div>
             <div>
               <Label htmlFor="postal-code">Postal Code</Label>
-              <Input className="mt-1" id="postal-code" placeholder="12345" />
+              <Input className="mt-1" id="postal-code" placeholder={childData.postalCode} />
             </div>
             <div>
               <Label htmlFor="emergency-contact-name">Emergency Contact Name</Label>
-              <Input className="mt-1" id="emergency-contact-name" placeholder="John Doe" />
+              <Input className="mt-1" id="emergency-contact-name" placeholder={childData.emergencyContactName} />
             </div>
             <div>
               <Label htmlFor="emergency-contact-phone">Emergency Contact Phone</Label>
-              <Input className="mt-1" id="emergency-contact-phone" placeholder="+1 (555) 555-5555" />
+              <Input className="mt-1" id="emergency-contact-phone" placeholder={childData.emergencyContactPhone} />
             </div>
           </div>
         </div>
@@ -78,47 +82,46 @@ const ChildPage = ({ params }: { params: { slug: string } }) => {
           <div className="space-y-4">
             <div>
               <Label htmlFor="data-level">Data Level</Label>
-              <Input className="mt-1" id="data-level" placeholder="Level 1" />
+              <Input className="mt-1" id="data-level" placeholder={childData.level} />
             </div>
             <div>
               <Label htmlFor="class">Class</Label>
-              <Input className="mt-1" id="class" placeholder="Class A" />
+              <Input className="mt-1" id="class" placeholder={childData.class} />
             </div>
             <div>
               <Label htmlFor="date-of-birth">Date of Birth</Label>
-              <Input className="mt-1" id="date-of-birth" type="date" />
+              <Input className="mt-1" id="date-of-birth" type="date" placeholder={childData.dateOfBirth} />
             </div>
             <div>
               <Label htmlFor="medical-conditions">Medical Conditions</Label>
               <Textarea
                 className="mt-1"
                 id="medical-conditions"
-                placeholder="List any medical conditions..."
-                rows={3}
-              />
+                placeholder={childData.medicalConditions}
+                rows={3} />
             </div>
             <div>
               <Label htmlFor="joining-date">Joining Date</Label>
-              <Input className="mt-1" id="joining-date" type="date" />
+              <Input className="mt-1" id="joining-date" placeholder={childData.joiningDate}  /> 
             </div>
             <div>
               <Label htmlFor="parent-name">Parent/Guardian Name</Label>
-              <Input className="mt-1" id="parent-name" placeholder="John Doe" />
+              <Input className="mt-1" id="parent-name" placeholder={childData.parentLastName} />
             </div>
             <div>
               <Label htmlFor="parent-email">Parent/Guardian Email</Label>
-              <Input className="mt-1" id="parent-email" placeholder="john@example.com" type="email" />
+              <Input className="mt-1" id="parent-email" placeholder={childData.parentEmail} type="email" />
             </div>
             <div>
               <Label htmlFor="parent-phone">Parent/Guardian Phone</Label>
-              <Input className="mt-1" id="parent-phone" placeholder="+1 (555) 555-5555" />
+              <Input className="mt-1" id="parent-phone" placeholder={childData.parentPhone} />
             </div>
           </div>
         </div>
       </div>
-          </div>
+    </div>
 
-      )
-    }
+  )
+}
 
   export default ChildPage;

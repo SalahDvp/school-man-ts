@@ -7,14 +7,15 @@ export const AppContext = createContext();
 
 // Create the provider component
 export const  FetchChildDataProvider = ({ children,slug}) => {
-    const { parent } = useParentData();
+    const { parent,transactions } = useParentData();
+    
   const childData = parent?.children.find((child) => child.id === slug);
   console.log("childdata",childData);
     if (!childData) {
       return <div>Loading...</div>;
     }
 return (
-    <AppContext.Provider value={{childData}}>
+    <AppContext.Provider value={{childData,transactions}}>
       {children}
     </AppContext.Provider>
   );
