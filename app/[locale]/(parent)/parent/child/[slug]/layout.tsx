@@ -4,7 +4,6 @@ import React from 'react';
 import { useParentData } from "@/context/parent/fetchDataContext";
 import { ChildNav } from "../../../components/child-nav-bar";
 import {FetchChildDataProvider} from "../../../components/childDataProvider"
-export const PageContext = React.createContext(null);
 export default function RootLayout({
     children,
     params:{slug},
