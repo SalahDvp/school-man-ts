@@ -470,5 +470,14 @@
   "amount-left-to-pay": "المبلغ المتبقي للدفع",
   "about": "عن",
   "family": "عائلة",
-  "appointments": "تعيينات"
+  "appointments": "تعيينات",
+  "schedule-an-appointment": "ترتيب موعد",
+  "pick-a-time-that-works-best-for-you": "اختر الوقت الذي يناسبك بشكل أفضل.",
+  "select-a-teacher": "اختر المعلم",
+  "20-min": "20 دقيقة",
+  "select-teacher-or-date": "حدد المعلم أو التاريخ",
+  "book-meeting": "اجتماع الكتاب",
+  "appointment-history": "تاريخ التعيين",
+  "a-list-of-your-recent-appoitnments": "قائمة بمواعيدك الأخيرة.",
+  "Balance": "توازن"
 }

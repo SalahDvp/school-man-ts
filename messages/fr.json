@@ -470,5 +470,15 @@
   "amount-left-to-pay": "montant restant à payer",
   "about": "À propos",
   "family": "Famille",
-  "appointments": "Rendez-vous"
+  "appointments": "Rendez-vous",
+  "schedule-an-appointment": "Planifier un rendez-vous",
+  "pick-a-time-that-works-best-for-you": "Choisissez le moment qui vous convient le mieux.",
+  "select-a-teacher": "Sélectionnez un professeur",
+  "duration": "Durée",
+  "20-min": "20 min",
+  "select-teacher-or-date": "sélectionnez Professeur ou date",
+  "book-meeting": "Réserver une réunion",
+  "appointment-history": "Historique des rendez-vous",
+  "a-list-of-your-recent-appoitnments": "Une liste de vos rendez-vous récents.",
+  "Balance": "Équilibre"
 }

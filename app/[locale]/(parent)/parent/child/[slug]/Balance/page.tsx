@@ -1,3 +1,4 @@
+
 "use client"
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,9 +9,23 @@ import React from 'react';
 import { useTranslations } from "next-intl"
 
 function FamilyPage() {
+
+const t=useTranslations()
 const {childData}=useChildData()
-    const t=useTranslations()
-    return (
+
+const rows = [];
+for (let i = 0; i < childData.transactions.length; i++) {
+  const transaction = childData.transactions[i];
+  rows.push(
+    <tr key={i} className="bg-white dark:bg-gray-800">
+      <td className="px-4 py-3">{transaction.paymentDate}</td>
+      <td className="px-4 py-3">{transaction.description}</td>
+      <td className="px-4 py-3 text-right">{transaction.paymentAmount}</td>
+      <td className="px-4 py-3 text-right">{transaction.amountLeftToPay}</td>
+    </tr>
+  );
+}
+return (
         <div className="space-y-6">
         <div>
         <h3 className="text-lg font-medium">{t('general-information')}</h3>
@@ -28,11 +43,11 @@ const {childData}=useChildData()
           <CardContent>
             <div className="flex items-center justify-between">
               <p className="text-gray-600 font-medium">Current Balance</p>
-              <p className="text-2xl font-bold text-primary">$1,050.00</p>
+              <p className="text-2xl font-bold text-primary">{childData.totalAmount} DZD</p>
             </div>
             <div className="flex items-center justify-between mt-2">
               <p className="text-gray-600 font-medium">Amount Left to Pay</p>
-              <p className="text-2xl font-bold text-red-500">$1,050.00</p>
+              <p className="text-2xl font-bold text-red-500">{childData.amountLeftToPay} DZD</p>
             </div>
           </CardContent>
           <CardFooter>
@@ -65,44 +80,27 @@ const {childData}=useChildData()
         </Card>
         </div>
         <Card className="md:grid-cols-1 w-2/3">
-          <CardHeader>
-            <CardTitle>Transactions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-white rounded-lg shadow-md overflow-x-auto">
-              <table className="w-full table-auto">
-                <thead className="bg-gray-100 text-gray-600 font-medium">
-                  <tr>
-                    <th className="px-4 py-3 text-left">Date</th>
-                    <th className="px-4 py-3 text-left">Description</th>
-                    <th className="px-4 py-3 text-right">Amount Paid</th>
-                    <th className="px-4 py-3 text-right">Balance</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  <tr>
-                    <td className="px-4 py-3">May 1, 2023</td>
-                    <td className="px-4 py-3">Tuition - Spring 2023</td>
-                    <td className="px-4 py-3 text-right">$500.00</td>
-                    <td className="px-4 py-3 text-right">$500.00</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-3">April 15, 2023</td>
-                    <td className="px-4 py-3">Registration Fee</td>
-                    <td className="px-4 py-3 text-right">$50.00</td>
-                    <td className="px-4 py-3 text-right">$550.00</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-3">March 1, 2023</td>
-                    <td className="px-4 py-3">Tuition - Winter 2023</td>
-                    <td className="px-4 py-3 text-right">$500.00</td>
-                    <td className="px-4 py-3 text-right">$1,050.00</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+      <CardHeader>
+        <CardTitle>Transactions</CardTitle>
+      </CardHeader>
+      <CardContent>
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-x-auto">
+                <table className="w-full table-auto">
+            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium">
+              <tr>
+                <th className="px-4 py-3 text-left">Date</th>
+                <th className="px-4 py-3 text-left">Description</th>
+                <th className="px-4 py-3 text-right">Amount Paid</th>
+                <th className="px-4 py-3 text-right">left to pay</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+      {rows}
+    </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
       </div>
       </div>
     );
@@ -112,5 +110,3 @@ const {childData}=useChildData()
 
 
 export default FamilyPage
-
-

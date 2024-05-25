@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { getDay, parse, format, addMinutes, isWithinInterval, eachMinuteOfInterval } from 'date-fns';
-import { CalendarCheck, Clock, LoaderIcon, MapPin, Timer } from 'lucide-react'
+import { getDay, parse, format, addMinutes, eachMinuteOfInterval, isEqual, setMilliseconds } from 'date-fns';
 import React, { useEffect, useState } from 'react'
 import { Calendar } from '@/components/ui/calendar'
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -11,11 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import CalendarDatePicker from '@/app/[locale]/(home)/students/components/date-picker'
 import { Label } from "@/components/ui/label"
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import { BellIcon, EyeNoneIcon, PersonIcon } from "@radix-ui/react-icons"
-import { getTeachers } from './actions'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '@/firebase/firebase-config'
 import { useForm } from "react-hook-form";
@@ -27,10 +24,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { LoadingButton } from '@/components/ui/loadingButton';
+import { useTranslations } from 'next-intl';
+import { useToast } from '@/components/ui/use-toast';
+import { useParentData } from '@/context/parent/fetchDataContext';
+import { useChildData } from '@/app/[locale]/(parent)/components/childDataProvider';
+import { addAppointment } from '@/lib/hooks/parent/appointment';
+import { Appointment } from '@/lib/hooks/parent/appointment';
+import { appointmentSchema ,AppointmentSchemaType} from '@/validators/appointmentSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import AppointmentHistory from './AppointmentsHistory';
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-const generateTimeSlots = (officeHours, selectedDate, interval, appointments) => {
+const generateTimeSlots = (officeHours:{day:string,start:string,end:string}[], selectedDate:Date, interval:number, appointments:Appointment[]) => {
   const selectedDay = daysOfWeek[getDay(selectedDate)];
   const dayHours = officeHours.find(hours => hours.day === selectedDay);
 
@@ -39,43 +45,45 @@ const generateTimeSlots = (officeHours, selectedDate, interval, appointments) =>
   const slots = [];
   const start = parse(dayHours.start, 'HH:mm', selectedDate);
   const end = parse(dayHours.end, 'HH:mm', selectedDate);
-  
+
   const allSlots = eachMinuteOfInterval(
     { start, end },
     { step: interval }
   ).map(time => format(time, 'HH:mm'));
 
   for (const slot of allSlots) {
-    const slotStart = parse(slot, 'HH:mm',selectedDate);
+    const slotStart = parse(slot, 'HH:mm', selectedDate);
     const slotEnd = addMinutes(slotStart, interval);
 
-    const isOverlapping = appointments.some(appointment => {
-    
-      
-      const appointmentStart =appointment.start
-      const appointmentEnd = appointment.end
-     
-      return isWithinInterval(slotStart, { start: appointmentStart, end: appointmentEnd }) ||
-             isWithinInterval(slotEnd, { start: appointmentStart, end: appointmentEnd });
+    const isOverlapping = appointments.some((appointment:Appointment) => {
+      const appointmentStart = appointment.start;
+      // Set milliseconds to 0 for both dates before comparison
+      const slotStartWithoutMs = setMilliseconds(slotStart, 0);
+      const appointmentStartWithoutMs = setMilliseconds(appointmentStart, 0);
+
+      // Check if the slot start time matches the appointment start time
+      return isEqual(slotStartWithoutMs, appointmentStartWithoutMs);
     });
 
     if (!isOverlapping) {
-      slots.push(slot);
+      slots.push({ slot, slotStart, slotEnd });
     }
   }
 
   return slots;
 };
 function MeetingTimeDateSelection() {
-    const [prevBooking,setPrevBooking]=useState([]);
     const [teachers, setTeachers] = useState<any>([])
     const [loading, setLoading] = useState(true)
-    const form = useForm<any>({
-      //resolver: zodResolver(ParentRegistrationSchema),
+    const {parent,setParent}=useParentData()
+    const {childData}=useChildData()
+    const t=useTranslations()
+    const {toast}=useToast()
+    const form = useForm<AppointmentSchemaType>({
+      resolver: zodResolver(appointmentSchema),
       defaultValues:{
-        date:new Date(),
-        teacher:'',
-        slot:'08:00',
+        duration:20,
+        date:new Date()
       }
     });
 
@@ -91,8 +99,8 @@ function MeetingTimeDateSelection() {
       
           for (const data of getTeachersRef.docs) {
             const reservationsRef = await getDocs(query(
-              collection(db, 'Teachers', data.id, 'Appointments'),
-              // where('start', '>=', new Date())
+              collection(db, 'Appointments'),
+              where('start', '>=', new Date()),where('teacherId', "==",data.id)
             ));
             const appointments = reservationsRef.docs.map(doc => ({
               ...doc.data(),
@@ -100,7 +108,7 @@ function MeetingTimeDateSelection() {
               end:new Date(doc.data().end.toDate()),
               id: doc.id,
             }));
-      
+            
             teachersData.push({
               ...data.data(),
               id: data.id,
@@ -127,7 +135,7 @@ function MeetingTimeDateSelection() {
     const selectedTeacher = watch('teacher')
     const selectedDate = watch('date')
     const timeSlots = React.useMemo(() => {
-      const teacher = teachers.find((t) => t.teacher === getValues("teacher"));
+      const teacher = teachers.find((t:any) => t.teacher === getValues("teacher"));
       if (!teacher || !teacher.officeHours) return [];
       console.log("slots",teacher.appointments);
       
@@ -141,26 +149,66 @@ function MeetingTimeDateSelection() {
       );
       if (!teacher || !teacher.officeHours) return allIndexes;
 
-      const array=teacher.officeHours.map((day)=>(
+      const array=teacher.officeHours.map((day:{day:string,start:string,end:string})=>(
         daysOfWeek.indexOf(day.day)
       ))
   
       const remainingIndexes = allIndexes.filter(index => !array.includes(index));
       return  remainingIndexes;
     }, [selectedTeacher, teachers]);
+
+    async function onSubmit(data: any) {
+      const appointmentData={teacher:data.teacher,teacherId:data.teacherId,duration:data.duration,date:data.date,slot:data.slot,student:childData.student,studentId:childData.id,parent:`${parent.firstName} ${parent.lastName}`,parentId:parent.id,start:data.slotStart,end:data.slotEnd}
+      const appointmentId=addAppointment(appointmentData);
+      setTeachers((prevTeachers:any) =>
+        prevTeachers.map((teacher:any) =>
+          teacher.id === data.teacherId
+            ? {
+                ...teacher,
+                appointments: [
+                  ...teacher.appointments,
+                  { ...appointmentData, id: appointmentId },
+                ],
+              }
+            : teacher
+        )
+      );
+      setParent((prevParent:any) => ({
+        ...prevParent,
+        childrendata: prevParent.children.map((child:any) =>
+          child.id === childData.id
+            ? {
+                ...child,
+                appointments: [
+                  ...child.appointments,
+                  { ...appointmentData, id: appointmentId },
+                ],
+              }
+            : child
+        ),
+      }));
+      reset({
+        duration:20,
+        date:new Date(),
+        teacher:""
+      });
+    toast({
+      title: t('changes-applied-0'),
+      description: t('changes-applied-successfully'),
+    });
+        
+  }
     if (loading) {
       return <div>Loading...</div>
     }
-
 
   return  (
   <div className='md:flex md:flex-row'>
 <Card className='w-full md:w-2/3 mr-2'>
   <CardHeader className='flex flex-col items-center justify-center text-center'>
-    <CardTitle>Schedule an Appointment</CardTitle>
+    <CardTitle>{t('schedule-an-appointment')}</CardTitle>
     <CardDescription>
-      Pick a time that works best for you.
-    </CardDescription>
+      {t('pick-a-time-that-works-best-for-you')} </CardDescription>
   </CardHeader>
   <Form {...form}>
             <form>
@@ -173,15 +221,20 @@ function MeetingTimeDateSelection() {
           name="teacher"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Teacher</FormLabel>
+              <FormLabel>{t('teacher')}</FormLabel>
               <FormControl>
-         <Select required onValueChange={(value)=>{
-          
-          form.setValue("teacher",value)
+         <Select required value={field.value} onValueChange={(value)=>{
+          const selectedTeacher=teachers.find((t:any)=>t.teacher===value)
+          if(selectedTeacher){
+            form.setValue("teacher",value)
+            form.setValue('teacherId',selectedTeacher.id)
+          }
+       
           
           }}>
  <SelectTrigger>
-            <SelectValue placeholder="Select a teacher" />
+  
+            <SelectValue placeholder={t('select-a-teacher')} />
           </SelectTrigger>
             <SelectContent>
  
@@ -199,9 +252,9 @@ function MeetingTimeDateSelection() {
       </div>
       <div className="space-y-2">
         
-        <Label htmlFor="date">Duration</Label>
+        <Label htmlFor="date">{t('duration')}</Label>
         <Button className="w-full flex-col h-auto items-start" variant="outline" type='button'>
-          <span className="font-normal">20 min</span>
+          <span className="font-normal">{t('20-min')}</span>
         </Button>
       </div>
       <div className="space-y-2">
@@ -210,19 +263,22 @@ function MeetingTimeDateSelection() {
           name="date"
           render={({ field }) => (
             <FormItem>
-            <FormLabel>Date</FormLabel>
+            <FormLabel>{t('date')}</FormLabel>
             <FormControl>
         <Button className="w-full flex-col h-auto items-start" variant="outline" type='button'>
-          <span className="font-normal">{timeSlots.length>0?format(field.value,'d/M/yyyy'):"select Teacher or date"}</span>
+          <span className="font-normal">{timeSlots.length>0?format(field.value,'d/M/yyyy'):t('select-teacher-or-date')}</span>
         </Button>
         </FormControl>
         </FormItem>
         )}
       />
       </div>
-      <Button type="submit">
-        Book Appointment
-      </Button>
+      <LoadingButton
+            loading={isSubmitting}
+            type="submit"
+            onClick={form.handleSubmit(onSubmit)}
+          >
+          {t('book-meeting')} </LoadingButton>
     </div>
     <div className="grid gap-2 items-center justify-center md:justify-items-center w-full md:w-auto">
     <FormField
@@ -234,7 +290,10 @@ function MeetingTimeDateSelection() {
        <Calendar
             {...field}
             mode="single"
-            disabled={{dayOfWeek:officeHoursDayIndex}}
+            disabled={[
+               { before: new Date() },
+              { dayOfWeek: officeHoursDayIndex }
+            ]}
             className="rounded-md border"
             selected={timeSlots.length>0?field.value:undefined}
             onDayClick={field.onChange}
@@ -258,14 +317,14 @@ function MeetingTimeDateSelection() {
           <FormItem>
             <FormControl>
               <Button
-                onClick={() => form.setValue("slot", time)}
+                onClick={() => {form.setValue("slot", time.slot);form.setValue("slotStart", time.slotStart);form.setValue("slotEnd", time.slotEnd)}}
                 className={`border-primary w-full  mb-2 text-primary ${
-                  time === getValues("slot") ? 'bg-primary text-white' : ''
+                  time.slot === getValues("slot") ? 'bg-primary text-white' : ''
                 }`}
                 variant="outline"
                 type="button"
               >
-                {time}
+                {time.slot}
               </Button>
             </FormControl>
             <FormMessage />
@@ -280,41 +339,7 @@ function MeetingTimeDateSelection() {
   </form>
   </Form>
 </Card>
-   <Card className='w-full md:w-1/3'>
-   <CardHeader className="pb-3">
-     <CardTitle>Appointment History</CardTitle>
-    
-   </CardHeader>
-   <CardContent className="grid gap-1 mt-10">
-     <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
-       <BellIcon className="mt-px h-5 w-5" />
-       <div className="space-y-1">
-         <p className="text-sm font-medium leading-none">Everything</p>
-         <p className="text-sm text-muted-foreground">
-           Email digest, mentions & all activity.
-         </p>
-       </div>
-     </div>
-     <div className="-mx-2 flex items-start space-x-4 rounded-md bg-accent p-2 text-accent-foreground transition-all">
-       <PersonIcon className="mt-px h-5 w-5" />
-       <div className="space-y-1">
-         <p className="text-sm font-medium leading-none">Available</p>
-         <p className="text-sm text-muted-foreground">
-           Only mentions and comments.
-         </p>
-       </div>
-     </div>
-     <div className="-mx-2 flex items-start space-x-4 rounded-md p-2 transition-all hover:bg-accent hover:text-accent-foreground">
-       <EyeNoneIcon className="mt-px h-5 w-5" />
-       <div className="space-y-1">
-         <p className="text-sm font-medium leading-none">Ignoring</p>
-         <p className="text-sm text-muted-foreground">
-           Turn off all notifications.
-         </p>
-       </div>
-     </div>
-   </CardContent>
- </Card>
+<AppointmentHistory/>
  </div>
  
   );

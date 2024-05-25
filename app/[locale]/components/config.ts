@@ -75,10 +75,10 @@ export const pathnames = {
     "ar": "/parent/child/[slug]",
     "fr":"/parent/child/[slug]"
   },
-  "/parent/child/[slug]/Family": {
-    "en": "/parent/child/[slug]/Family",
-    "ar": "/parent/child/[slug]/Family",
-    "fr":"/parent/child/[slug]/Family"
+  "/parent/child/[slug]/Balance": {
+    "en": "/parent/child/[slug]/Balance",
+    "ar": "/parent/child/[slug]/Balance",
+    "fr":"/parent/child/[slug]/Balance"
   },
   "/parent/child/[slug]/Appointments": {
     "en": "/parent/child/[slug]/Appointments",
