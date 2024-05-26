@@ -153,13 +153,13 @@ type FormKeys =
   async function onSubmit(data: ParentFormValues) {
     try {
       const addParent = httpsCallable(functions, 'createUserAndAssignRole');
-      const parentadded=await addParent({...data,documents:[]})
+      const parentadded:any=await addParent({...data,documents:[]})
       //const parentId = await addParent({...data,documents:[]});
       if(parentadded.data){
-        const uploaded = await uploadFilesAndLinkToCollection("Parents",parentadded.data.uid, filesToUpload);
+        const uploaded = await uploadFilesAndLinkToCollection("Parents",parentadded.data?.uid, filesToUpload);
         setParents((prev: ParentFormValues[]) => [
        
-          { ...data, id: parentadded.data.uid, parent: `${data.firstName} ${data.lastName}`,     
+          { ...data, id: parentadded.data?.uid, parent: `${data.firstName} ${data.lastName}`,     
           value: `${data.firstName} ${data.lastName}`,
           label: `${data.firstName} ${data.lastName}`, documents: uploaded },...prev
         ]);

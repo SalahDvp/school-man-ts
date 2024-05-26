@@ -141,7 +141,7 @@ function MeetingTimeDateSelection() {
       
       return generateTimeSlots(teacher.officeHours, getValues("date"), 20, teacher.appointments)
     
-    }, [selectedTeacher, teachers,selectedDate ])
+    }, [selectedTeacher, teachers,selectedDate,getValues])
     const officeHoursDayIndex = React.useMemo(() => {
       const allIndexes = [0, 1, 2, 3, 4, 5, 6];
       const teacher = teachers.find(
