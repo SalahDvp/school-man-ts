@@ -6,23 +6,33 @@ import { Input } from "@/components/ui/input"
 import { useChildData } from '@/app/[locale]/(parent)/components/childDataProvider';
 import React from 'react';
 import { useTranslations } from "next-intl"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 function FamilyPage() {
 
 
 
-
-   /* const transactions = [
+/*
+   const transactions = [
       { date: "May 1, 2023", description: "Tuition - Spring 2023", amountPaid: "$500.00", balance: "$500.00" },
       { date: "April 15, 2023", description: "Registration Fee", amountPaid: "$50.00", balance: "$550.00" },
       { date: "March 1, 2023", description: "Tuition - Winter 2023", amountPaid: "$500.00", balance: "$1,050.00" }
     ];
-    */
-
+    
+*/
 const {childData,transactions}=useChildData()
-console.log('zakamo', childData);
+//console.log('zakamo', childData);
 
-
+/*
 const rows = [];
 
 for (let i = 0; i < transactions.length; i++) {
@@ -36,7 +46,7 @@ for (let i = 0; i < transactions.length; i++) {
     </tr>
   );
 }
-
+*/
     const t=useTranslations()
     return (
         <div className="space-y-6">
@@ -98,19 +108,31 @@ for (let i = 0; i < transactions.length; i++) {
       </CardHeader>
       <CardContent>
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-x-auto">
-                <table className="w-full table-auto">
-            <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium">
-              <tr>
-                <th className="px-4 py-3 text-left">Date</th>
-                <th className="px-4 py-3 text-left">Description</th>
-                <th className="px-4 py-3 text-right">Amount Paid</th>
-                <th className="px-4 py-3 text-right">left to pay</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
-      {rows}
-    </tbody>
-          </table>
+      <Table>
+        <TableCaption>A list of your recent Transactions.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Date</TableHead>
+            <TableHead className="text-right">Description</TableHead>
+            <TableHead className="text-right">Amount Paid</TableHead>
+            <TableHead className="text-right">left to pay</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {transactions.map((invoice) => (
+            <TableRow key={invoice.invoice}>
+              <TableCell className="font-medium">{invoice.paymentDate}</TableCell>
+              <TableCell className="text-right">{invoice.description}</TableCell>
+              <TableCell className="text-right">{invoice.paymentAmount}</TableCell>
+              <TableCell className="text-right">{invoice.amountLeftToPay}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+          </TableRow>
+        </TableFooter>
+      </Table>
         </div>
       </CardContent>
     </Card>
