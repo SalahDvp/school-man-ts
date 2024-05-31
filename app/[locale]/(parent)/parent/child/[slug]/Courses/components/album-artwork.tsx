@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { PlusCircledIcon } from "@radix-ui/react-icons"
-
+import React from "react"
 import { cn } from "@/lib/utils"
 import {
   ContextMenu,
@@ -14,7 +14,30 @@ import {
 } from "@/components/ui/context-menu"
 
 import { playlists } from "./data/playlists"
-
+import CsvIcon  from '@/public/FilesIcons/CSV.svg';
+import DocIcon from '@/public/FilesIcons/DOC.svg';
+import DocxIcon from '@/public/FilesIcons/DOCX.svg';
+import JpgIcon from '@/public/FilesIcons/JPG.svg';
+import MovIcon from '@/public/FilesIcons/MOV.svg';
+import Mp3Icon from '@/public/FilesIcons/MP3.svg';
+import Mp4Icon from '@/public/FilesIcons/MP4.svg';
+import PdfIcon from '@/public/FilesIcons/PDF.svg';
+import PngIcon from '@/public/FilesIcons/PNG.svg';
+import PptIcon from '@/public/FilesIcons/PPT.svg';
+import TxtIcon from '@/public/FilesIcons/TXT.svg';
+const fileIcons:any= {
+  csv: CsvIcon as any,
+  doc: DocIcon,
+  docx: DocxIcon,
+  jpg: JpgIcon,
+  mov: MovIcon,
+  mp3: Mp3Icon,
+  mp4: Mp4Icon,
+  pdf: PdfIcon,
+  png: PngIcon,
+  ppt: PptIcon,
+  txt: TxtIcon,
+};
 interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   album: any
   aspectRatio?: "portrait" | "square"
@@ -22,6 +45,16 @@ interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
   height?: number
 }
 
+const getFileIcon = (fileType:any) => {
+  return fileIcons[fileType.toLowerCase()] || "https://images.unsplash.com/photo-1490300472339-79e4adc6be4a?w=300&dpr=2&q=80";
+};
+const AlbumIcon = ({ albumType}:{albumType:string}) => {
+  const AlbumComponent = getFileIcon(albumType);
+  if (AlbumComponent) {
+    return <AlbumComponent />;
+  }
+  return null; // or any default icon/component
+};
 export function AlbumArtwork({
   album,
   aspectRatio = "portrait",
@@ -30,64 +63,56 @@ export function AlbumArtwork({
   className,
   ...props
 }: AlbumArtworkProps) {
+  const fileIconSrc = React.useMemo(() => getFileIcon(album.type), [album.type]);
+  console.log(fileIconSrc);
+  const handleDownload = () => {
+    if (album.url) {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      
+      xhr.onload = (event) => {
+        const blob = xhr.response;
+        if (blob) {
+          const url = window.URL.createObjectURL(blob);
+      
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = album.name; // Set the download attribute to the actual file name
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }
+      };
+      
+      xhr.onerror = (event) => {
+        console.error('Error fetching file:', xhr.statusText);
+      };
+      
+      xhr.open('GET', album.url);
+      xhr.send();
+    }
+  };
+  
   return (
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div className="overflow-hidden rounded-md">
-            <Image
-              src={album.cover}
-              alt={album.title}
-              width={width}
-              height={height}
-              className={cn(
-                "h-auto w-auto object-cover transition-all hover:scale-105",
-                aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-              )}
-            />
+
+          <div className="overflow-hidden rounded-md" id='myimg'>
+          <AlbumIcon albumType={album.type} />
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">
-          <ContextMenuItem>Add to Library</ContextMenuItem>
-          <ContextMenuSub>
-            <ContextMenuSubTrigger>Add to Playlist</ContextMenuSubTrigger>
-            <ContextMenuSubContent className="w-48">
-              <ContextMenuItem>
-                <PlusCircledIcon className="mr-2 h-4 w-4" />
-                New Playlist
-              </ContextMenuItem>
-              <ContextMenuSeparator />
-              {playlists.map((playlist) => (
-                <ContextMenuItem key={playlist}>
-                  <svg
-                    xmlns="https://images.pexels.com/photos/301926/pexels-photo-301926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="mr-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M21 15V6M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM12 12H3M16 6H3M12 18H3" />
-                  </svg>
-                  {playlist}
-                </ContextMenuItem>
-              ))}
-            </ContextMenuSubContent>
-          </ContextMenuSub>
+          <ContextMenuItem onClick={()=>window.open(album.url, '_blank')}>Open in new Tab</ContextMenuItem>
+          <ContextMenuItem onClick={()=>handleDownload()}>Download</ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuItem>Play Next</ContextMenuItem>
-          <ContextMenuItem>Play Later</ContextMenuItem>
-          <ContextMenuItem>Create Station</ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem>Like</ContextMenuItem>
-          <ContextMenuItem>Share</ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
       <div className="space-y-1 text-sm">
-        <h3 className="font-medium leading-none">{album.title}</h3>
-        <p className="text-xs text-muted-foreground">{album.instructor}</p>
+        <h3 className="font-medium leading-none">{album.name}</h3>
+        {/* <p className="text-xs text-muted-foreground">{album?.instructor}</p> */}
       </div>
     </div>
   )

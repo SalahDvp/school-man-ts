@@ -34,8 +34,13 @@ import { Appointment } from '@/lib/hooks/parent/appointment';
 import { appointmentSchema ,AppointmentSchemaType} from '@/validators/appointmentSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import AppointmentHistory from './AppointmentsHistory';
+import { functions } from '@/firebase/firebase-config';
+import {HttpsCallableResult, httpsCallable } from 'firebase/functions';
+import { formatInTimeZone, fromZonedTime } from 'date-fns-tz'
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
+interface GoogleMeetLinkResponse {
+  meetLink: string;
+}
 const generateTimeSlots = (officeHours:{day:string,start:string,end:string}[], selectedDate:Date, interval:number, appointments:Appointment[]) => {
   const selectedDay = daysOfWeek[getDay(selectedDate)];
   const dayHours = officeHours.find(hours => hours.day === selectedDay);
@@ -158,6 +163,22 @@ function MeetingTimeDateSelection() {
     }, [selectedTeacher, teachers]);
 
     async function onSubmit(data: any) {
+      const timeZoneAlgeria = 'Africa/Algiers';
+      const startTimeUTC = fromZonedTime(data.slotStart, timeZoneAlgeria)
+      const endTimeUTC = fromZonedTime(data.slotEnd, timeZoneAlgeria)      
+      const createGoogleMeetLink = httpsCallable<{ emails: string[]; startTime: Date; endTime: Date;},GoogleMeetLinkResponse>(functions, 'createGoogleMeetLink');
+      createGoogleMeetLink({
+        emails: ["youcefmilk@gmail.com","manseurw406@gmail.com"],
+        startTime:startTimeUTC,
+        endTime:endTimeUTC,
+      })
+        .then((result:HttpsCallableResult<GoogleMeetLinkResponse>) => {
+          const meetLink = result.data.meetLink;
+          console.log('Google Meet link:', meetLink);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
       const appointmentData={teacher:data.teacher,teacherId:data.teacherId,duration:data.duration,date:data.date,slot:data.slot,student:childData.student,studentId:childData.id,parent:`${parent.firstName} ${parent.lastName}`,parentId:parent.id,start:data.slotStart,end:data.slotEnd}
       const appointmentId=addAppointment(appointmentData);
       setTeachers((prevTeachers:any) =>

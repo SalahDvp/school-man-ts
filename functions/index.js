@@ -1,8 +1,32 @@
-const {onCall,HttpsError} = require("firebase-functions/v2/https");
+const {onCall,HttpsError,onRequest} = require("firebase-functions/v2/https");
 const {getDatabase} = require("firebase-admin/database");
 const {logger} = require("firebase-functions/v2");
 const admin=require('firebase-admin')
+const { createEvent } = require('./googlemeet');
+const functions = require('firebase-functions');
 admin.initializeApp();
+
+exports.createGoogleMeetLink =onCall(async (request) => {
+  const { emails, startTime, endTime } = request.data;
+
+  if (!emails || !startTime || !endTime) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Missing required parameters: emails, startTime, endTime, timeZone'
+    );
+  }
+
+  try {
+    const meetLink = await createEvent(emails, startTime, endTime);
+    return { meetLink };
+  } catch (error) {
+    logger.error("Error creating Google Meet link:", error);
+    throw new HttpsError(
+ error
+    );
+  }
+});
+
 
 exports.createUserAndAssignRole = onCall(async (request) => {
   try {
@@ -36,10 +60,3 @@ exports.createUserAndAssignRole = onCall(async (request) => {
     throw new HttpsError("internal", "Error creating user and assigning role");
   }
 });
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
-
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });

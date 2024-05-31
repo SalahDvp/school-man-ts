@@ -477,5 +477,13 @@
   "book-meeting": "Book meeting",
   "appointment-history": "Appointment History",
   "a-list-of-your-recent-appoitnments": "A list of your recent Appoitnments.",
-  "Balance": "Balance"
+  "Balance": "Balance",
+  "Islamic_Education": "Islamic Education",
+  "Arabic_Language": "Arabic Language",
+    "French_Language": "French Language ",
+    "Social_Sciences": "Social Sciences",
+    "Mathematics": "Mathematics",
+    "Scientific_Activities": "Scientific Activities",
+    "Artistic_Education_and_Technological_Alertness": "Artistic Education and Technological Alertness"
+  
 }
