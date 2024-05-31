@@ -46,7 +46,7 @@ interface AlbumArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const getFileIcon = (fileType:any) => {
-  return fileIcons[fileType.toLowerCase()] || "https://images.unsplash.com/photo-1490300472339-79e4adc6be4a?w=300&dpr=2&q=80";
+  return fileIcons[fileType.toLowerCase()] || null;
 };
 const AlbumIcon = ({ albumType}:{albumType:string}) => {
   const AlbumComponent = getFileIcon(albumType);
@@ -64,7 +64,6 @@ export function AlbumArtwork({
   ...props
 }: AlbumArtworkProps) {
   const fileIconSrc = React.useMemo(() => getFileIcon(album.type), [album.type]);
-  console.log(fileIconSrc);
   const handleDownload = () => {
     if (album.url) {
       const xhr = new XMLHttpRequest();
