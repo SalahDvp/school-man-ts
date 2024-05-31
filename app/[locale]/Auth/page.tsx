@@ -10,7 +10,7 @@ import { signIn } from "@/lib/auth"
 import { useRouter } from "@/navigation"
 
 function SignIn() {
-  const [email, setEmail] = useState('admin@admin.com');
+  const [email, setEmail] = useState('parent@parent.com');
   const [password, setPassword] = useState('12345678');
   const router=useRouter()
   const handleSignIn = async () => {
