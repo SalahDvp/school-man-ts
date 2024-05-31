@@ -33,7 +33,7 @@ function extractFileType(contentType: string | undefined): string | null {
   }
   return null;
 }
-export async function fetchFilesWithMetadata(path: string): Promise<FileMetadata[]> {
+async function fetchFilesWithMetadata(path: string): Promise<FileMetadata[]> {
   const folderRef = ref(storage,path)
   const fileListSnapshot = await listAll(folderRef)
 
