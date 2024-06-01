@@ -168,9 +168,9 @@ function MeetingTimeDateSelection() {
       const endTimeUTC = fromZonedTime(data.slotEnd, timeZoneAlgeria)      
       const createGoogleMeetLink = httpsCallable<{ emails: string[]; startTime: Date; endTime: Date;},GoogleMeetLinkResponse>(functions, 'createGoogleMeetLink');
       createGoogleMeetLink({
-        emails: ["youcefmilk@gmail.com","manseurw406@gmail.com"],
-        startTime:startTimeUTC,
-        endTime:endTimeUTC,
+        emails: ["youcefmilk@gmail.com"],
+        startTime:new Date(),
+        endTime:new Date(new Date().setHours(new Date().getHours() + 1)),
       })
         .then((result:HttpsCallableResult<GoogleMeetLinkResponse>) => {
           const meetLink = result.data.meetLink;
